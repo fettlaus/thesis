@@ -2,6 +2,7 @@
 .texlipse
 /.settings
 /tmp
+/out
 *.aux
 *.glo
 *.idx
