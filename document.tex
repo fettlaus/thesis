@@ -20,11 +20,14 @@
 \usepackage{makeidx}
 \usepackage{listings}
 \usepackage{natbib}
-\usepackage[ngerman,colorlinks=true]{hyperref}
+\usepackage[ngerman,hidelinks]{hyperref}
 \usepackage{soul}
 \usepackage{hawstyle}
 \usepackage{lipsum} %% for sample text
-
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{\par}{}{}
+\makeatother
 %% define some colors
 \colorlet{BackgroundColor}{gray!20}
 \colorlet{KeywordColor}{blue}
@@ -132,11 +135,11 @@
 %% write to the log/stdout
 \typeout{===== File: chapter 1}
 %% include chapter file (chapter1.tex)o
-\include{chapter1}
-\include{chapter2}
-\include{chapter3}
-\include{chapter4}
-\include{chapter5}
+\input{chapter1}
+\input{chapter2}
+\input{chapter3}
+\input{chapter4}
+\input{chapter5}
 
 %%%%
 %% add some text to generate a sample document

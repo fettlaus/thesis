@@ -1,4 +1,34 @@
 \chapter{Einführung}
 \section*{Motivation}
-aoeie \cite*{sample_bib}
-\lipsum
+Eingebettete Systeme sind aus unseren heutigen Welt nicht mehr wegzudenken. Sie
+dienen zur Heimautomatisierung, Prozesssteuerung und vielem
+Anderen\footnote{weiteres Beispiel einfügen!}. Diese Systeme kommunizieren
+häufig über Funkprotokolle, die auf eine hohe Energieeffizienz ausgelegt sind
+und sich oftmals dynamisch organisieren können. Als Beispiel lassen sich ZigBee,
+ANT, Z-Wave, Bluetooth low energy oder MiWi nennen.
+
+All diesen Funkprotokollen ist gemein, dass sie auf eine hohe Integration
+ausgelegt sind und oftmals in bestehende Systeme eingebunden werden. So ist es
+zum Beispiel nicht abwegig, dass zusätzlich zu einer Heimautomatisierung ein
+Funknetzwerk nach IEEE 802.11 \footnote{Bekannt als "`WLAN"'} bereits
+besteht.
+
+\cite*{sample_bib}
+\section*{Ziele}
+Ziel dieser Bachelorarbeit ist es, eine Entwicklungsplattform zu schaffen, die
+eine (Fort-)Entwicklung von bereits integrierten Funksystemen erleichtert.
+Hierzu werden verschiedene Hilfsmittel benötigt.
+
+Als Anforderung werden folgende Ziele gesetzt:
+\begin{itemize}
+  \item Möglichkeit eine Anzahl von Zielsystemen zu programmieren und zu
+  debuggen.
+  \item Aufnahme und Weiterleitung von Nachrichten mehrerer Zielsysteme. Hierbei
+  ist insbesondere von Bedeutung, die Funkaktivitäten der Komponenten sichtbar
+  zu machen.
+  \item Aggregierung der empfangenen Daten mehrerer Zielsysteme in einem
+  Entwicklungssystem. Die Darstellung der Daten soll einen zeitlichen Ablauf
+  der jeweiligen Vorgänge ersichtlich werden lassen.
+\end{itemize}
+\section*{Gliederung}
+Im ersten Teil werden bestehende Systeme analysiert, um 
