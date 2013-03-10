@@ -1,4 +1,157 @@
-\chapter{Analyse}
+\chapter{Analyse eines Entwicklungssystems}\label{chap:analyse}
+\minitoc
+In diesem Kapitel soll aufgezeigt werden, woraus ein Entwicklungssystem
+im Allgemeinen besteht und welche Anforderungen sich also für ein zu
+entwerfendes Entwicklungssystem ergeben.
+\section{Begriffsdefinitionen}
+\subsection*{Zielsystem}
+Das \emph{Zielsystem} ist das zu entwerfende Entwicklungsziel.
+\subsection*{Entwicklungsplattform}
+Zu einer \emph{Entwicklungsplattform} gehören alle Hardware- und
+Softwareelemente, die nötig sind, um die Umsetzung eines bestimmten
+Softwareprojektes zu erreichen. Die einzelnen Be                      
+ standteile einer solchen \emph{Entwicklungsplattform} sollen im Verlauf dieses
+Kapitels identifiziert werden.
+\section{Elemente einer Entwicklungsplattform}
+Die Elemente einer Entwicklungsplattform kann man drei Kategorien zuordnen.
+Jeder Bestandteil 
+\subsection{Software}
+Text
+\begin{itemize}
+  \item \subsubsection*{Compiler} GCC
+  \item \subsubsection*{Debugger} GDB
+  \item \subsubsection*{Testtools} Junit
+  \item \subsubsection*{Deploymenttools}
+\end{itemize}
+
+\subsection{Hardware}
+\begin{itemize}
+  \item Hardware-Testtools
+  \item Flasher
+  \item ns
+\end{itemize}
+\subsection{Vorgehensmodell}
+Am Anfang eines Entwicklungsprozesses steht die Entscheidung über eine
+Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
+die in Industrie und Wirtschaft weit verbreitet sind. Als Beispiele lassen sich
+hier das Wasserfallmodell, Scrum oder auch Extreme Programming nennen.
+
+All diesen Modellen ist gemein, dass einige ihrer Schritte unbedingt
+Softwareunterstützung bedürfen oder diese die Entwicklung unter
+Umständen beschleunigen kann.
+Einige Vorgehensmodelle und deren nötige Softwareunterstützung sollen hier
+exemplarisch aufgeführt werden.
+\subsubsection*{Wasserfallmodell}
+Das Wasserfallmodell ist ein klassisches, nicht-iteratives Vorgehensmodell,
+dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann. 
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=350pt]{HAW_logo}
+\caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell}
+\end{figure}
+
+Jeder einzelne Schritt in der Entwicklung stellt hierbei eine abgeschlossene
+Phase mit vorher festgelegten Anfangs- und Endpunkten dar.
+
+ \subsubsection*{Scrum} Hier Scrum beschreiben
+\subsubsection*{Extreme Programming}
+Hier Extreme Programming beschreiben
+\section{Softwareunterstützung}
+Für eine neue Entwicklungsplattform ist es wünschenswert, sich nicht von einem
+speziellen Vorgehensmodell abhängig zu machen. Es sollte also eine Schnittmenge
+gefunden werden, um die Minimalanforderungen möglichst vieler Modelle abdecken
+zu können.
+
+Als Schnittmenge kristallisieren sich dabei folgende Aspekte heraus:
+\begin{itemize}
+  \item \subsection*{Programmieren} Eine Softwareunterstützung erfolgt in diesem
+  Schritt meist durch eine IDE und/oder einen Compiler.
+  \item \subsection*{Testen} Je nach Art der Tests wird auch in diesem Schritt
+  Softwareunterstützung benötigt. 
+  \item \subsection*{Verteilen} Soll eine Software auf mehrere
+  Systeme verteilt werden, passiert dies fast immer softwaregestützt.
+  \item \subsection*{Warten} Die Wartung einer Software ist ein weiterer
+  wichtiger Bestandteil des Softwarelebenszyklus'.
+\end{itemize}
+\section{Vorbedingungen durch das zu entwickelnde System}\label{sec:vorb}
+Entwicklung von Software für funkende Mikrocontroller. Dies Mikrocontroller sind
+teilweise hochgradig in ihre Umgebung integriert. So können diese z.B.
+nicht für die Entwicklung kurzfristig ausgebaut werden. Aufgrund ihrer extrem
+hohen Verbreitung\footnote{Referenz} bezieht sich diese Arbeit ausschließlich
+auf Systeme mit ARM-Architektur.
+\section{Weitere Gegebenheiten}\label{sec:gegeb}
+Es existiert Infrastruktur, die man sich für die Entwicklung zu Nutze machen
+kann. Hierzu zählen zum Beispiel WLAN, Stromversorgung, Ethernet.
+
+\section{Randbedingungen des Entwicklungsprozesses}
+Die gegebenen Umständen aus \autoref{sec:gegeb} und \autoref{sec:vorb} ergeben
+folgende Randbedingungen:
+\begin{itemize}
+  \item Das Zielsystem ist nie auch gleichzeitig das Entwicklungssystem.
+  Zusätzlich zu der Tatsache, dass die Zielsysteme eine andere
+  \item Das Zielsystem interagiert mit Umgebung. Deshalb sind zum Beispiel
+  Funkstörungen o.Ä. zu beachten
+  \item Der Zielsystemort ist selten auch der Entwicklungsort
+  \item Es existieren viele Zielsysteme mit gleicher oder ähnlicher
+  Konfiguration
+\end{itemize}
+
+\section{Anforderungen an das Entwicklungssystem}
+Aus den Randbedingungen ergeben sich harte und weiche Anforderungen an ein
+potentielles Entwicklungssystem. Die harten Anforderungen müssen von einem
+Entwicklungssytem zwangsweise erfüllt werden um als geeignetes System dienen zu
+können. Die Erfüllung weicher Anforderungen kann den den
+Entwicklungsprozess vereinfachen und dem Entwickler die Arbeit erleichtern.
+\subsection{Harte Anforderungen}
+\begin{itemize}
+  \item Schon während der Entwicklung muss ein Zugriff auf das Zielsystem zum
+  Debuggen möglich sein
+  \item Software muss "`remote"' deployt werden können
+  \item Tests sollten aus Simulationsgründen vor Ort erfolgen
+  \item Wartungszyklen und Wartungsupdates müssen meist für viele Systeme
+  parallel duchgeführt werden
+\end{itemize}
+\subsection{Weiche Anforderungen}
+\begin{itemize}
+  \item 
+\end{itemize}
+
+
+\section{Entwicklungsmodelle}
+Unterschiedliche Anforderungen je nach Entwicklungsziel
+Manche stimmen jedoch überein, so z.B.
+  
+
+
+
+Abhängig von den Vorfaben und den eingesetzten Entwicklungsmodellen werden
+für jedes Softwareprojekt unterschiedliche Anforderungen an die verwendete Hard-
+und Software gestellt.
+
+Diese Anforderungen 
+
+ Je nach Art der Software, Anforderungen und
+
+Unabhängig von der Wahl des Entwicklungsmodells können und
+müssen viele dieser Schritte teilweise auch softwaregestützt ablaufen. Es ist
+daher für ein Entwicklungssystem zwingend notwendig, diese Schritte zu
+unterstützten.
+
+Zu den softwaregestützten Schritten zählen hierbei:
+\begin{itemize}
+  \item \subsection*{Modultest} Modultest
+  \item \subsection*{Integrationstest} Integrationstest eingebetteter Systeme
+  erfolgen meist mit Hilfe standardisierter Verfahren. Diese verfahren lassen
+  sich oft auch zum Beispiel in die Endkontrolle von herstellungsprozessen
+  integrieren. So sind in der Industrie verfahren wie JTAG oder Pintests weit
+  verbreitet.
+  \item \subsection*{Deployment} Im Bereich der 
+  \item \subsection*{Wartung}
+\end{itemize}
+
+\ldots
 \section{JTAG}
 JTAG statt SWD
 \begin{itemize}

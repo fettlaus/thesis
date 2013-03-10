@@ -25,9 +25,20 @@
 \usepackage{hawstyle}
 \usepackage{lipsum} %% for sample text
 \usepackage{etoolbox}
+%% All my packages
+
+\usepackage{amsthm}
+\usepackage{parskip}
+\usepackage{tocloft}
+\usepackage{tocbibind}
+
+
+%%\renewcommand{\cftdot}{.}
+
 \makeatletter
-\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{\par}{}{}
+%%\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{\par}{}{}
 \makeatother
+\usepackage{minitoc}
 %% define some colors
 \colorlet{BackgroundColor}{gray!20}
 \colorlet{KeywordColor}{blue}
@@ -121,8 +132,10 @@
 
 \newpage
 \singlespacing
-
+\mtcselectlanguage{german}
+\dominitoc
 \tableofcontents
+
 \newpage
 %% enable if these lists should be shown on their own page
 %%\listoftables
@@ -156,7 +169,10 @@ See also \cite{sample_bib}.
 %%\include{appendix}
 
 % bibliography and other stuff
-\backmatter
+%\backmatter
+
+\typeout{===== Section: figures}
+\listoffigures
 
 \typeout{===== Section: literature}
 %% read the documentation for customizing the style
