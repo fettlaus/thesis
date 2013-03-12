@@ -9,19 +9,56 @@ Das \emph{Zielsystem} ist das zu entwerfende Entwicklungsziel.
 \subsection*{Entwicklungsplattform}
 Zu einer \emph{Entwicklungsplattform} gehören alle Hardware- und
 Softwareelemente, die nötig sind, um die Umsetzung eines bestimmten
-Softwareprojektes zu erreichen. Die einzelnen Be                      
+Softwareprojektes zu erreichen. Die einzelnen Be
  standteile einer solchen \emph{Entwicklungsplattform} sollen im Verlauf dieses
 Kapitels identifiziert werden.
 \section{Elemente einer Entwicklungsplattform}
-Die Elemente einer Entwicklungsplattform kann man drei Kategorien zuordnen.
+Die Elemente einer Entwicklungsplattform lassen sich grob drei Kategorien
+zuordnen.
 Jeder Bestandteil 
 \subsection{Software}
-Text
+Software unterstützt Softwareprojekte in allen Phasen der Durchführung. 
 \begin{itemize}
-  \item \subsubsection*{Compiler} GCC
-  \item \subsubsection*{Debugger} GDB
-  \item \subsubsection*{Testtools} Junit
+  \item \subsection*{IDEs} IDEs\footnote{Integrated Development Environment}
+  sind zentrale Entwicklungsoberflächen der Softwareentwickler. In dieser
+  Umgebung werden oftmals viele Tools zusammengefasst, die für den
+  Entwicklungszyklus notwendig sind. Sie dienen dazu Quelltext zu verwalten,
+  Versionsverwaltung zu betreiben, Code zu kompilieren, die entwickelte Software
+  zu testen, zu deployen und zu debuggen.
+  
+  Oft werden die in den folgenden Punkten aufgeführten Tools in eine IDE
+  integriert, um Entwicklungsabläufe zu vereinfachen und zu beschleunigen.
+  
+  \emph{Beispiele:} Eclipse, NetBeans, CodeWarrior, Microsoft Visual Studio, Qt
+  Creator
+  \item \subsubsection*{Compiler} Compiler sind für viele Softwareprojekte von
+  essentieller Bedeutung. Speziell im eingebetteten Bereich werden überwiegend
+  kompilierte Programmiersprachen wie C oder C++ eingesetzt, da sie nach dem
+  Kompiliervorgang in nativem Maschinencode vorliegen und so oft eine höhere
+  Ausführungsgeschwinidgkeit gewährleisten können. Außerdem können sie meist
+  besser an das Zielsystem angepasst werden, da sie keiner weiteren Frameworks
+  oder Interpreter mit "`überflüssigen"' Funktionen bedürfen.
+  
+  Soll eine kompilierte Software auf einem anderen als dem Entwicklungssystem
+  eingesetzt werden, so wird ein sogenannter \textbf{Cross-Compiler} benötigt.
+  Diese speziellen Compiler sind in der Lage, Software zu kompilieren, die
+  später auf einer andere Rechnerarchitektur (z.B. ARM statt Intel) und/oder auf einem
+  anderen Betriebssystem (z.B. Linux statt Windows) betrieben werden soll.
+  
+  \emph{Beispiele:} GCC, IAR C/C++ Compiler, ARM RVCT Compiler, Intel C++
+  Compiler, CodeWarrior Compiler
+  \item \subsubsection*{Debugger}
+   Tool, um Software während seiner Laufzeit untersuchen zu können.
+   
+  \emph{Beispiele:} GDB
+  \item \subsubsection*{Testtools}
+  Tool, um Software auf Einhatung geforderter Parameter zu prüfen.
+  
+  \emph{Beispiele:} Unittests, , JTAG, SWD, 
   \item \subsubsection*{Deploymenttools}
+  
+
+  \emph{Beispiele:} Installer
 \end{itemize}
 
 \subsection{Hardware}
@@ -31,10 +68,11 @@ Text
   \item ns
 \end{itemize}
 \subsection{Vorgehensmodell}
-Am Anfang eines Entwicklungsprozesses steht die Entscheidung über eine
+Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
 Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
 die in Industrie und Wirtschaft weit verbreitet sind. Als Beispiele lassen sich
-hier das Wasserfallmodell, Scrum oder auch Extreme Programming nennen.
+hier das Wasserfallmodell, das V-Modell, Scrum oder auch Extreme Programming
+nennen.
 
 All diesen Modellen ist gemein, dass einige ihrer Schritte unbedingt
 Softwareunterstützung bedürfen oder diese die Entwicklung unter
