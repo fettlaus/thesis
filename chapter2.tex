@@ -9,15 +9,55 @@ Das \emph{Zielsystem} ist das zu entwerfende Entwicklungsziel.
 \subsection*{Entwicklungsplattform}
 Zu einer \emph{Entwicklungsplattform} gehören alle Hardware- und
 Softwareelemente, die nötig sind, um die Umsetzung eines bestimmten
-Softwareprojektes zu erreichen. Die einzelnen Be
- standteile einer solchen \emph{Entwicklungsplattform} sollen im Verlauf dieses
-Kapitels identifiziert werden.
+Softwareprojektes zu erreichen. Die einzelnen Bestandteile einer solchen
+\emph{Entwicklungsplattform} sollen im Verlauf dieses Kapitels identifiziert
+werden.
 \section{Elemente einer Entwicklungsplattform}
 Die Elemente einer Entwicklungsplattform lassen sich grob drei Kategorien
-zuordnen.
-Jeder Bestandteil 
+zuordnen. 
+\subsection{Vorgehensmodell}
+Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
+Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
+die in Industrie und Wirtschaft weit verbreitet sind. Als Beispiele lassen sich
+hier das Wasserfallmodell, das V-Modell, Scrum oder auch Extreme Programming
+nennen.
+
+All diesen Modellen ist gemein, dass einige ihrer Schritte
+unbedingt Unterstützung durch Soft- und Hardwareware bedürfen oder
+diese die Entwicklung unter Umständen beschleunigen kann.
+Einige Vorgehensmodelle sollen hier exemplarisch aufgeführt werden.
+\subsubsection*{Wasserfallmodell}
+Das Wasserfallmodell ist ein klassisches, nicht-iteratives Vorgehensmodell,
+dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann. 
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=350pt]{wasserfallmodell.png}
+\caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell Aufgenommen:
+12.03.2013}
+\end{figure}
+
+Jeder einzelne Schritt in der Entwicklung stellt hierbei eine abgeschlossene
+Phase mit vorher festgelegten Anfangs- und Endpunkten dar.
+
+In den Initialisierungs- und Analysephasen wird oft der Kunde in die
+Entwicklung eingebunden. Typischerweise werden hier deshalb keine oder nur
+wenige spezialisierte Tools verwendet.
+
+Die Entwurfs- und Realisierungsphasen jedoch benötigen oft eine hohe
+Softwareunterstützung. Während in der Entwurfsphase meist Tools zur
+Visualisierung und Strukturierung von Softwarearchtiektur eingesetzt wird
+(UML, Struktogramme, etc.) kann man Werkzeuge zur Planung und
+Visualisierung von Soft
+
+ \subsubsection*{Scrum} Scrum ist ein iteratives und agiles Modell zur
+ Entwicklung von Software.
+ 
+  \subsubsection*{Extreme Programming}
+Hier Extreme Programming beschreiben
+
 \subsection{Software}
-Software unterstützt Softwareprojekte in allen Phasen der Durchführung. 
+Software unterstützt Softwareprojekte in allen Phasen der Durchführung.
 \begin{itemize}
   \item \subsection*{IDEs} IDEs\footnote{Integrated Development Environment}
   sind zentrale Entwicklungsoberflächen der Softwareentwickler. In dieser
@@ -42,8 +82,8 @@ Software unterstützt Softwareprojekte in allen Phasen der Durchführung.
   Soll eine kompilierte Software auf einem anderen als dem Entwicklungssystem
   eingesetzt werden, so wird ein sogenannter \textbf{Cross-Compiler} benötigt.
   Diese speziellen Compiler sind in der Lage, Software zu kompilieren, die
-  später auf einer andere Rechnerarchitektur (z.B. ARM statt Intel) und/oder auf einem
-  anderen Betriebssystem (z.B. Linux statt Windows) betrieben werden soll.
+  später auf einer andere Rechnerarchitektur (z.B. ARM statt Intel) und/oder auf
+  einem anderen Betriebssystem (z.B. Linux statt Windows) betrieben werden soll.
   
   \emph{Beispiele:} GCC, IAR C/C++ Compiler, ARM RVCT Compiler, Intel C++
   Compiler, CodeWarrior Compiler
