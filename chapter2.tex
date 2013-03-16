@@ -15,6 +15,9 @@ werden.
 \section{Elemente einer Entwicklungsplattform}
 Die Elemente einer Entwicklungsplattform lassen sich grob drei Kategorien
 zuordnen. 
+
+Viele Teile dieser drei Kategorien beeinflussen Entscheidungen, die für
+einen anderen Bereich getroffen werden müssen.
 \subsection{Vorgehensmodell}
 Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
 Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
@@ -23,9 +26,17 @@ hier das Wasserfallmodell, das V-Modell, Scrum oder auch Extreme Programming
 nennen.
 
 All diesen Modellen ist gemein, dass einige ihrer Schritte
-unbedingt Unterstützung durch Soft- und Hardwareware bedürfen oder
+unbedingt Unterstützung durch Soft- und Hardware bedürfen oder
 diese die Entwicklung unter Umständen beschleunigen kann.
-Einige Vorgehensmodelle sollen hier exemplarisch aufgeführt werden.
+
+Da es eine klare Strukturierung zeigt, soll hier exemplarisch für alle
+Vorgehensmodelle das \textbf{Wasserfallmodell} aufgeführt werden.
+
+Andere Vorgehensmodelle strukturieren ihren Ablauf unterschiedlich, jedoch sind
+diese Unterschiede für die Wahl der verwendeten Hard- und Software nur von
+untergeordneter Relevanz, da die zentralen Entwicklungsschritte
+identisch sind.
+
 \subsubsection*{Wasserfallmodell}
 Das Wasserfallmodell ist ein klassisches, nicht-iteratives Vorgehensmodell,
 dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann. 
@@ -42,29 +53,39 @@ Phase mit vorher festgelegten Anfangs- und Endpunkten dar.
 
 In den Initialisierungs- und Analysephasen wird oft der Kunde in die
 Entwicklung eingebunden. Typischerweise werden hier deshalb keine oder nur
-wenige spezialisierte Tools verwendet.
+wenige spezialisierte Tools verwendet. Zu der verwendeten Software zählt hier
+unter anderem \emph{Projektmanagementsoftware}.
 
 Die Entwurfs- und Realisierungsphasen jedoch benötigen oft eine hohe
 Softwareunterstützung. Während in der Entwurfsphase meist Tools zur
-Visualisierung und Strukturierung von Softwarearchtiektur eingesetzt wird
-(UML, Struktogramme, etc.) kann man Werkzeuge zur Planung und
-Visualisierung von Soft
+Visualisierung und Strukturierung von Softwarearchitektur eingesetzt werden
+\emph{(UML, Struktogramme, etc.)}, werden in der Realisierungsphase meist
+Werkzeuge eingesetzt, die von der konkreten Anforderung abhängen.
+\emph{(Compiler, IDEs, Debugger)}
 
- \subsubsection*{Scrum} Scrum ist ein iteratives und agiles Modell zur
- Entwicklung von Software.
- 
-  \subsubsection*{Extreme Programming}
-Hier Extreme Programming beschreiben
+Um einen Übergang in die Einführungs- und Nutzungsphasen zu ermöglichen, muss
+die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
+System auf eine Erfüllung der Anforderungen überprüfen. Hierfür werden
+Testpraktiken benutzt, die auch oft auf Soft- und Hardwaregestützt ablaufen.
+\emph{(JTAG, Unittests, In-circuit Tests)}
 
-\subsection{Software}
+Auch durchläuft ein System in seiner Nutzungsphase oft auch Wartungszyklen.
+Diese Zyklen setzen eine möglichst einfache Wartbarkeit des Systems voraus.
+
+\subsection{Software}\label{sub:software}
 Software unterstützt Softwareprojekte in allen Phasen der Durchführung.
+
+Obwohl viele dieser einzelnen Elemente auf Hardwareunterstützung angewiesen
+sind, sollen in diesem Abschnitt nur die Softwarebestandteile beschrieben
+werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
+\autoref{sub:hardware} beschrieben.
 \begin{itemize}
-  \item \subsection*{IDEs} IDEs\footnote{Integrated Development Environment}
+  \item \subsubsection*{IDEs} IDEs\footnote{Integrated Development Environment}
   sind zentrale Entwicklungsoberflächen der Softwareentwickler. In dieser
   Umgebung werden oftmals viele Tools zusammengefasst, die für den
-  Entwicklungszyklus notwendig sind. Sie dienen dazu Quelltext zu verwalten,
-  Versionsverwaltung zu betreiben, Code zu kompilieren, die entwickelte Software
-  zu testen, zu deployen und zu debuggen.
+  Entwicklungszyklus notwendig sind. Sie dienen dazu Quelltext zu verwalten und
+  zu schreiben, Versionsverwaltung zu betreiben, Code zu kompilieren, die
+  entwickelte Software zu testen, zu deployen und zu debuggen.
   
   Oft werden die in den folgenden Punkten aufgeführten Tools in eine IDE
   integriert, um Entwicklungsabläufe zu vereinfachen und zu beschleunigen.
@@ -75,7 +96,7 @@ Software unterstützt Softwareprojekte in allen Phasen der Durchführung.
   essentieller Bedeutung. Speziell im eingebetteten Bereich werden überwiegend
   kompilierte Programmiersprachen wie C oder C++ eingesetzt, da sie nach dem
   Kompiliervorgang in nativem Maschinencode vorliegen und so oft eine höhere
-  Ausführungsgeschwinidgkeit gewährleisten können. Außerdem können sie meist
+  Ausführungsgeschwindigkeit gewährleisten können. Außerdem können sie meist
   besser an das Zielsystem angepasst werden, da sie keiner weiteren Frameworks
   oder Interpreter mit "`überflüssigen"' Funktionen bedürfen.
   
@@ -87,55 +108,110 @@ Software unterstützt Softwareprojekte in allen Phasen der Durchführung.
   
   \emph{Beispiele:} GCC, IAR C/C++ Compiler, ARM RVCT Compiler, Intel C++
   Compiler, CodeWarrior Compiler
-  \item \subsubsection*{Debugger}
-   Tool, um Software während seiner Laufzeit untersuchen zu können.
-   
-  \emph{Beispiele:} GDB
-  \item \subsubsection*{Testtools}
-  Tool, um Software auf Einhatung geforderter Parameter zu prüfen.
+  \item \subsubsection*{Debugger}\label{subs:swdebugger} Der Debugger ist ein
+  Tool, mithilfe dessen ein Entwickler eine Software während ihrer Laufzeit
+  untersuchen, steuern und, in einem gewissen Rahmen, modifizieren kann. Er
+  dient dem Entwickler hauptsächlich zur Fehlersuche, da es mit seiner Hilfe
+  sehr leicht ist, die Vorgänge in einer Software nachzuvollziehen.
   
-  \emph{Beispiele:} Unittests, , JTAG, SWD, 
-  \item \subsubsection*{Deploymenttools}
+  Der Entwickler ist durch das Setzen von Breakpoints\footnote{Willkürliche,
+  vom Entwickler vor dem Start der Software zu setzende, "`Haltepunkte"' im
+  Programmablauf.} mittels des Debuggers in der Lage, eine Software in einen
+  definierten Zustand zu bringen. Anschließend kann er den weiteren
+  Programmablauf schrittweise ausführen lassen (single-stepping) oder mitunter
+  auch geringfügige Änderung am Speicher des Systems vornehmen.
   
-
-  \emph{Beispiele:} Installer
+  Debugger sind in integrierten Systemen oft auf eine hohe Hardwareunterstützung
+  angewiesen. In \autoref{subs:hwdebugger} wird dies näher beschrieben.
+  
+   \emph{Beispiele:} GDB (GNU Debugger), IDB (Intel Debugger), Valgrind
+  \item \subsubsection*{Testtools} In die Kategorie der Testtools fallen
+  alle Elemente die benötigt werden, um die Funktionsfähigkeit eines Systems zu
+  prüfen. Außerdem dienen diese auch oft dazu, ein Gesamtsystem sowie dessen
+  Teilsysteme auf die Erfüllung der Anforderungen zu prüfen.
+  
+  Um die einzelnen Bestandteile eines Systems zu überprüfen, existieren viele
+  verschiedene Ansätze. Meist werden Tests grob in \emph{Modultests},
+  \emph{Integrationstests}, \emph{Systemtests} und \emph{Abnahmetests}
+  unterteilt.
+  
+  Alle diese Testarten setzen jedoch eine grundlegende Testbarkeit des Systems
+  voraus.
+  
+  \emph{Beispiele:} Unittests, \ldots  
+  \item \subsubsection*{Deploymenttools}\label{subs:deployment} Um ein System
+  ausliefern zu können, muss es für den Endanwender vorbereitet werden.
+  
+  Im Embeddedbereich erfolgt dies meist durch ein "`Flashen"' der Firmware.
+  Dieser Vorgang wird jedoch, zu Testzwecken, auch in der Entwicklungsphase
+  eines Projektes oft durchgeführt und muss daher entsprechend einfach und
+  möglichst unkompliziert sein.
+  
+  \emph{Beispiele:} Installer, Paketverwaltungssysteme, Skripte
 \end{itemize}
 
-\subsection{Hardware}
+\subsection{Hardware}\label{sub:hardware}
+Die für ein Projekt benötigte Hardware wird oftmals\ldots
 \begin{itemize}
-  \item Hardware-Testtools
-  \item Flasher
-  \item ns
+  \item \subsubsection*{Testtools} Um Tests durchführen zu können, wird
+  oft auch eine Unterstützung durch Hardware benötigt. Der JTAG\footnote{Joint
+  Test Action Group}-Port bietet hier oftmals eine der zentralen
+  Möglichkeiten, das System zu testen.
+  \item \subsubsection*{Debugger}\label{subs:hwdebugger}  Um
+  Softwaredebugging wie in \autoref{subs:swdebugger} beschrieben im Umfeld eines
+  Mikroprozessors zu erleichtern beziehungsweise überhaupt zu ermöglichen,
+  besitzen diese oft verschiedene Eigenschaften.
+  Um eine Software Schritt-für-Schritt auszuführen, wird eine Unterstützung von
+  der CPU vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich zum
+  Beispiel über einen sogenannten TAP\footnote{test access
+  port} oder DAP\footnote{Debug Access Port; benutzt von neueren ARM Kernen.
+  Ermöglicht Tracing} in einen Debug-Modus bringen.
+  Dieser Debug-Modus ist Voraussetzung dafür, Single-Step-Debugging duchführen
+  oder Breakpoints setzen zu können.
+  
+  Der JTAG-Port stellt oft die Schnittstelle
+  zu diesen Modulen dar.
+  
+  Neben einer JTAG-Schnittstelle und der Möglichkeit, ein System mittels
+  In-System Programmer\footnote{Anschluss der es erlaubt, ein integriertes
+  System wie einen Mikrocontroller mit einer Software zu programmieren, ohne
+  ihn ausbauen zu müssen.} programmieren zu können, erlauben es zum Beispiel
+  viele Mikroprozessoren, Breakpoints im Programm zu setzen.
+  \item \subsubsection*{Flasher} Um, wie in \autoref{subs:deployment}
+  beschrieben, ein Zielsystem mit einer Firmware beschreiben zu können, wird oft
+  ein Hardwarebaustein benötigt.
+  
+  Abhängig vom verwendeten Zielsystem erfolgt ein "`Flashen"' meist über extra
+  dafür bestimmte Hardware. Gängige Varianten sind hierbei zum Beispiel das
+  ISP\footnote{In-system programming} sowie die Verwendung des JTAG-Ports zur
+  Übertragung des Programmcodes.
 \end{itemize}
-\subsection{Vorgehensmodell}
-Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
-Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
-die in Industrie und Wirtschaft weit verbreitet sind. Als Beispiele lassen sich
-hier das Wasserfallmodell, das V-Modell, Scrum oder auch Extreme Programming
-nennen.
+\section{Vorgaben} In diesem Abschnitt sollen die Vorgaben für ein
+beispielhaftes Zielsystem festgelegt werden. 
 
-All diesen Modellen ist gemein, dass einige ihrer Schritte unbedingt
-Softwareunterstützung bedürfen oder diese die Entwicklung unter
-Umständen beschleunigen kann.
-Einige Vorgehensmodelle und deren nötige Softwareunterstützung sollen hier
-exemplarisch aufgeführt werden.
-\subsubsection*{Wasserfallmodell}
-Das Wasserfallmodell ist ein klassisches, nicht-iteratives Vorgehensmodell,
-dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann. 
+Das zu entwerfende Entwicklungssystem soll dabei ein möglichst großes Spektrum
+potentieler Architekturen und Funksysteme abdecken können, so dass es später
+einfach ist, das zu entwickelnde Zielsystem durch ein anderes zu ersetzen.
+\subsection{Analyse/Marktübersicht}
+\subsubsection{Prozessorarchitekturen} => Wir wollen ARM
+\subsubsection{Funkmodule} => Wir wollen einen Transceiver ohne übermäßige
+interne Logik
+\subsection{Festlegung} In diesem Abschnitt soll festgelegt
+\subsubsection{ARM als Zielplattform} => Warum der ARM von Olimex gut ist
+\subsubsection{MRF24J40 als Funkmodul} => Warum dieses Modul die einfachste Wahl
+ist
+\section{Anforderungen an ein konkretes System (Lastenheft)}
+\subsection{Debugging} Warum wir OpenOCD/GDB brauchen
+\subsection{Deployment} Warum wir JTAG zum Flashen brauchen
+\subsection{Datenanalyse} Warum wir UART Output brauchen
 
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=350pt]{HAW_logo}
-\caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell}
-\end{figure}
 
-Jeder einzelne Schritt in der Entwicklung stellt hierbei eine abgeschlossene
-Phase mit vorher festgelegten Anfangs- und Endpunkten dar.
 
- \subsubsection*{Scrum} Hier Scrum beschreiben
-\subsubsection*{Extreme Programming}
-Hier Extreme Programming beschreiben
+
+\iffalse
+
+%%=============================================================================
 \section{Softwareunterstützung}
 Für eine neue Entwicklungsplattform ist es wünschenswert, sich nicht von einem
 speziellen Vorgehensmodell abhängig zu machen. Es sollte also eine Schnittmenge
@@ -243,5 +319,4 @@ JTAG statt SWD
 \section{Serversoftware}
 
 \section{Clientsoftware}
-
-\lipsum
+\fi
