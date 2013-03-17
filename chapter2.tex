@@ -43,9 +43,10 @@ dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann.
 
 \begin{figure}[!h]
 \centering
-\includegraphics[width=350pt]{wasserfallmodell.png}
-\caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell Aufgenommen:
-12.03.2013}
+\def\svgwidth{\columnwidth}
+\input{res/wasserfallmodell.pdf_tex}
+\caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell. Erstellt nach
+\cite{WP01}}
 \end{figure}
 
 Jeder einzelne Schritt in der Entwicklung stellt hierbei eine abgeschlossene
@@ -67,7 +68,7 @@ Um einen Übergang in die Einführungs- und Nutzungsphasen zu ermöglichen, muss
 die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
 System auf eine Erfüllung der Anforderungen überprüfen. Hierfür werden
 Testpraktiken benutzt, die auch oft auf Soft- und Hardwaregestützt ablaufen.
-\emph{(JTAG, Unittests, In-circuit Tests)}
+\emph{(\gls{jtag}, Unittests, In-circuit Tests)}
 
 Auch durchläuft ein System in seiner Nutzungsphase oft auch Wartungszyklen.
 Diese Zyklen setzen eine möglichst einfache Wartbarkeit des Systems voraus.
@@ -80,12 +81,12 @@ sind, sollen in diesem Abschnitt nur die Softwarebestandteile beschrieben
 werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
 \autoref{sub:hardware} beschrieben.
 \begin{itemize}
-  \item \subsubsection*{IDEs} IDEs\footnote{Integrated Development Environment}
-  sind zentrale Entwicklungsoberflächen der Softwareentwickler. In dieser
-  Umgebung werden oftmals viele Tools zusammengefasst, die für den
-  Entwicklungszyklus notwendig sind. Sie dienen dazu Quelltext zu verwalten und
-  zu schreiben, Versionsverwaltung zu betreiben, Code zu kompilieren, die
-  entwickelte Software zu testen, zu deployen und zu debuggen.
+  \item \subsubsection*{\glspl{ide}} \glspl{ide} sind zentrale
+  Entwicklungsoberflächen der Softwareentwickler. In dieser Umgebung werden
+  oftmals viele Tools zusammengefasst, die für den Entwicklungszyklus notwendig
+  sind. Sie dienen dazu Quelltext zu verwalten und zu schreiben,
+  Versionsverwaltung zu betreiben, Code zu kompilieren, die entwickelte Software
+  zu testen, zu deployen und zu debuggen.
   
   Oft werden die in den folgenden Punkten aufgeführten Tools in eine IDE
   integriert, um Entwicklungsabläufe zu vereinfachen und zu beschleunigen.
@@ -124,7 +125,7 @@ werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
   Debugger sind in integrierten Systemen oft auf eine hohe Hardwareunterstützung
   angewiesen. In \autoref{subs:hwdebugger} wird dies näher beschrieben.
   
-   \emph{Beispiele:} GDB (GNU Debugger), IDB (Intel Debugger), Valgrind
+   \emph{Beispiele:} \gls{gdb} , IDB (Intel Debugger), Valgrind
   \item \subsubsection*{Testtools} In die Kategorie der Testtools fallen
   alle Elemente die benötigt werden, um die Funktionsfähigkeit eines Systems zu
   prüfen. Außerdem dienen diese auch oft dazu, ein Gesamtsystem sowie dessen
@@ -151,40 +152,77 @@ werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
 \end{itemize}
 
 \subsection{Hardware}\label{sub:hardware}
-Die für ein Projekt benötigte Hardware wird oftmals\ldots
+Welche Art von Unterstützung in welchem Umfang von Hardware geleistet werden
+muss, ergibt sich oft aus den Projektvorgaben. Im Speziellen ist hierbei von
+Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
 \begin{itemize}
   \item \subsubsection*{Testtools} Um Tests durchführen zu können, wird
-  oft auch eine Unterstützung durch Hardware benötigt. Der JTAG\footnote{Joint
-  Test Action Group}-Port bietet hier oftmals eine der zentralen
-  Möglichkeiten, das System zu testen.
+  oft auch eine Unterstützung durch Hardware benötigt. 
+  \begin{figure}[!h]
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{res/boundaryscan.pdf_tex}
+    \caption{Funktionsweise von \gls{jtag}. Erstellt nach \cite{ALT01}}
+    \label{fig:ALT01}
+  \end{figure}
+  Der \gls{jtag}-Port ist ein System, welches ursprünglich für genau diese
+  Zwecke konzipiert wurde. Er ermöglicht es, einen sogenannten boundary-scan
+  durchzuführen. Jedes in \autoref{fig:ALT01} mit "`IC"' markierte Bauteil muss
+  dafür über einen, in der Abbildung nicht eingezeichneten, sogenannten \gls{tap} oder
+  \gls{dap}\footnote{Wird von neueren ARM Kernen benutzt.
+  Ermöglicht auch Tracing} verfügen. Diese befinden sich \emph{nicht} in der
+  Logik des Bauteils sondern stellen eine separate Steuerschaltung dar.
+  
+  Die \glspl{tap}/\glspl{dap} werden verkettet und ermöglichen es, die Ein-
+  und Ausgänge der einzelnen Bauteile mit Prüfdaten zu betreiben, Bauteile komplett
+  zu überbrücken oder auch sie in ihrem Betrieb anzuhalten.
+  Die in \autoref{fig:ALT01} als "`Zu testende Verbindung"' markierte Leitung
+  kann so auf Unterbrechungen oder Überbrückungen geprüft werden.
+  
+  Einen darauf aufbauenden Funktionsumfang bietet das in ARM
+  Prozessoren zum Einsatz kommende \gls{swd} an.
+  
+  Um (auch analoge) Bauteile und Platinen in größerem Umfang zu testen, dient
+  der \emph{in-circuit Test}. Hierbei wird ein speziell angefertigtes
+  "`Nagelbett"' auf eine Platine gesenkt. Dies erlaubt zusätzlich zum
+  \emph{boundary-scan} das Testen von Widerständen, Kapazitäten und anderen
+  elektrischen Kenngrößen.
+   
+  \emph{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger, Spy-Bi-Wire,
+  DebugWIRE, In-circuit Testanlagen
   \item \subsubsection*{Debugger}\label{subs:hwdebugger}  Um
   Softwaredebugging wie in \autoref{subs:swdebugger} beschrieben im Umfeld eines
   Mikroprozessors zu erleichtern beziehungsweise überhaupt zu ermöglichen,
   besitzen diese oft verschiedene Eigenschaften.
   Um eine Software Schritt-für-Schritt auszuführen, wird eine Unterstützung von
   der CPU vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich zum
-  Beispiel über einen sogenannten TAP\footnote{test access
-  port} oder DAP\footnote{Debug Access Port; benutzt von neueren ARM Kernen.
-  Ermöglicht Tracing} in einen Debug-Modus bringen.
+  Beispiel mittels des \gls{dap}/\gls{tap} in einen Debug-Modus bringen.
   Dieser Debug-Modus ist Voraussetzung dafür, Single-Step-Debugging duchführen
   oder Breakpoints setzen zu können.
   
-  Der JTAG-Port stellt oft die Schnittstelle
-  zu diesen Modulen dar.
+  Da ein \gls{jtag}-Port einen direkt Zugriff auf alle Eingänge eines
+  Mikrocontrollers bietet und der \gls{dap}/\gls{tap} tief in die Hardware
+  integriert ist, lassen sich über diese Verbindung oft auch Register und Speicherbereiche modifizieren.
   
-  Neben einer JTAG-Schnittstelle und der Möglichkeit, ein System mittels
-  In-System Programmer\footnote{Anschluss der es erlaubt, ein integriertes
-  System wie einen Mikrocontroller mit einer Software zu programmieren, ohne
+  Neben einer \gls{jtag}-Schnittstelle und der Möglichkeit, ein System mittels
+  \gls{isp}\footnote{Anschluss der es erlaubt, ein
+  integriertes System wie einen Mikrocontroller mit einer Software zu programmieren, ohne
   ihn ausbauen zu müssen.} programmieren zu können, erlauben es zum Beispiel
   viele Mikroprozessoren, Breakpoints im Programm zu setzen.
+  
+  \emph{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger
   \item \subsubsection*{Flasher} Um, wie in \autoref{subs:deployment}
-  beschrieben, ein Zielsystem mit einer Firmware beschreiben zu können, wird oft
-  ein Hardwarebaustein benötigt.
+  beschrieben, ein Zielsystem mit einer Firmware beschreiben zu können, wird
+  oft ein Hardwarebaustein benötigt.
   
   Abhängig vom verwendeten Zielsystem erfolgt ein "`Flashen"' meist über extra
-  dafür bestimmte Hardware. Gängige Varianten sind hierbei zum Beispiel das
-  ISP\footnote{In-system programming} sowie die Verwendung des JTAG-Ports zur
-  Übertragung des Programmcodes.
+  dafür bestimmte Hardware. Gängige Variante ist hierbei zum Beispiel die
+  Verwendung eines \glspl{isp}. Ein \gls{isp}
+  ist ein System das speziell dafür ausgelegtes ist, Firmware auf ein bereits
+  eingebautes Bauteil zu übertragen.
+  
+  Auch bieten manche Systeme eine Übertragung des Programmcodes über die
+  \gls{jtag}-Schnittstelle an.
 \end{itemize}
 \section{Vorgaben} In diesem Abschnitt sollen die Vorgaben für ein
 beispielhaftes Zielsystem festgelegt werden. 

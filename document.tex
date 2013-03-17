@@ -17,26 +17,42 @@
 \usepackage{textcomp}
 \usepackage[german,refpage]{nomencl}
 \usepackage{setspace}
-\usepackage{makeidx}
+\usepackage[xindy]{imakeidx}
 \usepackage{listings}
-\usepackage{natbib}
+%%\usepackage{natbib}
 \usepackage[ngerman,hidelinks]{hyperref}
 \usepackage{soul}
 \usepackage{hawstyle}
 \usepackage{lipsum} %% for sample text
 \usepackage{etoolbox}
 %% All my packages
-
+\usepackage{float}
+\usepackage{csquotes}
+\usepackage[citestyle=numeric,doi=true,url=true]{biblatex}
+\addbibresource{sample.bib}
 \usepackage{amsthm}
 \usepackage{parskip}
-\usepackage{tocloft}
+%%\usepackage{xindy}
+\usepackage[toc,acronym,xindy]{glossaries}
+
+%%\usepackage{tocloft}
 \usepackage{tocbibind}
 \graphicspath{{./res/}{./logo/}}
 
+\input{glos.tex}
+%%\newacronym{dap}{DAP}{Debug access port}
+%%\newacronym{tap}{TAP}{test access port}
+\makeglossaries
 %%\renewcommand{\cftdot}{.}
-
+%%\renewcommand*{\familydefault}{\sfdefault}
 \makeatletter
 %%\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{\par}{}{}
+\renewcommand\fs@ruled{\def\@fs@cfont{\bfseries}\let\@fs@capt\floatc@ruled
+%%\def\@fs@post{\hrule height.8pt depth0pt \kern2pt}%
+\def\@fs@post{\relax}
+\def\@fs@pre{\kern2pt\hrule\relax}%
+\def\@fs@mid{\kern2pt\hrule\kern2pt}%
+\let\@fs@iftopcapt\iffalse}
 \makeatother
 \usepackage{minitoc}
 %% define some colors
@@ -98,6 +114,8 @@
 \begin{document}
 \selectlanguage{ngerman}
 
+\floatstyle{ruled}
+\restylefloat{figure}
 %%%%%
 %% customize (see readme.pdf for supported values)
 \HAWThesisProperties{Author={Arne Wischer	}
@@ -141,11 +159,12 @@
 %%\listoftables
 %%\listoffigures
 %\lstlistoflistings
-
+\printglossary[type=acronym,title=Abkürzungsverzeichnis,toctitle=Abkürzungsverzeichnis]
 %% main
 \mainmatter
 \onehalfspacing
 %% write to the log/stdout
+
 \typeout{===== File: chapter 1}
 %% include chapter file (chapter1.tex)o
 \input{chapter1}
@@ -176,8 +195,9 @@ See also \cite{sample_bib}.
 
 \typeout{===== Section: literature}
 %% read the documentation for customizing the style
-\bibliographystyle{dinat}
-\bibliography{sample}
+%%\bibliographystyle{dinat}
+%%\bibliography{sample}
+\printbibliography[heading=bibintoc]
 
 \typeout{===== Section: nomenclature}
 %% uncomment if a TOC entry is needed

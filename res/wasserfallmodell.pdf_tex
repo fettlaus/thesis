@@ -1,0 +1,60 @@
+%% Creator: Inkscape inkscape 0.48.3.1, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'wasserfallmodell.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{392.93325195bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.62851602)%
+    \put(0,0){\includegraphics[width=\unitlength]{wasserfallmodell.pdf}}%
+    \put(0.13633946,0.57618769){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Initialisierung}}}%
+    \put(0.27469859,0.46949515){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Analyse}}}%
+    \put(0.4217462,0.35892291){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Entwurf}}}%
+    \put(0.56610914,0.25320031){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Realisierung}}}%
+    \put(0.71532155,0.14456792){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Einführung}}}%
+    \put(0.85131508,0.0388453){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Nutzung}}}%
+  \end{picture}%
+\endgroup%
