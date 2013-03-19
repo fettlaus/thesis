@@ -202,7 +202,8 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   
   Da ein \gls{jtag}-Port einen direkt Zugriff auf alle Eingänge eines
   Mikrocontrollers bietet und der \gls{dap}/\gls{tap} tief in die Hardware
-  integriert ist, lassen sich über diese Verbindung oft auch Register und Speicherbereiche modifizieren.
+  integriert ist, lassen sich über diese Verbindung oft auch Register und
+  Speicherbereiche modifizieren.
   
   Neben einer \gls{jtag}-Schnittstelle und der Möglichkeit, ein System mittels
   \gls{isp}\footnote{Anschluss der es erlaubt, ein
@@ -213,33 +214,78 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   \emph{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger
   \item \subsubsection*{Flasher} Um, wie in \autoref{subs:deployment}
   beschrieben, ein Zielsystem mit einer Firmware beschreiben zu können, wird
-  oft ein Hardwarebaustein benötigt.
+  oft ein Hardwarebauteil benötigt.
   
-  Abhängig vom verwendeten Zielsystem erfolgt ein "`Flashen"' meist über extra
-  dafür bestimmte Hardware. Gängige Variante ist hierbei zum Beispiel die
-  Verwendung eines \glspl{isp}. Ein \gls{isp}
-  ist ein System das speziell dafür ausgelegtes ist, Firmware auf ein bereits
-  eingebautes Bauteil zu übertragen.
+  Abhängig vom verwendeten Zielsystem erfolgt ein "`Flashen"' dabei häufig über
+  extra dafür bestimmte Hardware. Gängige Variante ist hierbei zum Beispiel die
+  Verwendung eines \glspl{isp}. Ein \gls{isp} ist ein System, das speziell
+  dafür ausgelegt ist, Firmware auf ein bereits eingebautes Bauteil zu übertragen.
   
-  Auch bieten manche Systeme eine Übertragung des Programmcodes über die
+  Auch bieten manche Zielsysteme eine Übertragung des Programmcodes über die
   \gls{jtag}-Schnittstelle an.
 \end{itemize}
+%%==================================================================
 \section{Vorgaben} In diesem Abschnitt sollen die Vorgaben für ein
 beispielhaftes Zielsystem festgelegt werden. 
 
 Das zu entwerfende Entwicklungssystem soll dabei ein möglichst großes Spektrum
 potentieler Architekturen und Funksysteme abdecken können, so dass es später
 einfach ist, das zu entwickelnde Zielsystem durch ein anderes zu ersetzen.
-\subsection{Analyse/Marktübersicht}
-\subsubsection{Prozessorarchitekturen} => Wir wollen ARM
-\subsubsection{Funkmodule} => Wir wollen einen Transceiver ohne übermäßige
-interne Logik
-\subsection{Festlegung} In diesem Abschnitt soll festgelegt
-\subsubsection{ARM als Zielplattform} => Warum der ARM von Olimex gut ist
-\subsubsection{MRF24J40 als Funkmodul} => Warum dieses Modul die einfachste Wahl
+
+Da Mikroprozessoren mit ARM-Architektur einen Anteil von rund 71\%\cite{IDC01}
+an allen verkauften \glspl{cpu} haben, sorgt dies allein bereits für eine hohe
+Austauschbarkeit. Diese Tatsache sollten die Entscheidungen ebenso
+widerspiegeln.
+\subsection{Zielsystem} Bedingt durch die hohe Verbreitung von ARM \glspl{cpu}
+existiert eine große Anzahl an Entwicklungsboards, die in Frage kommen.
+
+Da das Zielsystem später stark integriert arbeiten können soll, ist es wichtig,
+eine Entscheidung eher nach Kriterien der Energieeffizienz als der
+Rechenleistung zu treffen.
+
+Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
+Reihe der Cortex-M Prozessoren auf. Sie liegen mit einem Energiebedarf von
+11.2 bis 33 µW/MHz\cite{ARM01}\footnote{Bei Fertigung in
+90-Nanometer-Low-Power Konfiguration} bereits in einem Bereich, der z.B. für
+Batteriebetrieb sehr gut geeignet ist. Aus diesem Grund optimieren viele
+Chiphersteller, die Cortex-M Kerne verbauen, diese genau dafür.
+
+So 
+
+\begin{equation}\begin{split}
+\frac{2000\milli\ampere\hour}{11 \milli\ampere}*1\% \approx 757 \dday
+\end{split}\end{equation}
+
+ => Warum der ARM von Olimex gut ist
+\subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
+zwei Kategorien einteilen.
+
+Für eine einfache Integration steht die Gruppe der \textbf{Single-Chip
+Solutions} zur Verfügung. Diese Bauteile bestehen sowohl aus einem  
+
+Allerdings bedeutet dies gleichzeitig mehr Hardware( (ein integrierter
+Mikroprozessor muss betrieben werden und benötigt Strom).
+Außerdem verhindert die hohe Abstraktion der Kommunikation genauere Einblicke in
+deren Abläufe. Da das Ziel dieser Arbeit jedoch auch ist, die Visualisierung von
+Kommunikationsabläufen zu ermöglichen, kann eine zu starke Abstraktion
+hinderlich sein.
+
+
+Die Gruppe der \textbf{Transceiver}
+
+ $\rightarrow$ Warum dieses Modul die einfachste Wahl
 ist
+%%======================================================================
 \section{Anforderungen an ein konkretes System (Lastenheft)}
-\subsection{Debugging} Warum wir OpenOCD/GDB brauchen
+Nachdem nun klar ist, aus welchen Bestandteilen ein Entwicklungssytem besteht
+und welches Zielsystem eingesetzt werden soll, müssen nun die
+konkreten Anforderungen gestellt werden.
+
+Diese Anforderungen sollen als Ziel dieser Arbeit erfüllt werden und eine
+Entwicklung des Zielsystems ermöglichen.
+
+\subsection{Debugging} Warum wir OpenOCD/GDB
+brauchen 
 \subsection{Deployment} Warum wir JTAG zum Flashen brauchen
 \subsection{Datenanalyse} Warum wir UART Output brauchen
 
