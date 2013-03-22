@@ -284,14 +284,45 @@ konkreten Anforderungen gestellt werden.
 Diese Anforderungen sollen als Ziel dieser Arbeit erfüllt werden und eine
 Entwicklung des Zielsystems ermöglichen.
 
-\subsection{Debugging} Warum wir OpenOCD/GDB
-brauchen 
-\subsection{Deployment} Warum wir JTAG zum Flashen brauchen
-\subsection{Datenanalyse} Warum wir UART Output brauchen
+\subsection{Debugging} Die Entwicklung einer Software und die Suche nach Fehlern
+in dieser wird durch den Einsatz eines Debuggers enorm erleichtert. 
 
+\subsection{Deployment} Für das Deployment, sowohl testweise und zu
+Debuggingzwecken während der Entwicklung als auch für die endgültige
+Fertigstellung, ist es erforderlich, die einzelnen Knoten des Zielsystems mit
+einer neuen Firmware flashen zu können.
 
+Voraussetzung ist allerdings, dass sich dieser Prozess möglichst ortsunabhängig
+betreiben lässt. Hierfür können bereits existierende Infrastrukturen (WLAN,
+Ethernet) genutzen werden.
 
+Da, es sich bei dem Zielsystem in seiner Gesamtheit um eine Vielzahl identischer
+Komponenten handelt, sollte sich dieser Prozess im Idealfall auf
+eine beliebige Anzahl an Zielsystemen ausweiten lassen. Es wäre wünschenswert,
+eine Anzahl von Komponenten in einem einzigen Schritt mit einer Firmware zu
+beschreiben.
 
+\subsection{Datenanalyse} Die Möglichkeit, ein Entwicklungssystem beliebige
+Daten als "`Debuginformationen"' ausgeben zu lassen, erlaubt es, eine
+Übersicht über die zeitlichen Abläufe zu erstellen. Gerade für die
+Zusamenarbeit miteinander interagierende Module ist es also wichtig, diese
+Informationen zentral zu sammeln und sortieren, um sie später zur
+Fehlersuche heranziehen zu können.
+
+Um dieses System umsetzen zu können müssen also zwei Komponenten erstellt
+werden:
+\begin{enumerate}
+  \item Eine zentrale Verwaltungseinheit um Daten zu aggregieren und verwalten
+  zu können
+  \item Ein Gegenstück, dass die Daten eines einzelnen Moduls sammelt und an die
+  Verwaltungseinheit weiterleitet
+\end{enumerate}
+\begin{figure}[!h]
+\centering
+\def\svgwidth{\columnwidth}
+\input{res/system.pdf_tex}
+\caption{Das geplante Gesamtsystem}
+\end{figure}
 
 \iffalse
 
