@@ -244,11 +244,9 @@ eine Entscheidung eher nach Kriterien der Energieeffizienz als der
 Rechenleistung zu treffen.
 
 Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
-Reihe der Cortex-M Prozessoren auf. Sie liegen mit einem Energiebedarf von
-11.2 bis 33 µW/MHz\cite{ARM01}\footnote{Bei Fertigung in
-90-Nanometer-Low-Power Konfiguration} bereits in einem Bereich, der z.B. für
-Batteriebetrieb sehr gut geeignet ist. Aus diesem Grund optimieren viele
-Chiphersteller, die Cortex-M Kerne verbauen, diese genau dafür.
+Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
+in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diesem
+Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau dafür.
 
 So 
 
@@ -256,22 +254,32 @@ So
 \frac{2000\milli\ampere\hour}{11 \milli\ampere}*1\% \approx 757 \dday
 \end{split}\end{equation}
 
+
  => Warum der ARM von Olimex gut ist
 \subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
 zwei Kategorien einteilen.
 
-Für eine einfache Integration steht die Gruppe der \textbf{Single-Chip
-Solutions} zur Verfügung. Diese Bauteile bestehen sowohl aus einem  
+Jedes Funkmodul besteht midnestens aus einem \textbf{Transceiver}. Dieser
+Transceiver umfasst zumindest die analogen Komponenten der physikalischen
+Schicht wie Analog-Digital-Wandler, Digital-Analog-Wandler, Filter, Verstärker,
+Frequenzerzeuger. Je nach Ausführung werden, ahängig davon ob der Transceiver
+für ein spezifisches Protokoll eingesetzt werden soll, auch die Bauteile des
+Medium-Access-Layers (Checksummenprüfung, Buffer, Kollisionsvermeidung) in
+einen Transceiver integriert.
 
-Allerdings bedeutet dies gleichzeitig mehr Hardware( (ein integrierter
-Mikroprozessor muss betrieben werden und benötigt Strom).
+Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
+zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
+neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
+Aufgaben höherer Schichten und wir dafür oft über einfache Protokolle wie UART
+oder SPI angesprochen.
+
+Dies bedeutet jedoch gleichzeitig mehr Hardware, da ein integrierter
+Mikroprozessor betrieben werden muss und somit Strom benötigt.
 Außerdem verhindert die hohe Abstraktion der Kommunikation genauere Einblicke in
-deren Abläufe. Da das Ziel dieser Arbeit jedoch auch ist, die Visualisierung von
-Kommunikationsabläufen zu ermöglichen, kann eine zu starke Abstraktion
-hinderlich sein.
+deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll, die
+Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
+Abstraktion hinderlich sein.
 
-
-Die Gruppe der \textbf{Transceiver}
 
  $\rightarrow$ Warum dieses Modul die einfachste Wahl
 ist
