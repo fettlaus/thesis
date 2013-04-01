@@ -1,15 +1,177 @@
 \chapter{Konzeption}
 \minitoc
-\section{Debugging}
-\subsection{Marktübersicht}
+In diesem Kapitel soll das Entwicklungssystem konzipiert werden.
+Dazu muss jedes Element auf seine zu erfüllende Funktion untersucht werden.
 
+Hieraus ergibt sich im Anschluss der anzufordernde Funktionsumfang, den der
+jeweilige Bestandteil zu erfüllen hat.
+
+Nach einer Analyse bereits existierender Systeme folgt schließlich die
+Festlegung auf ein Entwicklungsziel.
+
+Letztendlich muss sichergestellt werden, dass alle einzelnen Komponenten in dem
+zu planenden System miteinander interagieren. Es müssen also
+Schnittstellenspezifikationen festgelegt werden.
+\section{Debugging}
+\subsection{Definition}
+Das Debugging eines eingebetteten Systems erfordert meist eine kombinierte Hard-
+und Softwarelösung.
+
+Der Softwareteil ist oft in die \gls{ide} des Entwicklers eingebunden oder lässt
+sich zumindest vom Arbeitsplatz des Entwicklers aus steuern. Die Befehle des
+Entwicklers (Setzen eines Breakpoints, Abfrage von Registerwerten, etc.) werden
+vom Softwaretreiber anschließend in Steuerbefehle des Hardwarebauteils
+umgesetzt. Das Hardwaremodul übernimmt hierauf, unter Nutzung eine
+standardisierten Schnittstelle, die Kommunikation mit dem Zielsystem.
+
+Als Schnittstellen sind für diese Zwecke vor allem \gls{jtag} und \gls{swd}
+verbreitet. Während \gls{jtag} ursprünglich primär zum Testen von Bauteilen
+konzipiert wurde, erweitert \gls{swd} dieses Konzept um speziell für das
+Debuggen nützliche Funktionen (Tracing, Paritätschecks) und reduziert die Anzahl
+zwingend notwendiger Pins von 4 auf 2. Da \gls{swd} aber von ARM speziell
+für Prozessoren mit eingebautem CoreSight-Modul entwickelt wurde, ist
+Unterstützung hierfür nicht auf allen ARM-Controllern anzutreffen. \gls{jtag}
+hat hier eine wesentlich grÖßere Verbreitung und wird auch
+architekturübergreifend genutzt (Die Wahl von \gls{jtag} würde eine spätere
+Erweiterung auf andere Architekturen somit erleichtern).
+\subsection{Marktübersicht}
+Die Auswahl bereits existierender Netzwerk-Debugging-Lösungen ist geradezu
+minimal.
+Als eigenständige Lösung findet sich hier zum Beispiel \emph{ZY1000 (Ultimate
+Solutions Inc.)} oder \emph{WiFiDemon (Macraigor Systems)}. Beide Systeme
+stellen eine Schnittstelle zwischen Ethernet oder WLAN dar und sind somit
+bereits existierende Umsetzungen des geplanten \emph{Entwicklungssystems}, wenn
+man es auf den Aspekt des Debugging reduzieren würde.
+
+Beide Lösungen sind jedoch geschlossene Systeme. Wollte man also, wie
+vorgesehen, zusätzliche Daten sammeln, müsste man ein weiteres Gerät (mit
+eigenem Anschluss an das Netzwerk) verwenden.
+
+Betrachtet man die Softwareseite des Debuggings, landet man beinahe
+zwangsläufig beim Open Source Projekt \textbf{OpenOCD}. Dieses Projekt ist im
+Rahmen einer Diplomarbeit\cite{OOCD2} an der FH Augsburg entstanden und hatte
+die Entwicklung einer quelloffenen Software zum Debuggen von
+ARM-Mikrocontrollern zum Ziel. OpenOCD fungiert dabei als Schnittstelle zwischen
+einem \gls{jtag}-Debugger und einer Benutzeroberfläche.
+
+OpenOCD lässt sich dabei entweder über eine eigene Benutzeroberfläche via
+Telnet-Protokoll oder mittels eines \gls{gdb}-Clients bedienen.
+\begin{definition}[GDB]
+Der \gls{gdb} ist der Standard-Debugger unter
+Unix-Betriebssystemen. Er bietet unter Anderem die Möglichkeit, ein Programm im
+laufenden Betrieb anzuhalten, Breakpoints zu setzen oder Single-Stepping
+durchzuführen. Der GDB lässt besitzt keine grafische Oberfläche, sondern
+lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
+einem Client über TCP/IP ferngesteuert zu werden. 
+\end{definition}
+\subsection{Cross-Compilierung}
+Hier steht, warum wir Cross-Kompilieren müssen, was das ist und evtl. was das
+bedeutet
+\subsection{OpenWRT - Paketverwaltung}
+Hier steht, wie die Paketverwaltung von OpenWRT aufgebaut ist und warum wir sie
+nutzen sollten.
+\subsection{Wahl eines JTAG-Adapters}
+Hier steht, warum wir welchen Adapter wählen. (JTAG-Adapter von Olimex)
 \subsection{Zielsetzung}
-Portierung von OpenOCD nach Carambola 
+Hier steht, was wir genau umzusetzen haben. (OpenOCD auf OpenWRTs
+Paketverwaltung mit MIPS portieren und Cross-Compilieren)
 \section{Datenanalyse}
-\subsection{Übersicht}
-=> 
+\subsection{Anforderungen}
+Was die Anforderungen sind. (Welche Daten sollen erfasst werden, wie sollen die
+Daten aufbereitet werden, was ist mit Synchronizität)
+
+ser2net bietet ähnliche Funktionen
+\subsection{Bestandteile}
+Die ganze Sache besteht aus:
+\begin{itemize}
+  \item Client
+  \item Server
+  \item Protokoll
+\end{itemize}
+\subsection{Zeitsynchronisation}
+Welchen Algorithmus wir nehmen, wie wir ihn anpassen, warum wir UDP nehmen
+\subsection{Protokoll}
+Wie unser Protkoll aussieht, welche befehle es geben wird.
+Schnittstellenspezifikation. Hierzu gehört \autoref{fig:prot}
+\begin{figure}
+\centering
+\begin{tabu}{l l l p{7cm}}
+\multicolumn{3}{c}{\textbf{Server zu Client}}\\ \cline{1-3}
+Protokoll & Abkürzung & Wert & Beschreibung \\ \hline
+TCP & MESS & \texttt{0x01} & Allgemeine Nachricht des Servers. Eventuell als
+Broadcast verursacht MESS von einem Client. \\
+& UART & \texttt{0x02} & Der Server hat eine UART-Zeile empfangen. Die
+empfangenen Daten sind als Payload angehängt. \\
+& SPID & \texttt{0x03} & Der Server hat eine SPI-Zeile empfangen. Die
+empfangenen Daten sind als Payload angehängt. \\
+UDP & PONG & \texttt{0x06} & Antwort des Servers auf PING vom Client.
+Zeitstempel identisch mit PING.\\
+\hline \\
+\multicolumn{3}{c}{\textbf{Client zu Server}}\\ \cline{1-3}
+Protokoll & Abkürzung & Wert & Beschreibung \\
+\hline
+TCP & MESS & \texttt{0x01} & Payload an alle verbundenen Clients senden.
+(Broadcastfunktion)\\
+& EXIT & \texttt{0x10} & Den Server zum Schließen aller Verbindungen und Beenden
+der Serveranwendung veranlassen. \\
+UDP & PING & \texttt{0x05} & Einen Ping
+mit aktuellem Zeitstempel des Clients senden. \\
+& STIM & \texttt{0x04} & Letzter Schritt der Zeitsynchronisation. Den Zeitpunkt
+des zuletzt erhaltenen \emph{PONG} als Payload anhängen. Zeitstempel identisch
+mit PONG.\\
+\hline \end{tabu}\\
+\caption{Nachrichtentypen des Protokolls}{\emph{In dieser Tabelle ist mit
+"`Client"' das Softwaremodul auf dem Entwickler-PC und als "`Server"' das Gegenstück auf
+dem eingebetteten System gemeint.}}
+\label{fig:prot}
+\end{figure}
 \subsection{Zielsetzung}
+Hier folgt die exakte Zielsetzung
 => Konzept FreeJTAG
+\begin{itemize}
+  \item Zeitsynchronisation
+  \item UART-to-Network
+  \item Auf andere Protokolle erweiterbar
+  \item Konfigurierbar
+  \item Auf MIPS lauffähig
+\end{itemize}
+\begin{figure}
+\centering
+\begin{sequencediagram}
+\newthread{client}{:Client}
+\newthread{server}{:Server}
+\mess[2]{client}{PING}{server}
+\node[anchor=east] (t0) at (mess from) {$t_0$};
+\node[anchor=west,label=above right:{$t_1$}] (t1) at (mess to) {};
+\mess[2]{server}{PONG}{client}
+\node[anchor=west,label=below right:{$t_2$}] (t2) at (mess from) {};
+\node[anchor=east] (t3) at (mess to) {$t_3$};
+\mess[2]{client}{STIM}{server}
+\path (t0.east) |- coordinate(t01) (t1);
+\draw[dashed] (t1) -- (t01);
+\path (t3.east) |- coordinate(t23) (t2);
+\draw[dashed] (t2) -- (t23);
+\end{sequencediagram}
+\caption{Ablauf der Zeitsynchronisation eines Servers}
+\end{figure}
+\begin{equation}
+\frac{t_1-t_0-t_3+t_2}{2}=\Delta t
+\end{equation}
+\begin{figure}
+\centering
+\begin{bytefield}[bitheight=3.3ex,bitwidth=3em,endianness=big]{8}
+\bitheader{0-7} \\
+\begin{rightwordgroup}{Header}
+\wordbox{1}{Type (1 Byte)} \\
+\wordbox{2}{Length (2 Byte)} \\
+\wordbox{8}{Timestamp (8 Byte)}
+\end{rightwordgroup} \\
+\wordbox[lrt]{1}{Data (n Byte)} \\
+\skippedwords \\
+\wordbox[lrb]{1}{}
+\end{bytefield}
+\caption{Systematischer Aufbau eines Datenpaketes}
+\end{figure}
 \section{Deployment}
 \subsection{Übersicht}
 \subsection{Zielsetzung}
@@ -23,4 +185,3 @@ public static void main(){
  }
 }
 \end{lstlisting}
-\lipsum

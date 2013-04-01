@@ -2,22 +2,45 @@
 \minitoc
 In diesem Kapitel soll aufgezeigt werden, woraus ein Entwicklungssystem
 im Allgemeinen besteht und welche Anforderungen sich also für ein zu
-entwerfendes Entwicklungssystem ergeben.
-\section{Begriffsdefinitionen}
-\subsection*{Zielsystem}
-Das \emph{Zielsystem} ist das zu entwerfende Entwicklungsziel.
-\subsection*{Entwicklungsplattform}
-Zu einer \emph{Entwicklungsplattform} gehören alle Hardware- und
-Softwareelemente, die nötig sind, um die Umsetzung eines bestimmten
-Softwareprojektes zu erreichen. Die einzelnen Bestandteile einer solchen
-\emph{Entwicklungsplattform} sollen im Verlauf dieses Kapitels identifiziert
-werden.
-\section{Elemente einer Entwicklungsplattform}
-Die Elemente einer Entwicklungsplattform lassen sich grob drei Kategorien
+entwerfendes \emph{Entwicklungssystem} ergeben.
+\begin{definition}[Entwicklungssystem]
+Zu einem \emph{Entwicklungssystem} gehören
+alle Hard- und Softwareelemente, die nötig sind, um die Umsetzung eines
+bestimmten Softwareprojektes zu erreichen. Die einzelnen Bestandteile eines
+solchen \emph{Entwicklungssystems} sollen im Verlauf dieses Kapitels
+identifiziert werden.
+\end{definition}
+\section{Grundlegende Konzeption}
+\begin{figure}[H]
+\centering
+\def\svgwidth{\columnwidth}
+\input{res/system.pdf_tex}
+\caption{Das geplante Gesamtsystem}{Weitere Erklärung hier!}
+\label{fig:sys}
+\end{figure}
+Der Grundgedanke, der hinter dem zu entwerfenden \emph{Entwicklungssystem}
+stehen soll ist, dass bereits bestehende Infrastruktur wie Ethernet oder WLAN
+genutzt wird, um die Steuerung der Systeme und die Erfassung der Daten
+auf dem System des Entwicklers verfügbar zu machen und zusammenzufassen.
+
+In \autoref{fig:sys} ist dargestellt, wie die eingezeichneten \emph{"`Module"'}
+über WLAN in die bestehende Infrastruktur, symbolisiert durch einen
+Access-Point, eingegliedert werden.
+\begin{definition}[Zielsystem]
+Das \emph{Zielsystem} ist das System, welches mit Hilfe des
+\emph{Entwicklungssystems} relisiert werden soll.
+\end{definition}
+Die einzelnen \emph{"`Module"'} wiederum sind in der Lage, die Ein- und Ausgänge
+der \emph{Zielsysteme("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
+ermöglicht es, Daten zu sammeln und weiterzuleiten, sowie auf die "`Ziele"'
+zuzugreifen.
+
+\section{Elemente eines Entwicklungssystems}
+Die Elemente eines Entwicklungssystems lassen sich grob drei Kategorien
 zuordnen. 
 
-Viele Teile dieser drei Kategorien beeinflussen Entscheidungen, die für
-einen anderen Bereich getroffen werden müssen.
+Zu bedenken ist, dass bei der Entwicklung von Soft- und Hardware viele der
+einzelnen Elemente, auch kategorieübergreifend, miteinander interagieren. 
 \subsection{Vorgehensmodell}
 Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
 Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
@@ -60,17 +83,21 @@ unter anderem \emph{Projektmanagementsoftware}.
 Die Entwurfs- und Realisierungsphasen jedoch benötigen oft eine hohe
 Softwareunterstützung. Während in der Entwurfsphase meist Tools zur
 Visualisierung und Strukturierung von Softwarearchitektur eingesetzt werden
-\emph{(UML, Struktogramme, etc.)}, werden in der Realisierungsphase meist
-Werkzeuge eingesetzt, die von der konkreten Anforderung abhängen.
-\emph{(Compiler, IDEs, Debugger)}
+\emph{(\gls{uml}, Struktogramme, etc.)}, werden in der Realisierungsphase
+meist Werkzeuge eingesetzt, die von der konkreten Anforderung abhängen.
+\emph{(Compiler, \glspl{ide}, Debugger)}
 
 Um einen Übergang in die Einführungs- und Nutzungsphasen zu ermöglichen, muss
 die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
 System auf eine Erfüllung der Anforderungen überprüfen. Hierfür werden
-Testpraktiken benutzt, die auch oft auf Soft- und Hardwaregestützt ablaufen.
-\emph{(\gls{jtag}, Unittests, In-circuit Tests)}
+häufig Testpraktiken benutzt, die auch soft- und hardwaregestützt
+ablaufen. \emph{(\gls{jtag}, Unittests, In-circuit Tests)}
 
-Auch durchläuft ein System in seiner Nutzungsphase oft auch Wartungszyklen.
+Um ein Ausliefern der Software zu ermöglichen, werden Werkzeuge zum Deployment
+benötigt. Dies erfordert oft ein Zusammenspiel aus Hardware-
+und Softwarekomponenten. \emph{(Installer, Softwarepakete, Flasher)}
+
+Oft durchläuft ein System in seiner Nutzungsphase auch Wartungszyklen.
 Diese Zyklen setzen eine möglichst einfache Wartbarkeit des Systems voraus.
 
 \subsection{Software}\label{sub:software}
@@ -179,8 +206,8 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   Die in \autoref{fig:ALT01} als "`Zu testende Verbindung"' markierte Leitung
   kann so auf Unterbrechungen oder Überbrückungen geprüft werden.
   
-  Einen darauf aufbauenden Funktionsumfang bietet das in ARM
-  Prozessoren zum Einsatz kommende \gls{swd} an.
+  Einen darauf aufbauenden Funktionsumfang bietet das, vorwiegend in ARM
+  Prozessoren zum Einsatz kommende, \gls{swd} an.
   
   Um (auch analoge) Bauteile und Platinen in größerem Umfang zu testen, dient
   der \emph{in-circuit Test}. Hierbei wird ein speziell angefertigtes
@@ -225,18 +252,36 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   \gls{jtag}-Schnittstelle an.
 \end{itemize}
 %%==================================================================
-\section{Vorgaben} In diesem Abschnitt sollen die Vorgaben für ein
-beispielhaftes Zielsystem festgelegt werden. 
+\section{Vorgaben des Zielsystems}
+Die hier angeführten Punkte wurden als grundlegend für die Arbeit erachtet und
+sind aus diesem Grund feste vorgaben an das System und keine
+Designentscheidungen. An dieser Stelle sollen lediglich die Gründe für
+die Wahl dieser Vorgaben erläutert werden.
 
-Das zu entwerfende Entwicklungssystem soll dabei ein möglichst großes Spektrum
-potentieler Architekturen und Funksysteme abdecken können, so dass es später
-einfach ist, das zu entwickelnde Zielsystem durch ein anderes zu ersetzen.
+Das zu entwerfende Entwicklungssystem sollte ein möglichst
+großes Spektrum potentieller Architekturen und Funksysteme abdecken können, so
+dass es später einfach ist, das zu entwickelnde Zielsystem durch ein anderes zu
+ersetzen.
 
-Da Mikroprozessoren mit ARM-Architektur einen Anteil von rund 71\%\cite{IDC01}
-an allen verkauften \glspl{cpu} haben, sorgt dies allein bereits für eine hohe
-Austauschbarkeit. Diese Tatsache sollten die Entscheidungen ebenso
-widerspiegeln.
-\subsection{Zielsystem} Bedingt durch die hohe Verbreitung von ARM \glspl{cpu}
+Da Mikroprozessoren mit \textbf{ARM-Architektur} einen Anteil von rund
+71\%\cite{IDC01} an allen verkauften \glspl{cpu} haben, sorgt dies allein für
+eine hohe Austauschbarkeit. Dieser Umstand bedingt die Vorgabe, dass das
+\emph{Entwicklungssystem} speziell auf die Entwicklung eines Zielsystems
+mit ARM-Architektur ausgelegt sein soll. 
+
+Es ist wünschenswert, die hohe Austauschbarkeit einzelner Bestandteile in
+den weiteren Entscheidungen ebenso widerzuspiegeln.
+
+\ldots
+
+\section{Vorentscheidungen für das  Zielsystem} In diesem Abschnitt sollen die
+Vorgaben für ein beispielhaftes Zielsystem erläutert und festgelegt werden. 
+\subsection{Entwicklungssystem}
+
+\ldots
+=> Carambola
+\subsection{Zielsystem}
+Bedingt durch die hohe Verbreitung von ARM \glspl{cpu}
 existiert eine große Anzahl an Entwicklungsboards, die in Frage kommen.
 
 Da das Zielsystem später stark integriert arbeiten können soll, ist es wichtig,
@@ -246,7 +291,8 @@ Rechenleistung zu treffen.
 Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
 Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
 in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diesem
-Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau dafür.
+Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau
+dafür.
 
 So 
 
@@ -325,12 +371,7 @@ werden:
   \item Ein Gegenstück, dass die Daten eines einzelnen Moduls sammelt und an die
   Verwaltungseinheit weiterleitet
 \end{enumerate}
-\begin{figure}[!h]
-\centering
-\def\svgwidth{\columnwidth}
-\input{res/system.pdf_tex}
-\caption{Das geplante Gesamtsystem}
-\end{figure}
+
 
 \iffalse
 
@@ -403,7 +444,7 @@ Manche stimmen jedoch überein, so z.B.
 
 
 
-Abhängig von den Vorfaben und den eingesetzten Entwicklungsmodellen werden
+Abhängig von den Vorgaben und den eingesetzten Entwicklungsmodellen werden
 für jedes Softwareprojekt unterschiedliche Anforderungen an die verwendete Hard-
 und Software gestellt.
 
