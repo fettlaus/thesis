@@ -274,14 +274,18 @@ mit ARM-Architektur ausgelegt sein soll.
 Es ist wünschenswert, die hohe Austauschbarkeit einzelner Bestandteile in
 den weiteren Entscheidungen ebenso widerzuspiegeln.
 
-\ldots
+<\ldots>
 
 \section{Vorentscheidungen für das  Zielsystem} In diesem Abschnitt sollen die
 Vorgaben für ein beispielhaftes Zielsystem erläutert und festgelegt werden. 
 \subsection{Entwicklungssystem}
+<Warum wir das Carambola wählten>
 
-\ldots
-=> Carambola
+Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten Betriebssystem für
+eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
+portierter Softwarepakete, unterstützt viele Architekturen (unter anderem ARM,
+MIPS, PowerPC, x86) und gewährleistet, durch simple Konfigurationsdateien, einen
+hohen Grad an Konfigurierbarkeit.
 \subsection{Zielsystem}
 Bedingt durch die hohe Verbreitung von ARM \glspl{cpu}
 existiert eine große Anzahl an Entwicklungsboards, die in Frage kommen.
@@ -296,14 +300,8 @@ in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diese
 Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau
 dafür.
 
-So 
+ <Warum der ARM von Olimex gut ist>
 
-\begin{equation}\begin{split}
-\frac{2000\milli\ampere\hour}{11 \milli\ampere}*1\% \approx 757 \dday
-\end{split}\end{equation}
-
-
- => Warum der ARM von Olimex gut ist
 \subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
 zwei Kategorien einteilen.
 
@@ -329,8 +327,7 @@ Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
 Abstraktion hinderlich sein.
 
 
- $\rightarrow$ Warum dieses Modul die einfachste Wahl
-ist
+ <Warum genau dieses Modul die einfachste Wahl ist>
 %%======================================================================
 \section{Anforderungen an ein konkretes System (Lastenheft)}
 Nachdem nun klar ist, aus welchen Bestandteilen ein Entwicklungssytem besteht
@@ -340,17 +337,23 @@ konkreten Anforderungen gestellt werden.
 Diese Anforderungen sollen als Ziel dieser Arbeit erfüllt werden und eine
 Entwicklung des Zielsystems ermöglichen.
 
+All diesen Anforderungen ist gemein, dass sie "`ferngesteuert"' funktionieren
+müssen. Hierfür können bereits existierende Infrastrukturen (WLAN,
+Ethernet) genutzen werden.
+
 \subsection{Debugging} Die Entwicklung einer Software und die Suche nach Fehlern
 in dieser wird durch den Einsatz eines Debuggers enorm erleichtert. 
+
+Gefordert wird:
+\begin{itemize}
+  \item Die Möglichkeit, das Zielsystem schrittweise zu Debuggen
+  \item Eine Integration in eine zu Entwicklungsoberfläche(\gls{ide})
+\end{itemize}
 
 \subsection{Deployment} Für das Deployment, sowohl testweise und zu
 Debuggingzwecken während der Entwicklung als auch für die endgültige
 Fertigstellung, ist es erforderlich, die einzelnen Knoten des Zielsystems mit
 einer neuen Firmware flashen zu können.
-
-Voraussetzung ist allerdings, dass sich dieser Prozess möglichst ortsunabhängig
-betreiben lässt. Hierfür können bereits existierende Infrastrukturen (WLAN,
-Ethernet) genutzen werden.
 
 Da, es sich bei dem Zielsystem in seiner Gesamtheit um eine Vielzahl identischer
 Komponenten handelt, sollte sich dieser Prozess im Idealfall auf

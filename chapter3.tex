@@ -65,16 +65,100 @@ lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
 einem Client über TCP/IP ferngesteuert zu werden. 
 \end{definition}
 \subsection{Cross-Compilierung}
-Hier steht, warum wir Cross-Kompilieren müssen, was das ist und evtl. was das
-bedeutet
-\subsection{OpenWRT - Paketverwaltung}
-Hier steht, wie die Paketverwaltung von OpenWRT aufgebaut ist und warum wir sie
-nutzen sollten.
+In einigen Fällen ist es nicht praktikabel oder schlicht unmöglich, dass eine
+Anwendung auf der CPU-Architektur kompiliert wird, die auch später die
+ausführende Architektur ist. Dies kann zum Beispiel dann der Fall sein, wenn ein
+engebettetes System über nicht ausreichend Ressourcen (Speicherplatz) verfügt,
+um den Kompilationsvorgang durchzuführen.
+
+In diesen Fällen kommt ein sogenannter \emph{Cross-Compiler} zum Einsatz.
+\subsection{OpenWRT - Paketverwaltung und Kompiliervorgang}
+OpenWRT besitzt mit \textbf{opkg} ein Tool zur Paketverwaltung von Anwendungen.
+Hierbei kann die Software in Form von *.ipk-Files aus sogenannten "`Repositories"'
+heruntergeladen und anschließend installiert werden. Durch dieses Tool wird es
+möglich, das eingebettete System für die eigenen Bedürfnisse anzupassen.
+
+Die Erstellung neuer Pakete für OpenWRT wird durch stark modifizierte Makefiles
+wesentlich vereinfacht.
+ \begin{definition}[Makefile]
+Ein \emph{Makefile} ist eine Datei, die Steuerbefehle für das Tool
+\texttt{make} enthält. \texttt{make} wird überwiegend eingesetzt, um Quellcode
+in ausführbare Programme und Bibliotheken zu übersetzen. Durch seinen hohen
+Grad an Abstraktion können \emph{Makefiles} jedoch auch für andere Aufgaben
+"`zweckentfremdet"' werden.
+\end{definition}
+OpenWRT liefert alle nötigen Bestandteile mit, um ein vollständiges Image für
+das eingebettete System zu erstellen.
+Der Ablauf ist dabei wie folgt:
+\begin{itemize}
+  \item Mittels \texttt{make menuconfig} lässt sich der folgende
+  Kompiliervorgang in einer grafischen Oberfläche anpassen. Dazu zählen die zu
+  erstellenden Anwendungen, Konfigurationsparameter des Kernels und
+  Voreinstellungen der Anwendungen.
+  \item Durch das Eingeben von \texttt{make} wird der Kompiliervorgang
+  gestartet
+  \item Der Quellcode der Toolchain wird heruntergeladen und kompiliert
+  \item Der Quellcode des Basissystems wird heruntergeladen und kompiliert
+  \item Die einzelnen Pakete werden erstellt:
+  \begin{itemize}
+    \item Herunterladen des Quellcodes
+    \item Anwenden von nötigen OpenWRT-Patches
+    \item Kompilieren der Anwendung
+    \item Erstellen der *.ipk-Datei
+  \end{itemize}
+\end{itemize}
+
+Soll OpenOCD nun auf ARM portiert werden, ist es wünschenswert, das Programm
+direkt in diesen Prozess des Paketverwaltungssystems einzubinden. Hierfür muss
+ein geeignetes \emph{Makefile} erstellt werden.
+
 \subsection{Wahl eines JTAG-Adapters}
-Hier steht, warum wir welchen Adapter wählen. (JTAG-Adapter von Olimex)
+OpenOCD unterstützt eine große Anzahl verschiedener JTAG-Adapter. Viele dieser
+Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
+
+Neben den industriellen Lösungen mit speziell entwickelten Bauteilen(Segger
+J-Link, ST Micro ST-Link), existieren auch viele Alternativen, die bereits
+existierende Bauteile verwenden. So kommt zum Beispiel oft der
+\emph{FT2232}-Chip zum Einsatz, der auf die Umsetzung von USB-Daten zu einem
+seriellen bzw. parallelen Ausgang spezialisiert ist. Neben kommerziellen
+Adaptern (Amontec JTAGkey2, Olimex ARM-USB-TINY-H) existieren auch einige Open
+Source Lösungen, in denen der \emph{FT2232} zum Einsatz kommt (OOCDLink,
+Opendous). 
+
+Entscheidend für die Wahl eines Adapters sollte zum einen die Anzahl der
+unterstützten Zielsysteme sein. Diese definiert sich hauptsächlich über die
+vom Adapter unterstützte \textbf{Spannung}. Da viele Mikrocontroller mit
+$3.3\volt$ oder $5.5\volt$ betrieben werden, sollte der Adapter zumindest diese beiden
+Spannungen unterstützen. Je größer diese Spanne jedoch ist, desto flexibler kann
+er später eingesetzt werden.
+
+Auch unterscheiden die Adapter sich im Vorhandensein von \textbf{adaptivem
+Clocking}. Diese Funktion erlaubt es dem Adapter, sich an die aktuelle
+Taktfrequenz des Zielsystems anzupassen. Da viele Mikrocontroller direkt nach
+dem Start oder in einem Deep-Sleep-Zustand mit einer geringen Taktzahl arbeiten
+und die aktuelle Taktzahl des Zielsystems oftmals die maximal mögliche
+JTAG-Taktzahl vorgibt, müsste der Adapter anderenfalls unter Umständen langsamer
+laufen. \emph{Adaptives Clocking} erlaubt es dem Zielsystem, eine Art
+"`Rückmeldung"' über die, aktuell gültige, maximale JTAG-Taktzahl zu geben.
+
+Im Rahmen dieser Arbeit soll der ARM-USB-TINY-H von Olimex zum Einsatz kommen.
+Dieser Adapter besitzt einen der verbreiteten \emph{FT2232}-Chips, bietet
+Adaptives Clocking und unterstützt einen Spannungsbereich von $2.0\volt$ bis
+$5.0\volt$.
+
 \subsection{Zielsetzung}
-Hier steht, was wir genau umzusetzen haben. (OpenOCD auf OpenWRTs
-Paketverwaltung mit MIPS portieren und Cross-Compilieren)
+Folgende Punkte sollen im Rahmen dieser Arbeit für ein funktionierendes
+Debugsystem umgesetzt werden:
+\begin{itemize}
+  \item OpenWRT muss kompiliert und konfiguriert werden werden.
+  \item Für OpenOCD muss ein \textbf{Makefile} erstellt werden, mithilfe
+  dessen über den \linebreak(Cross-)Kompiliervorgang eine Paketdatei für
+  OpenWRT erstellt wird.
+  \item OpenOCD muss so (vor-)konfiguriert werden, dass sich das Zielsystem
+  damit debuggen lässt.
+  \item Eine IDE muss so eingerichtet werden, dass sie OpenOCD über \gls{gdb}
+  als entfernete Debugging-Schnittstelle verwendet.
+\end{itemize}
 \section{Datenanalyse}
 \subsection{Anforderungen}
 Was die Anforderungen sind. (Welche Daten sollen erfasst werden, wie sollen die
