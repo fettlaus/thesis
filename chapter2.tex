@@ -15,7 +15,9 @@ identifiziert werden.
 \centering
 \def\svgwidth{\columnwidth}
 \input{res/system.pdf_tex}
-\caption{Das geplante Gesamtsystem}{Weitere Erklärung hier!}
+\caption{Das geplante Gesamtsystem}{Die "'Module"' werden über WLAN
+vom Entwicklersystem gesteuert und übermitteln an dieses auch alle
+Daten, die sie von ihrem jeweils angeschlossenen "`Ziel"' erhalten.}
 \label{fig:sys}
 \end{figure}
 Der Grundgedanke, der hinter dem zu entwerfenden \emph{Entwicklungssystem}
@@ -31,7 +33,7 @@ Das \emph{Zielsystem} ist das System, welches mit Hilfe des
 \emph{Entwicklungssystems} relisiert werden soll.
 \end{definition}
 Die einzelnen \emph{"`Module"'} wiederum sind in der Lage, die Ein- und Ausgänge
-der \emph{Zielsysteme("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
+der \emph{Zielsysteme ("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
 ermöglicht es, Daten zu sammeln und weiterzuleiten, sowie auf die "`Ziele"'
 zuzugreifen.
 
@@ -197,7 +199,7 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   durchzuführen. Jedes in \autoref{fig:ALT01} mit "`IC"' markierte Bauteil muss
   dafür über einen, in der Abbildung nicht eingezeichneten, sogenannten \gls{tap} oder
   \gls{dap}\footnote{Wird von neueren ARM Kernen benutzt.
-  Ermöglicht auch Tracing} verfügen. Diese befinden sich \emph{nicht} in der
+  Ermöglicht auch Tracing.} verfügen. Diese befinden sich \emph{nicht} in der
   Logik des Bauteils sondern stellen eine separate Steuerschaltung dar.
   
   Die \glspl{tap}/\glspl{dap} werden verkettet und ermöglichen es, die Ein-
