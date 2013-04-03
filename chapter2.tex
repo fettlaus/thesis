@@ -231,14 +231,10 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   
   Da ein \gls{jtag}-Port einen direkt Zugriff auf alle Eingänge eines
   Mikrocontrollers bietet und der \gls{dap}/\gls{tap} tief in die Hardware
-  integriert ist, lassen sich über diese Verbindung oft auch Register und
-  Speicherbereiche modifizieren.
-  
-  Neben einer \gls{jtag}-Schnittstelle und der Möglichkeit, ein System mittels
-  \gls{isp}\footnote{Anschluss der es erlaubt, ein
-  integriertes System wie einen Mikrocontroller mit einer Software zu programmieren, ohne
-  ihn ausbauen zu müssen.} programmieren zu können, erlauben es zum Beispiel
-  viele Mikroprozessoren, Breakpoints im Programm zu setzen.
+  integriert ist, lassen sich über diese Verbindung oft auch Register,
+  Speicherbereiche und andere Komponenten modifizieren. So kann ein
+  \gls{jtag}-Debugger mitunter auch als \emph{Flasher} eingesetzt werden, wenn
+  er in der Lage ist, den \gls{rom} zu beschreiben.
   
   \emph{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger
   \item \subsubsection*{Flasher} Um, wie in \autoref{subs:deployment}

@@ -159,25 +159,181 @@ Debugsystem umgesetzt werden:
   \item Eine IDE muss so eingerichtet werden, dass sie OpenOCD über \gls{gdb}
   als entfernete Debugging-Schnittstelle verwendet.
 \end{itemize}
-\section{Datenanalyse}
-\subsection{Anforderungen}
-Was die Anforderungen sind. (Welche Daten sollen erfasst werden, wie sollen die
-Daten aufbereitet werden, was ist mit Synchronizität)
+\section{Datenanalyse}\label{sec:datenan}
+Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die Analyse
+von vom Zielsystem erzeugten Daten. Da das Zielsystem über eine
+Funkschnittstelle verfügt, muss eine, für das Zielsystem zu entwickelnde,
+Software diese Schnittstelle sicher auch in Betrieb nehmen können.
 
-ser2net bietet ähnliche Funktionen
-\subsection{Bestandteile}
-Die ganze Sache besteht aus:
+Soll für diese Funkschnittstelle nun also z.B. ein neues Funkprotokoll entworfen
+werden, ist es sicher nützlich, die Abläufe innerhalb des Funknetzwerkes auf
+Korrektheit zu überprüfen.
+\begin{figure}[h!]
+\begin{sequencediagram}
+\newthread{node1}{Netzwerkknoten 1}
+\newthread{node2}{Netzwerkknoten 2}
+\mess[1]{node1}{Verbindungsanfrage}{node2}
+\node[anchor=east,inner sep=10pt] (t0) at (mess from) {$t_0$};
+\node[anchor=west,inner sep=10pt] (t1) at (mess to) {$t_1$};
+\mess[1]{node2}{Bestätigung}{node1}
+\node[anchor=west,inner sep=10pt] (t2) at (mess from) {$t_2$};
+\node[anchor=east,inner sep=10pt] (t3) at (mess to) {$t_3$};
+\end{sequencediagram}
+\centering \\
+\caption{Möglicher Ablauf eines fiktiven Funkprotokolls}{Hier können zu vier
+verschiedenen Zeitpunkten Daten aufgezeichnet werden, um einen
+zeitlichen Verlauf untersuchen und verdeutlichen zu können.}
+\label{fig:fikdiag}
+\end{figure}
+
+In \autoref{fig:fikdiag} sieht man ein einfaches Beispiel für eine
+Verbindungsanfrage eines fiktiven Funksystems. Die zu erfassenden Daten
+bestünden in diesem Fall zum Beispiel aus Textnachrichten der Zielsysteme. Würde
+man diese Daten nun erfassen und in einem System gebündelt anzeigen, könnte man
+den genauen Ablauf, wie in \autoref{fig:fikmsg} dargestellt, genau
+nachvollziehen.
+\begin{figure}[ht!]
+\centering
+\par\begin{tabu}{l c l}
+Zielsystem & Zeitstempel & Nachricht\\
+\hline
+\emph{<Netwerkknoten 1>} & \emph{$t_0$} & Verbindungsanfrage gesendet\\ 
+\emph{<Netwerkknoten 2>} & \emph{$t_1$} & Verbindungsanfrage erhalten\\
+\emph{<Netwerkknoten 2>} & \emph{$t_2$} & Bestätigung gesendet\\
+\emph{<Netwerkknoten 1>} & \emph{$t_3$} & Bestätigung erhalten\\
+\hline
+\end{tabu}\\
+\caption{Erfassung der Daten des Ablaufs aus \autoref{fig:fikdiag}}{Ein Ablauf
+wie in \autoref{fig:fikdiag} dargestellt, könnte diese Reihenfolge von
+Nachrichten erzeugen.}
+\label{fig:fikmsg}
+\end{figure}
+Mit steigender Komplexität des zu
+entwerfenden Funkprotokolls steigt jedoch auch die Komplexität solcher Abläufe.
+So ist zum Beispiel, wie im Funkprotokoll ZigBee vorgesehen, denkbar, dass die
+Funkknoten verschiedene Aufgaben im Routing und Aufbau des eigenen
+Funknetzwerkes übernehmen.
+
+\subsection{Anforderungen}
+Aufgabe dieses Teil des Entwicklungssystems wird es sein, die Erfassung der in
+\autoref{sec:datenan} erwähnten Abläufe zu erleichtern.
+
+Bedingung für die Erfassung von Daten seitens des Entwicklungssystems ist, dass
+das Zielsystem diese Daten überhaupt in einer erfassbaren Form zur Verfügung
+stellt. Hierbei muss jedoch beachtet werden, dass nicht jedes Zielsystem über
+alle Anschlussmöglichkeiten verfügen kann.
+
+Um die Daten vom Zielsystem zu erfassen, bietet sich zum Beispiel die Nutzung
+des \textbf{\gls{uart}} an. Hierfür muss jedoch die Software des Zielsystems so
+angepasst werden, dass es die zu sammelnden Daten über \gls{uart} ausgibt.
+
+\begin{definition}[UART]
+Der \gls{uart} ist eine, in Mikrocontrollern sehr weit verbreitete,
+elektronische Schaltung zur seriellen Übermittlung und Empfang von Daten. In
+seiner Minimalkonfiguration benötigt der \gls{uart} nur zwei Pins (RX ---
+Receive, TX --- Transmit), da auf ein Taktsignal verzichtet werden kann. Dies
+ermöglicht eine Nutzung von \gls{uart} auch in einem stark integriertem
+Zielsystem.
+\end{definition}
+
+Um die Daten später sortieren und analysieren zu können, müssen vom
+Entwicklungssystem folgende Daten erfasst werden.
 \begin{itemize}
-  \item Client
-  \item Server
-  \item Protokoll
+  \item Vom Zielsystem ausgegebene Daten
+  \item Zeitpunkt der Erfassung der Daten
 \end{itemize}
-\subsection{Zeitsynchronisation}
-Welchen Algorithmus wir nehmen, wie wir ihn anpassen, warum wir UDP nehmen
-\subsection{Protokoll}
-Wie unser Protkoll aussieht, welche befehle es geben wird.
-Schnittstellenspezifikation. Hierzu gehört \autoref{fig:prot}
+Besonderes Augenmerk muss hierbei auf die Synchronizität der einzelnen Module
+des Entwicklungssystems gelegt werden. Auf diesen Umstand wird in
+\autoref{subs:time} weiter eingegangen. 
+
+\subsection{Bestandteile}
+Die Software zur Analyse der gesammelten Daten muss im Kern aus drei Teilen
+bestehen.
+\begin{itemize}
+  \item \textbf{Server} --- Läuft als Anwendung auf dem Carambola. Empfängt
+  Daten über \gls{uart} und leitet diese an den Client weiter.
+  \item \textbf{Client} --- Läuft auf dem System des Entwicklers. Verbindet sich
+  zu der Serveranwendung und empfängt von ihr die gesammelten Daten.
+  \item \textbf{Protokoll} --- Definiert die Kommunikation zwischen Server und
+  Client.
+\end{itemize}
+
+\subsection{Zeitsynchronisation}\label{subs:time}
+Ein wichtiger Punkt im Entwurf dieses Systems ist die \textbf{Synchronisation
+der Uhren}. Da jedes Entwicklungsmodul zu einem
+
+Ein erster Ansatz wäre hier, bereits bestehende Synchronisationstechniken wie
+\gls{ntp} zu verwenden. Diese haben jedoch den Nachteil, dass sie für die
+Synchronisation immer eine aktive Verbindung zum Internet oder einen lokalen
+NTP-Server  benötigen. Außerdem sind, da die Carambola-Systeme keine
+Echtzeituhren besitzen, Datum und Uhrzeit nach einem Start des Systems auf die
+Unix Epoche gesetzt. Da NTP direkt die Systemzeit beeinflusst, würde dies 
+unter Umständen Auswirkungen auf andere Prozesse bedeuten.
+
+Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von Christian
+zum Einsatz kommen. Entscheidend ist hierbei, dass der Synchronisationsvorgang
+vom Zeitgeber angestoßen wird. Dies erfordert eine zusätzliche
+abschließende Datenübertragung.
+\begin{itemize}
+  \item Der Client stößt den Synchronisationsvorgang an, indem er dem Server
+  seinen aktuellen Zeitstempel $t_0$ mittels einer \texttt{PING}-Nachricht
+  übermittelt.
+  \item Bei Erhalt der Nachricht erfasst der Server seinen eigenen Zeitstempel
+  als $t_1$.
+  \item Anschließend bereitet er das Senden einer \texttt{PONG}-Nachricht als
+  Antwort vor, erfasst einen weiteren Zeitstempel ($t_2$) und sendet die
+  Nachricht.
+  \item Bei Erhalt der Nachricht durch den Client, erfasst dieser seine eigene
+  Zeit $t_3$ und übermittelt sie dem Server in einer, diesen
+  Synchronisierungsprozess abschließenden, \texttt{STIM}-Nachricht.
+\end{itemize} 
+Dieser Vorgang ist in \autoref{fig:timeseq} visualisiert.
 \begin{figure}
+\centering
+\begin{sequencediagram}[ht]
+\newthread{client}{:Client}
+\newthread{server}{:Server}
+\mess[2]{client}{PING}{server}
+\node[anchor=east,inner sep=10pt] (t0) at (mess from) {$t_0$};
+\node[anchor=west,inner sep=4pt,label=above right:{$t_1$}] (t1) at (mess to)
+{};
+\mess[2]{server}{PONG}{client}
+\node[anchor=west,inner sep=4pt,label=below right:{$t_2$}] (t2) at (mess from)
+{}; \node[anchor=east,inner sep=10pt] (t3) at (mess to) {$t_3$};
+\mess[2]{client}{STIM}{server}
+\path (t0.east) |- coordinate(t01) (t1);
+\draw[dashed] (t1) -- (t01);
+\path (t3.east) |- coordinate(t23) (t2);
+\draw[dashed] (t2) -- (t23);
+\end{sequencediagram}
+\caption{Ablauf der Zeitsynchronisation eines Servers}
+\label{fig:timeseq}
+\end{figure}
+
+Nach Abschluss dieser Kommunikation lässt sich die Zeitdifferenz durch folgende
+Formel errechnen.
+\begin{equation}
+\frac{t_1-t_0-t_3+t_2}{2}=\Delta t
+\end{equation}
+Um Abweichungen zum Beispiel durch unterschiedliche Latenzen auf dem Hin- und
+Rückweg im Netzwerk auszugleichen, werden mehrere dieser Vorgänge durchgeführt
+und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieses
+stellt dann die zu verwendende Differenz dar.
+
+\subsection{Protokoll}
+Damit Die Client- und die Serveranwendung über das netzwerk kommunizieren
+können, wird ein Protokoll zum Datenaustausch spezifiziert. Dieses Protokoll
+legt sowohl den Aufbau der Datenpakete als auch die Abläufe der Kommunikation
+fest.
+
+Während die Übertragung der Nutzdaten (vom Zielsystem ausgegebene Daten) über
+TCP erfolgt, läuft die Zeitsynchronisation über UDP ab.
+
+<\ldots>
+
+<Hierzu gehören auch noch \autoref{fig:prot}, \autoref{fig:bytefield} und
+Erklärungen dazu>
+\begin{figure}[ht!]
 \centering
 \begin{tabu}{l l l p{7cm}}
 \multicolumn{3}{c}{\textbf{Server zu Client}}\\ \cline{1-3}
@@ -209,39 +365,7 @@ mit PONG.\\
 dem eingebetteten System gemeint.}}
 \label{fig:prot}
 \end{figure}
-\subsection{Zielsetzung}
-Hier folgt die exakte Zielsetzung
-=> Konzept FreeJTAG
-\begin{itemize}
-  \item Zeitsynchronisation
-  \item UART-to-Network
-  \item Auf andere Protokolle erweiterbar
-  \item Konfigurierbar
-  \item Auf MIPS lauffähig
-\end{itemize}
-\begin{figure}
-\centering
-\begin{sequencediagram}
-\newthread{client}{:Client}
-\newthread{server}{:Server}
-\mess[2]{client}{PING}{server}
-\node[anchor=east] (t0) at (mess from) {$t_0$};
-\node[anchor=west,label=above right:{$t_1$}] (t1) at (mess to) {};
-\mess[2]{server}{PONG}{client}
-\node[anchor=west,label=below right:{$t_2$}] (t2) at (mess from) {};
-\node[anchor=east] (t3) at (mess to) {$t_3$};
-\mess[2]{client}{STIM}{server}
-\path (t0.east) |- coordinate(t01) (t1);
-\draw[dashed] (t1) -- (t01);
-\path (t3.east) |- coordinate(t23) (t2);
-\draw[dashed] (t2) -- (t23);
-\end{sequencediagram}
-\caption{Ablauf der Zeitsynchronisation eines Servers}
-\end{figure}
-\begin{equation}
-\frac{t_1-t_0-t_3+t_2}{2}=\Delta t
-\end{equation}
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{bytefield}[bitheight=3.3ex,bitwidth=3em,endianness=big]{8}
 \bitheader{0-7} \\
@@ -255,17 +379,11 @@ Hier folgt die exakte Zielsetzung
 \wordbox[lrb]{1}{}
 \end{bytefield}
 \caption{Systematischer Aufbau eines Datenpaketes}
+\label{fig:bytefield}
 \end{figure}
 \section{Deployment}
+<\ldots>
 \subsection{Übersicht}
+<\ldots>
 \subsection{Zielsetzung}
-
-\begin{lstlisting}[language=java]
-public static void main(){
- void Test(){
-  if(1 == 0){
-  System.out.println("Hello world!");
-  }
- }
-}
-\end{lstlisting}
+<\ldots>
