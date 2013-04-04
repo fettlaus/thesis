@@ -87,6 +87,8 @@ in ausführbare Programme und Bibliotheken zu übersetzen. Durch seinen hohen
 Grad an Abstraktion können \emph{Makefiles} jedoch auch für andere Aufgaben
 "`zweckentfremdet"' werden.
 \end{definition}
+
+\begin{minipage}[c]{\textwidth}
 OpenWRT liefert alle nötigen Bestandteile mit, um ein vollständiges Image für
 das eingebettete System zu erstellen.
 Der Ablauf ist dabei wie folgt:
@@ -107,14 +109,15 @@ Der Ablauf ist dabei wie folgt:
     \item Erstellen der *.ipk-Datei
   \end{itemize}
 \end{itemize}
+\end{minipage}
 
 Soll OpenOCD nun auf ARM portiert werden, ist es wünschenswert, das Programm
 direkt in diesen Prozess des Paketverwaltungssystems einzubinden. Hierfür muss
 ein geeignetes \emph{Makefile} erstellt werden.
 
 \subsection{Wahl eines JTAG-Adapters}
-OpenOCD unterstützt eine große Anzahl verschiedener JTAG-Adapter. Viele dieser
-Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
+OpenOCD unterstützt eine große Anzahl verschiedener \gls{jtag}-Adapter.
+Viele dieser Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
 
 Neben den industriellen Lösungen mit speziell entwickelten Bauteilen(Segger
 J-Link, ST Micro ST-Link), existieren auch viele Alternativen, die bereits
@@ -137,9 +140,9 @@ Clocking}. Diese Funktion erlaubt es dem Adapter, sich an die aktuelle
 Taktfrequenz des Zielsystems anzupassen. Da viele Mikrocontroller direkt nach
 dem Start oder in einem Deep-Sleep-Zustand mit einer geringen Taktzahl arbeiten
 und die aktuelle Taktzahl des Zielsystems oftmals die maximal mögliche
-JTAG-Taktzahl vorgibt, müsste der Adapter anderenfalls unter Umständen langsamer
+\gls{jtag}-Taktzahl vorgibt, müsste der Adapter anderenfalls unter Umständen langsamer
 laufen. \emph{Adaptives Clocking} erlaubt es dem Zielsystem, eine Art
-"`Rückmeldung"' über die, aktuell gültige, maximale JTAG-Taktzahl zu geben.
+"`Rückmeldung"' über die, aktuell gültige, maximale \gls{jtag}-Taktzahl zu geben.
 
 Im Rahmen dieser Arbeit soll der ARM-USB-TINY-H von Olimex zum Einsatz kommen.
 Dieser Adapter besitzt einen der verbreiteten \emph{FT2232}-Chips, bietet
@@ -147,6 +150,7 @@ Adaptives Clocking und unterstützt einen Spannungsbereich von $2.0\volt$ bis
 $5.0\volt$.
 
 \subsection{Zielsetzung}
+\begin{minipage}[c]{\textwidth}
 Folgende Punkte sollen im Rahmen dieser Arbeit für ein funktionierendes
 Debugsystem umgesetzt werden:
 \begin{itemize}
@@ -159,6 +163,7 @@ Debugsystem umgesetzt werden:
   \item Eine IDE muss so eingerichtet werden, dass sie OpenOCD über \gls{gdb}
   als entfernete Debugging-Schnittstelle verwendet.
 \end{itemize}
+\end{minipage}
 \section{Datenanalyse}\label{sec:datenan}
 Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die Analyse
 von vom Zielsystem erzeugten Daten. Da das Zielsystem über eine
@@ -236,17 +241,21 @@ ermöglicht eine Nutzung von \gls{uart} auch in einem stark integriertem
 Zielsystem.
 \end{definition}
 
+\begin{minipage}[c]{\textwidth}
 Um die Daten später sortieren und analysieren zu können, müssen vom
 Entwicklungssystem folgende Daten erfasst werden.
 \begin{itemize}
   \item Vom Zielsystem ausgegebene Daten
   \item Zeitpunkt der Erfassung der Daten
 \end{itemize}
+\end{minipage}
+
 Besonderes Augenmerk muss hierbei auf die Synchronizität der einzelnen Module
 des Entwicklungssystems gelegt werden. Auf diesen Umstand wird in
 \autoref{subs:time} weiter eingegangen. 
 
 \subsection{Bestandteile}
+\begin{minipage}[c]{\textwidth}
 Die Software zur Analyse der gesammelten Daten muss im Kern aus drei Teilen
 bestehen.
 \begin{itemize}
@@ -257,6 +266,7 @@ bestehen.
   \item \textbf{Protokoll} --- Definiert die Kommunikation zwischen Server und
   Client.
 \end{itemize}
+\end{minipage}
 
 \subsection{Zeitsynchronisation}\label{subs:time}
 Ein wichtiger Punkt im Entwurf dieses Systems ist die \textbf{Synchronisation
@@ -274,6 +284,12 @@ Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von Christian
 zum Einsatz kommen. Entscheidend ist hierbei, dass der Synchronisationsvorgang
 vom Zeitgeber angestoßen wird. Dies erfordert eine zusätzliche
 abschließende Datenübertragung.
+
+Da TCP durch seine Flusskontrolle die Messung der Netzwerklatenz
+durch eventuell Neuübertragungsversuche negativ beeinflussen kann, ist für die
+Zeitsynchronisation die Verwendung von UDP nötig. Dies bedingt allerdings die
+Verwendung einer Sequenznummer.
+
 \begin{itemize}
   \item Der Client stößt den Synchronisationsvorgang an, indem er dem Server
   seinen aktuellen Zeitstempel $t_0$ mittels einer \texttt{PING}-Nachricht
@@ -288,6 +304,7 @@ abschließende Datenübertragung.
   Synchronisierungsprozess abschließenden, \texttt{STIM}-Nachricht.
 \end{itemize} 
 Dieser Vorgang ist in \autoref{fig:timeseq} visualisiert.
+
 \begin{figure}
 \centering
 \begin{sequencediagram}[ht]
@@ -320,26 +337,87 @@ Rückweg im Netzwerk auszugleichen, werden mehrere dieser Vorgänge durchgeführ
 und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieses
 stellt dann die zu verwendende Differenz dar.
 
+Der übertragene Zeitstempel stellt die vergangenen $\mu\second$ seit
+eines am Entwickler-Rechner festgelegten Zeitpunktes dar. Eine 32-Bit Zahl
+reicht unter diesen Umständen für die Betrachtung längerer Zeitabstände nicht
+mehr aus ($2^{32}\mu\second\approx 71\minute$).
+
+Eine 64-Bit Zahl bleibt somit als einzige Möglichkeit. Sie bietet ausreichend
+viel Platz ($2^{64}\mu\second\approx 584942~years$), um auch über sehr große
+Zeiträume Daten aufzuzeichnen.
 \subsection{Protokoll}
-Damit Die Client- und die Serveranwendung über das netzwerk kommunizieren
+Damit der Client und die Serveranwendungen über das Netzwerk kommunizieren
 können, wird ein Protokoll zum Datenaustausch spezifiziert. Dieses Protokoll
 legt sowohl den Aufbau der Datenpakete als auch die Abläufe der Kommunikation
 fest.
 
 Während die Übertragung der Nutzdaten (vom Zielsystem ausgegebene Daten) über
-TCP erfolgt, läuft die Zeitsynchronisation über UDP ab.
+TCP erfolgt, läuft die Zeitsynchronisation über UDP ab. Hierbei ist für die
+Übertragung der Nutzdaten aber zu entscheiden ob der Nagle Algorithmus
+deaktiviert werden muss, da die Daten ansonsten unter Umständen zu stark
+verzögert werden.
 
-<\ldots>
+Um das Protokoll erweiterbar zu halten, sollte es eine Möglichkeit geben, das
+System später um andere Nutzdatentypen wie zum Beispiel Ausgaben einer SPI oder
+I$^2$C-Schnittstelle erweitern zu können.
 
-<Hierzu gehören auch noch \autoref{fig:prot}, \autoref{fig:bytefield} und
-Erklärungen dazu>
-\begin{figure}[ht!]
+\begin{minipage}[c]{\textwidth}
+Das Protokoll soll folgende Funktionen erlauben:
+\begin{itemize}
+  \item Zeitsynchronisation wie in \autoref{subs:time} aufgeführt
+  \item Übertragung von UART-Daten
+  \item Erweiterungsmöglichkeit für andere Datentypen
+\end{itemize}
+\end{minipage}
+
+Jedes Datenpaket besteht dafür aus einem \textbf{Pakettyp}, der \textbf{Länge}
+(Anzahl Byte) der Nutzdaten, einem \textbf{Zeitstempel} und optional den
+\textbf{Nutzdaten}. Die Übertragung erfolgt dabei, wie für die meisten
+Netzwerkprotokolle üblich, in Big-Endian. Der Aufbau eines Datenpaketes ist in
+\autoref{fig:bytefield} visualisiert.
+
+Die Größe des Headers beträgt 11 Byte und setzt sich wie folgt zusammen:\\
+Für die Bestimmung des \textbf{Typs} eines Datenpaketes reichen 8 Bit. Dies
+ermöglicht 256 verschiedene Pakettypen und somit ausreichend Spielraum für
+potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} mit 64 Bit ist in
+\autoref{subs:time} erläutert worden. Die maximale Größe der an ein
+Datenpaket anhängbaren Nutzdaten ist auf 512 Byte beschränkt. Dies erscheint
+ausreichend groß für "`kurze"' Statusnachrichten. Hieraus ergibt sich, dass für
+die Angabe der \textbf{Länge} 16 Bit benötigt werden.
+
+\begin{figure}[h!]
+\centering
+\begin{bytefield}[bitheight=3.3ex,bitwidth=3em,endianness=big]{8}
+\bitheader{0-7} \\
+\begin{rightwordgroup}{Header}
+\wordbox{1}{Type (1 Byte)} \\
+\wordbox{2}{Length (2 Byte)} \\
+\wordbox{8}{Timestamp (8 Byte)}
+\end{rightwordgroup} \\
+\wordbox[lrt]{1}{Data (n Byte)} \\
+\skippedwords \\
+\wordbox[lrb]{1}{}
+\end{bytefield}
+\caption{Systematischer Aufbau eines Datenpaketes}
+\label{fig:bytefield}
+\end{figure}
+Aus dem Ablauf in \autoref{subs:time} ist ersichtlich, dass einzig für die
+\texttt{PING}-Nachricht und unter Umständen auch für die \texttt{STIM}-Nachricht
+eine Verwendung des Zeitstempels wichtig ist. Verlagert man den Zeitstempel der
+\texttt{STIM}-Nachricht innerhalb des Datenpaketes in den Bereich der
+\emph{Nutzdaten}, lässt sich das \emph{Zeitstempel}-Feld im UDP-Ablauf als
+Sequenznummer verwenden. Die erste \texttt{PING}-Nachricht übermittelt somit
+indirekt auch die für den Synchronisierungsablauf notwendige Sequenznummer in
+Form ihres eigenen Zeitstempels.
+
+In \autoref{fig:prot} sind die verschiedenen Pakettypen aufgeführt. 
+\begin{figure}[h!]
 \centering
 \begin{tabu}{l l l p{7cm}}
 \multicolumn{3}{c}{\textbf{Server zu Client}}\\ \cline{1-3}
 Protokoll & Abkürzung & Wert & Beschreibung \\ \hline
 TCP & MESS & \texttt{0x01} & Allgemeine Nachricht des Servers. Eventuell als
-Broadcast verursacht MESS von einem Client. \\
+Broadcast verursacht durch MESS von einem Client. \\
 & UART & \texttt{0x02} & Der Server hat eine UART-Zeile empfangen. Die
 empfangenen Daten sind als Payload angehängt. \\
 & SPID & \texttt{0x03} & Der Server hat eine SPI-Zeile empfangen. Die
@@ -360,30 +438,20 @@ mit aktuellem Zeitstempel des Clients senden. \\
 des zuletzt erhaltenen \emph{PONG} als Payload anhängen. Zeitstempel identisch
 mit PONG.\\
 \hline \end{tabu}\\
-\caption{Nachrichtentypen des Protokolls}{\emph{In dieser Tabelle ist mit
-"`Client"' das Softwaremodul auf dem Entwickler-PC und als "`Server"' das Gegenstück auf
-dem eingebetteten System gemeint.}}
+\caption{Nachrichtentypen des Protokolls}{In dieser Tabelle ist mit
+"`Client"' das Softwaremodul auf dem Entwickler-PC und als "`Server"' das
+Gegenstück auf dem eingebetteten System gemeint. Die Spalte "`Wert"' enthält die
+im Header als "`Typ"' bezeichnete Kodierung des Pakettyps.}
 \label{fig:prot}
 \end{figure}
-\begin{figure}[ht!]
-\centering
-\begin{bytefield}[bitheight=3.3ex,bitwidth=3em,endianness=big]{8}
-\bitheader{0-7} \\
-\begin{rightwordgroup}{Header}
-\wordbox{1}{Type (1 Byte)} \\
-\wordbox{2}{Length (2 Byte)} \\
-\wordbox{8}{Timestamp (8 Byte)}
-\end{rightwordgroup} \\
-\wordbox[lrt]{1}{Data (n Byte)} \\
-\skippedwords \\
-\wordbox[lrb]{1}{}
-\end{bytefield}
-\caption{Systematischer Aufbau eines Datenpaketes}
-\label{fig:bytefield}
-\end{figure}
+
 \section{Deployment}
-<\ldots>
-\subsection{Übersicht}
-<\ldots>
+Die zum \emph{Debuggen} bereits bestehende \gls{jtag}-Verbindung lässt sich
+ebenso verwenden, um Software auf das Zielsystem zu bringen.
+
+Grundvoraussetzung ist hierfür jedoch, dass sich das \gls{rom} des Zielsystems
+über den \gls{tap} erreichen lässt. Dies ist bei dem verwendeten ST Cortex M3
+(und vielen anderen Mikrocontrollern) der Fall.
 \subsection{Zielsetzung}
-<\ldots>
+Es muss ein Skript für einen \gls{gdb}-Client erstellt werden, das es erlaubt,
+eine beliebige Anzahl Zielsysteme mit einer neuen Firmware zu versorgen.

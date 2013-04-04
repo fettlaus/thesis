@@ -276,9 +276,9 @@ den weiteren Entscheidungen ebenso widerzuspiegeln.
 Vorgaben für ein beispielhaftes Zielsystem erläutert und festgelegt werden. 
 \subsection{Entwicklungssystem}
 <Warum wir das Carambola wählten>
-
-Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten Betriebssystem für
-eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
+<Was das Carambola ist>
+Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten
+Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
 portierter Softwarepakete, unterstützt viele Architekturen (unter anderem ARM,
 MIPS, PowerPC, x86) und gewährleistet, durch simple Konfigurationsdateien, einen
 hohen Grad an Konfigurierbarkeit.
@@ -340,11 +340,13 @@ Ethernet) genutzen werden.
 \subsection{Debugging} Die Entwicklung einer Software und die Suche nach Fehlern
 in dieser wird durch den Einsatz eines Debuggers enorm erleichtert. 
 
+\begin{minipage}[c]{\textwidth}
 Gefordert wird:
 \begin{itemize}
   \item Die Möglichkeit, das Zielsystem schrittweise zu Debuggen
   \item Eine Integration in eine zu Entwicklungsoberfläche(\gls{ide})
 \end{itemize}
+\end{minipage}
 
 \subsection{Deployment} Für das Deployment, sowohl testweise und zu
 Debuggingzwecken während der Entwicklung als auch für die endgültige
@@ -464,8 +466,8 @@ Zu den softwaregestützten Schritten zählen hierbei:
   \item \subsection*{Integrationstest} Integrationstest eingebetteter Systeme
   erfolgen meist mit Hilfe standardisierter Verfahren. Diese verfahren lassen
   sich oft auch zum Beispiel in die Endkontrolle von herstellungsprozessen
-  integrieren. So sind in der Industrie verfahren wie JTAG oder Pintests weit
-  verbreitet.
+  integrieren. So sind in der Industrie verfahren wie \gls{jtag} oder
+  Pintests weit verbreitet.
   \item \subsection*{Deployment} Im Bereich der 
   \item \subsection*{Wartung}
 \end{itemize}
