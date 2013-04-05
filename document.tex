@@ -26,6 +26,8 @@
 \usepackage{lipsum} %% for sample text
 \usepackage{etoolbox}
 %% All my packages
+\definecolor{grey}{HTML}{E6E6E6}
+\usepackage{realboxes}
 \usepackage{amsmath}
 \usepackage{framed}
 \usepackage[amsmath,standard,hyperref,framed]{ntheorem}
@@ -35,7 +37,7 @@
 \usepackage{bytefield}
 \usepackage{float}
 \usepackage{csquotes}
-\usepackage[citestyle=numeric,doi=true,url=true]{biblatex}
+\usepackage[sorting=none,backend=biber,citestyle=numeric,doi=true,url=true]{biblatex}
 \addbibresource{sample.bib}
 %%\usepackage{amsthm}
 \usepackage{parskip}
@@ -49,6 +51,7 @@
 \graphicspath{{./res/}{./logo/}}
 
 \input{glos.tex}
+\input{customs.tex}
 %%\newacronym{dap}{DAP}{Debug access port}
 %%\newacronym{tap}{TAP}{test access port}
 \makeglossaries
@@ -122,21 +125,20 @@
 
 \begin{document}
 \selectlanguage{ngerman}
-
 \floatstyle{ruled}
 \restylefloat{figure}
 %%%%%
 %% customize (see readme.pdf for supported values)
 \HAWThesisProperties{Author={Arne Wischer	}
                     ,Title={Design und Implementierung eines verteilten
-                    linuxbasierten Entwicklungssystems für Nahbereichsfunkanwendungen mit ARM-Architektur }
-                    ,EnglishTitle={Developing software in Germany} ,ThesisType={Bachelorarbeit}
+                    linuxbasierten Entwicklungssystems für
+                    Nahbereichsfunkanwendungen mit ARM-Architektur }
+                    ,EnglishTitle={Developing software in Germany}
+                    ,ThesisType={Bachelorarbeit}
                     ,ExaminationType={Bachelorprüfung}
-                    ,DegreeProgramme={Bachelor of Science Technische Informatik}
-                    ,ThesisExperts={Prof. Dr. rer. nat. Hans Heinrich Heitmann
-                    \and Prof.
+                    ,DegreeProgramme={Bachelor of Science Technische Informatik} ,ThesisExperts={Prof. Dr. rer. nat. Hans Heinrich Heitmann \and Prof.
                     Dr.
-                    Zweitprüfer} ,ReleaseDate={\today}
+                    Zweitprüfer} ,ReleaseDate={18. April 2013}
                   }
 
 %% title

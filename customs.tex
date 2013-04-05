@@ -1,0 +1,10 @@
+\newcommand{\listinlsh}[1]{\Colorbox{grey}{\lstinline[language=sh]{#1}}}
+\newcommand{\listinlcpp}[1]{\Colorbox{grey}{\lstinline[language=C++]{#1}}}
+\newcommand{\listinljava}[1]{\Colorbox{grey}{\lstinline[language=Java]{#1}}}
+%%\theoremstyle{definition}
+%%\newtheorem{defi}{Definition}
+%%\theoremindent9pt
+\theoremprework{\par\begin{minipage}{\textwidth}\hrule\medskip}
+\theorempostwork{\hrule\medskip\end{minipage}}
+%%\renewtheoremstyle{definition}
+\renewtheorem{definition}{Definition}[chapter]

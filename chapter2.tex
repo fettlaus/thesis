@@ -20,10 +20,10 @@ vom Entwicklersystem gesteuert und übermitteln an dieses auch alle
 Daten, die sie von ihrem jeweils angeschlossenen "`Ziel"' erhalten.}
 \label{fig:sys}
 \end{figure}
-Der Grundgedanke, der hinter dem zu entwerfenden \emph{Entwicklungssystem}
-stehen soll ist, dass bereits bestehende Infrastruktur wie Ethernet oder WLAN
-genutzt wird, um die Steuerung der Systeme und die Erfassung der Daten
-auf dem System des Entwicklers verfügbar zu machen und zusammenzufassen.
+Der Grundgedanke hinter dem zu entwerfenden \emph{Entwicklungssystem} ist, dass
+bereits bestehende Infrastruktur wie Ethernet oder WLAN für die \emph{"`Module"'}
+genutzt wird, um die Steuerung der emph{"`Ziele"'} und die Erfassung der Daten auf
+dem System des Entwicklers verfügbar zu machen und zusammenzufassen.
 
 In \autoref{fig:sys} ist dargestellt, wie die eingezeichneten \emph{"`Module"'}
 über WLAN in die bestehende Infrastruktur, symbolisiert durch einen
@@ -32,7 +32,7 @@ Access-Point, eingegliedert werden.
 Das \emph{Zielsystem} ist das System, welches mit Hilfe des
 \emph{Entwicklungssystems} relisiert werden soll.
 \end{definition}
-Die einzelnen \emph{"`Module"'} wiederum sind in der Lage, die Ein- und Ausgänge
+Die einzelnen \emph{"`Module"'} sind in der Lage, die Ein- und Ausgänge
 der \emph{Zielsysteme ("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
 ermöglicht es, Daten zu sammeln und weiterzuleiten, sowie auf die "`Ziele"'
 zuzugreifen.
@@ -71,26 +71,29 @@ dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann.
 \def\svgwidth{\columnwidth}
 \input{res/wasserfallmodell.pdf_tex}
 \caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell. Erstellt nach
-\cite{WP01}}
+\cite{WP01}}{Jedes Element in diesem Diagramm stellt einen der Schritte und
+damit eine Phase des Waserfallmodells dar. Die Übergänge zwischen dein
+einzelnen Phsen sind oft fest definiert.}
+\label{fig:wasser}
 \end{figure}
 
-Jeder einzelne Schritt in der Entwicklung stellt hierbei eine abgeschlossene
-Phase mit vorher festgelegten Anfangs- und Endpunkten dar.
+In \autoref{fig:wasser} ist der mögliche Ablauf eines Wasserfallsmodells
+dargestellt.
 
-In den Initialisierungs- und Analysephasen wird oft der Kunde in die
+In den \emph{Initialisierungs- und Analysephasen} wird oft der Kunde in die
 Entwicklung eingebunden. Typischerweise werden hier deshalb keine oder nur
 wenige spezialisierte Tools verwendet. Zu der verwendeten Software zählt hier
 unter anderem \emph{Projektmanagementsoftware}.
 
-Die Entwurfs- und Realisierungsphasen jedoch benötigen oft eine hohe
+Die \emph{Entwurfs- und Realisierungsphasen} jedoch benötigen oft eine hohe
 Softwareunterstützung. Während in der Entwurfsphase meist Tools zur
 Visualisierung und Strukturierung von Softwarearchitektur eingesetzt werden
 \emph{(\gls{uml}, Struktogramme, etc.)}, werden in der Realisierungsphase
-meist Werkzeuge eingesetzt, die von der konkreten Anforderung abhängen.
-\emph{(Compiler, \glspl{ide}, Debugger)}
+meist Werkzeuge eingesetzt, die von der konkreten Anforderung abhängen
+\emph{(Compiler, \glspl{ide}, Debugger)}.
 
-Um einen Übergang in die Einführungs- und Nutzungsphasen zu ermöglichen, muss
-die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
+Um einen Übergang in die \emph{Einführungs- und Nutzungsphasen} zu ermöglichen,
+muss die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
 System auf eine Erfüllung der Anforderungen überprüfen. Hierfür werden
 häufig Testpraktiken benutzt, die auch soft- und hardwaregestützt
 ablaufen. \emph{(\gls{jtag}, Unittests, In-circuit Tests)}
@@ -154,7 +157,7 @@ werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
   Debugger sind in integrierten Systemen oft auf eine hohe Hardwareunterstützung
   angewiesen. In \autoref{subs:hwdebugger} wird dies näher beschrieben.
   
-   \emph{Beispiele:} \gls{gdb} , IDB (Intel Debugger), Valgrind
+   \emph{Beispiele:} GDB , IDB (Intel Debugger), Valgrind
   \item \subsubsection*{Testtools} In die Kategorie der Testtools fallen
   alle Elemente die benötigt werden, um die Funktionsfähigkeit eines Systems zu
   prüfen. Außerdem dienen diese auch oft dazu, ein Gesamtsystem sowie dessen
@@ -172,10 +175,10 @@ werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
   \item \subsubsection*{Deploymenttools}\label{subs:deployment} Um ein System
   ausliefern zu können, muss es für den Endanwender vorbereitet werden.
   
-  Im Embeddedbereich erfolgt dies meist durch ein "`Flashen"' der Firmware.
-  Dieser Vorgang wird jedoch, zu Testzwecken, auch in der Entwicklungsphase
-  eines Projektes oft durchgeführt und muss daher entsprechend einfach und
-  möglichst unkompliziert sein.
+  Im Embeddedbereich erfolgt dies meist durch ein Übertragen der
+  Firmware in den \gls{rom} des Zielsystems. Dieser Vorgang wird jedoch, zu
+  Testzwecken, auch in der Entwicklungsphase eines Projektes oft durchgeführt
+  und muss daher entsprechend einfach und möglichst unkompliziert sein.
   
   \emph{Beispiele:} Installer, Paketverwaltungssysteme, Skripte
 \end{itemize}
@@ -196,11 +199,11 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   \end{figure}
   Der \gls{jtag}-Port ist ein System, welches ursprünglich für genau diese
   Zwecke konzipiert wurde. Er ermöglicht es, einen sogenannten boundary-scan
-  durchzuführen. Jedes in \autoref{fig:ALT01} mit "`IC"' markierte Bauteil muss
-  dafür über einen, in der Abbildung nicht eingezeichneten, sogenannten \gls{tap} oder
+  durchzuführen. Jedes in \autoref{fig:ALT01} mit "`\gls{ic}"' markierte
+  Bauteil muss dafür über einen, in der Abbildung nicht eingezeichneten, sogenannten \gls{tap} oder
   \gls{dap}\footnote{Wird von neueren ARM Kernen benutzt.
   Ermöglicht auch Tracing.} verfügen. Diese befinden sich \emph{nicht} in der
-  Logik des Bauteils sondern stellen eine separate Steuerschaltung dar.
+  Logik des Bauteils, sondern stellen eine separate Steuerschaltung dar.
   
   Die \glspl{tap}/\glspl{dap} werden verkettet und ermöglichen es, die Ein-
   und Ausgänge der einzelnen Bauteile mit Prüfdaten zu betreiben, Bauteile komplett
@@ -252,7 +255,7 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
 %%==================================================================
 \section{Vorgaben des Zielsystems}
 Die hier angeführten Punkte wurden als grundlegend für die Arbeit erachtet und
-sind aus diesem Grund feste vorgaben an das System und keine
+sind aus diesem Grund feste Vorgaben an das System und keine
 Designentscheidungen. An dieser Stelle sollen lediglich die Gründe für
 die Wahl dieser Vorgaben erläutert werden.
 
@@ -280,15 +283,15 @@ Vorgaben für ein beispielhaftes Zielsystem erläutert und festgelegt werden.
 Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten
 Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
 portierter Softwarepakete, unterstützt viele Architekturen (unter anderem ARM,
-MIPS, PowerPC, x86) und gewährleistet, durch simple Konfigurationsdateien, einen
+MIPS, PowerPC, x86) und gewährleistet durch simple Konfigurationsdateien einen
 hohen Grad an Konfigurierbarkeit.
 \subsection{Zielsystem}
 Bedingt durch die hohe Verbreitung von ARM \glspl{cpu}
 existiert eine große Anzahl an Entwicklungsboards, die in Frage kommen.
 
-Da das Zielsystem später stark integriert arbeiten können soll, ist es wichtig,
-eine Entscheidung eher nach Kriterien der Energieeffizienz als der
-Rechenleistung zu treffen.
+Es ist wichtig eine Entscheidung eher nach Kriterien der Energieeffizienz als
+der Rechenleistung zu treffen, da das Zielsystem später stark integriert
+arbeiten können soll.
 
 Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
 Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
@@ -301,7 +304,7 @@ dafür.
 \subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
 zwei Kategorien einteilen.
 
-Jedes Funkmodul besteht midnestens aus einem \textbf{Transceiver}. Dieser
+Jedes Funkmodul besteht mindestens aus einem \textbf{Transceiver}. Dieser
 Transceiver umfasst zumindest die analogen Komponenten der physikalischen
 Schicht wie Analog-Digital-Wandler, Digital-Analog-Wandler, Filter, Verstärker,
 Frequenzerzeuger. Je nach Ausführung werden, ahängig davon ob der Transceiver
@@ -312,13 +315,13 @@ einen Transceiver integriert.
 Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
 zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
 neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
-Aufgaben höherer Schichten und wir dafür oft über einfache Protokolle wie UART
+Aufgaben höherer Schichten und wird dafür oft über einfache Protokolle wie UART
 oder SPI angesprochen.
 
 Dies bedeutet jedoch gleichzeitig mehr Hardware, da ein integrierter
 Mikroprozessor betrieben werden muss und somit Strom benötigt.
 Außerdem verhindert die hohe Abstraktion der Kommunikation genauere Einblicke in
-deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll, die
+deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll die
 Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
 Abstraktion hinderlich sein.
 
@@ -344,34 +347,33 @@ in dieser wird durch den Einsatz eines Debuggers enorm erleichtert.
 Gefordert wird:
 \begin{itemize}
   \item Die Möglichkeit, das Zielsystem schrittweise zu Debuggen
-  \item Eine Integration in eine zu Entwicklungsoberfläche(\gls{ide})
+  \item Eine Integration in eine Entwicklungsoberfläche(\gls{ide})
 \end{itemize}
 \end{minipage}
 
 \subsection{Deployment} Für das Deployment, sowohl testweise und zu
 Debuggingzwecken während der Entwicklung als auch für die endgültige
 Fertigstellung, ist es erforderlich, die einzelnen Knoten des Zielsystems mit
-einer neuen Firmware flashen zu können.
+einer neuen Firmware beschreiben zu können.
 
-Da, es sich bei dem Zielsystem in seiner Gesamtheit um eine Vielzahl identischer
+Da es sich bei dem Zielsystem in seiner Gesamtheit um eine Vielzahl identischer
 Komponenten handelt, sollte sich dieser Prozess im Idealfall auf
 eine beliebige Anzahl an Zielsystemen ausweiten lassen. Es wäre wünschenswert,
-eine Anzahl von Komponenten in einem einzigen Schritt mit einer Firmware zu
-beschreiben.
+eine Anzahl von Komponenten in einem einzigen Schritt mit einer Firmware
+beschreiben zu können.
 
-\subsection{Datenanalyse} Die Möglichkeit, ein Entwicklungssystem beliebige
-Daten als "`Debuginformationen"' ausgeben zu lassen, erlaubt es, eine
+\subsection{Datenanalyse} Die Möglichkeit ein Entwicklungssystem beliebige
+Daten als "`Debuginformationen"' ausgeben zu lassen erlaubt es, eine
 Übersicht über die zeitlichen Abläufe zu erstellen. Gerade für die
-Zusamenarbeit miteinander interagierende Module ist es also wichtig, diese
+Zusammenarbeit miteinander interagierender Module ist es also wichtig, diese
 Informationen zentral zu sammeln und sortieren, um sie später zur
 Fehlersuche heranziehen zu können.
 
-Um dieses System umsetzen zu können müssen also zwei Komponenten erstellt
-werden:
+Zur Umsetzung dieses Systems müssen also zwei Komponenten erstellt werden:
 \begin{enumerate}
-  \item Eine zentrale Verwaltungseinheit um Daten zu aggregieren und verwalten
-  zu können
-  \item Ein Gegenstück, dass die Daten eines einzelnen Moduls sammelt und an die
+  \item Eine zentrale Verwaltungseinheit, die Daten aggregieren und verwalten
+  kann
+  \item Ein Gegenstück, das die Daten eines einzelnen Moduls sammelt und an die
   Verwaltungseinheit weiterleitet
 \end{enumerate}
 

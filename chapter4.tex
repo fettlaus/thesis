@@ -1,8 +1,38 @@
 \chapter{Realisierung}
 \section{Konfiguration des Carambola}
+OpenWRT bietet mit dem Programm \gls{uci} eine Anwendung,
+Einstellungen zentralisiert zu verwalten. Über das \gls{uci}-System lassen sich
+unter anderem Ethernet, WLAN, DHCP und SSH-Server konfigurieren.
+
+Nach Systemstart werden alle Dateien im Ordner \texttt{/etc/uci-defaults}
+eingelesen, ausgeführt und anschließend gelöscht. Dies erlaubt es
+Softwarepaketen, Einstellungen am System vorzunehmen. Werden diese
+Softwarepakete bereits in die Firmware integriert, entspricht dies einer Art
+Vorkonfiguration des Systems.
 \subsection{WLAN und Netzwerkkonfiguration}
-<UCI, Konfigurationsskript>
+Da die Netzwerkkonfiguration von OpenWRT vollständig durch die
+\gls{uci}-Konfigurationsdateien abgewickelt wird, muss auch \gls{uci} genutzt
+werden, wenn das Netzwerk vorkonfiguriert werden soll.
+
+\gls{uci} bietet mit \listinlsh{uci batch} explizit einen Befehl an, um <\ldots> 
+\begin{definition}[Here document]
+Ein \emph{Here document} ermöglicht es unter einer Unix Shell, ein normalerweise
+interaktives Programm mit definierten Daten zu speisen.
+\end{definition}
+
+ <UCI, Konfigurationsskript>
 \subsection{Aktivierung des UART}
+Der Mikrochip\cite{RA01} des Carambolas besitzt zwei \glspl{uart}. Einer dieser
+\glspl{uart} wird für die Serielle Konsole verwendet und somit kann der zweite
+Anschluss für die Datenschnittstelle des Entwicklungssystems verwendet werden.
+Da die Pins des Carambolas für den zweiten \gls{uart} standardmäßig auf
+\gls{gpio}-Betrieb eingestellt sind, müssen diese erst umgestellt werden.
+
+Hierzu muss das Tool \texttt{io} installiert und mittels 
+\listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies setzt im Speicher des
+Mikrocontrollers das Flag, den \gls{uart} zu aktivieren. Dieser Vorgang muss
+nach jedem Systemstart erfolgen und wird 
+
 <Deaktivierung der Konsole, Aktivierung des zweiten UART>
 \section{OpenOCD}
 \begin{itemize}

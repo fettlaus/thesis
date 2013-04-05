@@ -10,7 +10,7 @@ Nach einer Analyse bereits existierender Systeme folgt schließlich die
 Festlegung auf ein Entwicklungsziel.
 
 Letztendlich muss sichergestellt werden, dass alle einzelnen Komponenten in dem
-zu planenden System miteinander interagieren. Es müssen also
+zu planenden System miteinander interagieren. Es müssen
 Schnittstellenspezifikationen festgelegt werden.
 \section{Debugging}
 \subsection{Definition}
@@ -28,18 +28,18 @@ Als Schnittstellen sind für diese Zwecke vor allem \gls{jtag} und \gls{swd}
 verbreitet. Während \gls{jtag} ursprünglich primär zum Testen von Bauteilen
 konzipiert wurde, erweitert \gls{swd} dieses Konzept um speziell für das
 Debuggen nützliche Funktionen (Tracing, Paritätschecks) und reduziert die Anzahl
-zwingend notwendiger Pins von 4 auf 2. Da \gls{swd} aber von ARM speziell
-für Prozessoren mit eingebautem CoreSight-Modul entwickelt wurde, ist
-Unterstützung hierfür nicht auf allen ARM-Controllern anzutreffen. \gls{jtag}
+zwingend notwendiger Pins von 4 auf 2. Da \gls{swd} aber von
+ARM speziell für Prozessoren mit eingebautem CoreSight-Modul entwickelt wurde,
+ist Unterstützung hierfür nicht auf allen ARM-Controllern anzutreffen. \gls{jtag}
 hat hier eine wesentlich größere Verbreitung und wird auch
-architekturübergreifend genutzt (Die Wahl von \gls{jtag} würde eine spätere
-Erweiterung auf andere Architekturen somit erleichtern).
+architekturübergreifend genutzt. Die Wahl von \gls{jtag} würde eine spätere
+Erweiterung auf andere Architekturen somit erleichtern.
 \subsection{Marktübersicht}
 Die Auswahl bereits existierender Netzwerk-Debugging-Lösungen ist geradezu
 minimal.
 Als eigenständige Lösung findet sich hier zum Beispiel \emph{ZY1000 (Ultimate
-Solutions Inc.)} oder \emph{WiFiDemon (Macraigor Systems)}. Beide Systeme
-stellen eine Schnittstelle zwischen Ethernet oder WLAN dar und sind somit
+Solutions Inc.)}\cite{ULT} oder \emph{WiFiDemon (Macraigor Systems)}\cite{MAC}.
+Beide Systeme stellen eine Schnittstelle zwischen Ethernet oder WLAN dar und sind somit
 bereits existierende Umsetzungen des geplanten \emph{Entwicklungssystems}, wenn
 man es auf den Aspekt des Debugging reduzieren würde.
 
@@ -60,7 +60,7 @@ Telnet-Protokoll oder mittels eines \gls{gdb}-Clients bedienen.
 Der \gls{gdb} ist der Standard-Debugger unter
 Unix-Betriebssystemen. Er bietet unter Anderem die Möglichkeit, ein Programm im
 laufenden Betrieb anzuhalten, Breakpoints zu setzen oder Single-Stepping
-durchzuführen. Der GDB lässt besitzt keine grafische Oberfläche, sondern
+durchzuführen. Der GDB besitzt keine grafische Oberfläche, sondern
 lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
 einem Client über TCP/IP ferngesteuert zu werden. 
 \end{definition}
@@ -74,10 +74,16 @@ um den Kompilationsvorgang durchzuführen.
 In diesen Fällen kommt ein sogenannter \emph{Cross-Compiler} zum Einsatz.
 \subsection{OpenWRT - Paketverwaltung und Kompiliervorgang}
 OpenWRT besitzt mit \textbf{opkg} ein Tool zur Paketverwaltung von Anwendungen.
-Hierbei kann die Software in Form von *.ipk-Files aus sogenannten "`Repositories"'
-heruntergeladen und anschließend installiert werden. Durch dieses Tool wird es
-möglich, das eingebettete System für die eigenen Bedürfnisse anzupassen.
-
+Hierbei kann die Software in Form von *.ipk-Files aus "`Repositories"'
+installiert werden. Durch dieses Tool wird es möglich, das eingebettete System
+für die eigenen Bedürfnisse anzupassen.
+\begin{definition}[Repository]
+Ein \emph{Repository} enthält kompilierte Anwendungen für ein bestimmtes
+Betriebssystem und eine spezifische Architektur. Über eine
+Paketverwaltungssoftware kann auf das Repository zugegriffen, Software
+heruntergeladen und installiert werden. Abhängigkeiten gegenüber anderen
+Softwarepaketen werden meist selbstständig erkannt und zusätzlich installiert.
+\end{definition}
 Die Erstellung neuer Pakete für OpenWRT wird durch stark modifizierte Makefiles
 wesentlich vereinfacht.
  \begin{definition}[Makefile]
@@ -120,13 +126,14 @@ OpenOCD unterstützt eine große Anzahl verschiedener \gls{jtag}-Adapter.
 Viele dieser Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
 
 Neben den industriellen Lösungen mit speziell entwickelten Bauteilen(Segger
-J-Link, ST Micro ST-Link), existieren auch viele Alternativen, die bereits
-existierende Bauteile verwenden. So kommt zum Beispiel oft der
+J-Link\cite{SEG}, ST Micro ST-Link\cite{STM01}), existieren auch viele
+Alternativen, die bereits existierende Bauteile verwenden. So kommt zum Beispiel oft der
 \emph{FT2232}-Chip zum Einsatz, der auf die Umsetzung von USB-Daten zu einem
 seriellen bzw. parallelen Ausgang spezialisiert ist. Neben kommerziellen
-Adaptern (Amontec JTAGkey2, Olimex ARM-USB-TINY-H) existieren auch einige Open
-Source Lösungen, in denen der \emph{FT2232} zum Einsatz kommt (OOCDLink,
-Opendous). 
+Adaptern (Amontec JTAGkey2\cite{AMO}, Olimex ARM-USB-TINY-H\cite{OLI})
+existieren auch einige Open Source Lösungen, in denen der \emph{FT2232} zum
+Einsatz kommt (OOCDLink\cite{OCDL}, Turtelizer 2\cite{TURT}). Eine Auflistung
+aller mit OpenOCD kompatiblen Adapter findet sich in dessen "`User Guide"'\cite{OOCD}.
 
 Entscheidend für die Wahl eines Adapters sollte zum einen die Anzahl der
 unterstützten Zielsysteme sein. Diese definiert sich hauptsächlich über die
@@ -167,7 +174,7 @@ Debugsystem umgesetzt werden:
 \section{Datenanalyse}\label{sec:datenan}
 Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die Analyse
 von vom Zielsystem erzeugten Daten. Da das Zielsystem über eine
-Funkschnittstelle verfügt, muss eine, für das Zielsystem zu entwickelnde,
+Funkschnittstelle verfügt, muss die für das Zielsystem zu entwickelnde
 Software diese Schnittstelle sicher auch in Betrieb nehmen können.
 
 Soll für diese Funkschnittstelle nun also z.B. ein neues Funkprotokoll entworfen
@@ -220,7 +227,7 @@ Funkknoten verschiedene Aufgaben im Routing und Aufbau des eigenen
 Funknetzwerkes übernehmen.
 
 \subsection{Anforderungen}
-Aufgabe dieses Teil des Entwicklungssystems wird es sein, die Erfassung der in
+Aufgabe dieses Teils des Entwicklungssystems wird es sein, die Erfassung der in
 \autoref{sec:datenan} erwähnten Abläufe zu erleichtern.
 
 Bedingung für die Erfassung von Daten seitens des Entwicklungssystems ist, dass
@@ -234,11 +241,11 @@ angepasst werden, dass es die zu sammelnden Daten über \gls{uart} ausgibt.
 
 \begin{definition}[UART]
 Der \gls{uart} ist eine, in Mikrocontrollern sehr weit verbreitete,
-elektronische Schaltung zur seriellen Übermittlung und Empfang von Daten. In
+elektronische Schaltung zur seriellen Übertragung von Daten. In
 seiner Minimalkonfiguration benötigt der \gls{uart} nur zwei Pins (RX ---
-Receive, TX --- Transmit), da auf ein Taktsignal verzichtet werden kann. Dies
-ermöglicht eine Nutzung von \gls{uart} auch in einem stark integriertem
-Zielsystem.
+Receive, TX --- Transmit), da, durch Festlegung auf einen gemeinsamen Takt, auf
+ein Taktsignal verzichtet werden kann. Dies ermöglicht eine Nutzung von
+\gls{uart} auch in einem stark integriertem Zielsystem.
 \end{definition}
 
 \begin{minipage}[c]{\textwidth}
@@ -270,7 +277,8 @@ bestehen.
 
 \subsection{Zeitsynchronisation}\label{subs:time}
 Ein wichtiger Punkt im Entwurf dieses Systems ist die \textbf{Synchronisation
-der Uhren}. Da jedes Entwicklungsmodul zu einem
+der Uhren} der jeweiligen Module. Nur so kann eine Vergleichbarkeit der
+verarbeiteten Daten gewährleistet werden.
 
 Ein erster Ansatz wäre hier, bereits bestehende Synchronisationstechniken wie
 \gls{ntp} zu verwenden. Diese haben jedoch den Nachteil, dass sie für die
@@ -280,9 +288,9 @@ Echtzeituhren besitzen, Datum und Uhrzeit nach einem Start des Systems auf die
 Unix Epoche gesetzt. Da NTP direkt die Systemzeit beeinflusst, würde dies 
 unter Umständen Auswirkungen auf andere Prozesse bedeuten.
 
-Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von Christian
-zum Einsatz kommen. Entscheidend ist hierbei, dass der Synchronisationsvorgang
-vom Zeitgeber angestoßen wird. Dies erfordert eine zusätzliche
+Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von
+Christian\cite{CHR} zum Einsatz kommen. Entscheidend ist hierbei, dass der
+Synchronisationsvorgang vom Zeitgeber angestoßen wird. Dies erfordert eine zusätzliche
 abschließende Datenübertragung.
 
 Da TCP durch seine Flusskontrolle die Messung der Netzwerklatenz
@@ -332,10 +340,10 @@ Formel errechnen.
 \begin{equation}
 \frac{t_1-t_0-t_3+t_2}{2}=\Delta t
 \end{equation}
-Um Abweichungen zum Beispiel durch unterschiedliche Latenzen auf dem Hin- und
-Rückweg im Netzwerk auszugleichen, werden mehrere dieser Vorgänge durchgeführt
-und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieses
-stellt dann die zu verwendende Differenz dar.
+Um Abweichungen, zum Beispiel durch unterschiedliche Latenzen auf dem Hin- und
+Rückweg im Netzwerk, auszugleichen, werden mehrere dieser Vorgänge durchgeführt
+und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieser
+Mittelwert ist eine etwas bessere Annäherung an die tatsächliche Differenz.
 
 Der übertragene Zeitstempel stellt die vergangenen $\mu\second$ seit
 eines am Entwickler-Rechner festgelegten Zeitpunktes dar. Eine 32-Bit Zahl
@@ -352,10 +360,13 @@ legt sowohl den Aufbau der Datenpakete als auch die Abläufe der Kommunikation
 fest.
 
 Während die Übertragung der Nutzdaten (vom Zielsystem ausgegebene Daten) über
-TCP erfolgt, läuft die Zeitsynchronisation über UDP ab. Hierbei ist für die
-Übertragung der Nutzdaten aber zu entscheiden ob der Nagle Algorithmus
-deaktiviert werden muss, da die Daten ansonsten unter Umständen zu stark
-verzögert werden.
+TCP erfolgt, läuft die Zeitsynchronisation über UDP ab. Die Verwendung von UDP
+garantiert, dass keine Mehrfachübertragung eines fehlerhaften Datenpaketes
+erfolgt, welche eine korrekte Zeitmessung verhindern würde.
+
+Für die Übertragung der Nutzdaten ist aber zu entscheiden ob der Nagle
+Algorithmus\cite{RFC896} deaktiviert werden muss, da die Daten ansonsten unter
+Umständen zu stark verzögert werden.
 
 Um das Protokoll erweiterbar zu halten, sollte es eine Möglichkeit geben, das
 System später um andere Nutzdatentypen wie zum Beispiel Ausgaben einer SPI oder
