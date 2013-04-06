@@ -1,27 +1,39 @@
 \chapter{Realisierung}
+In diesem Kapitel wird die Realisierung des Entwicklungssystems
+beschrieben. <\ldots>
 \section{Konfiguration des Carambola}
-OpenWRT bietet mit dem Programm \gls{uci} eine Anwendung,
-Einstellungen zentralisiert zu verwalten. Über das \gls{uci}-System lassen sich
-unter anderem Ethernet, WLAN, DHCP und SSH-Server konfigurieren.
+OpenWRT bietet mit dem Programm \gls{uci} eine Anwendung, Einstellungen
+zentralisiert zu verwalten. Über das \gls{uci}-System lassen sich unter anderem
+Ethernet, WLAN, DHCP und SSH-Server konfigurieren. Die einzelnen
+Einstellungsdateien liegen alle im Verzeichnis \listinlsh{/etc/config/} und
+können mittels des Tools modifiziert werden.
 
-Nach Systemstart werden alle Dateien im Ordner \texttt{/etc/uci-defaults}
-eingelesen, ausgeführt und anschließend gelöscht. Dies erlaubt es
-Softwarepaketen, Einstellungen am System vorzunehmen. Werden diese
-Softwarepakete bereits in die Firmware integriert, entspricht dies einer Art
-Vorkonfiguration des Systems.
+Nach Systemstart werden außerdem alle Dateien im Ordner
+\listinlsh{/etc/uci-defaults/} eingelesen, ausgeführt und anschließend gelöscht.
+Dies erlaubt es Softwarepaketen, Einstellungen am System vorzunehmen. Werden
+diese Softwarepakete bereits in die Firmware integriert, entspricht dies einer
+Art Vorkonfiguration des Systems.
 \subsection{WLAN und Netzwerkkonfiguration}
 Da die Netzwerkkonfiguration von OpenWRT vollständig durch die
 \gls{uci}-Konfigurationsdateien abgewickelt wird, muss auch \gls{uci} genutzt
 werden, wenn das Netzwerk vorkonfiguriert werden soll.
 
-\gls{uci} bietet mit \listinlsh{uci batch} explizit einen Befehl an, um <\ldots> 
-\begin{definition}[Here document]
-Ein \emph{Here document} ermöglicht es unter einer Unix Shell, ein normalerweise
-interaktives Programm mit definierten Daten zu speisen.
+\gls{uci} bietet mit \listinlsh{uci batch} explizit einen Befehl an, um
+umfangreiche Einstellungsändeurngen vorzunehmen. Hierfür werden die einzelnen
+Befehle mittels \emph{Here document} übergeben.
+\begin{lstlisting}[language=sh]
+uci batch <<-EOF_network
+	...
+	commit network
+	EOF_network
+\end{lstlisting}
+
+ \begin{definition}[Here document]
+Ein \emph{Here document} ermöglicht es, einem Unix-Befehl mehrere, durch
+Zeilenumbrüche getrennte, Befehle zu übergeben.
 \end{definition}
 
- <UCI, Konfigurationsskript>
-\subsection{Aktivierung des UART}
+\subsection{Aktivierung des UART}\label{subs:aktuart}
 Der Mikrochip\cite{RA01} des Carambolas besitzt zwei \glspl{uart}. Einer dieser
 \glspl{uart} wird für die Serielle Konsole verwendet und somit kann der zweite
 Anschluss für die Datenschnittstelle des Entwicklungssystems verwendet werden.
@@ -31,20 +43,70 @@ Da die Pins des Carambolas für den zweiten \gls{uart} standardmäßig auf
 Hierzu muss das Tool \texttt{io} installiert und mittels 
 \listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies setzt im Speicher des
 Mikrocontrollers das Flag, den \gls{uart} zu aktivieren. Dieser Vorgang muss
-nach jedem Systemstart erfolgen und wird 
+nach jedem Systemstart erfolgen und kann durch die, bei jedem Systemstart
+aufgerufene, \listinlsh{/etc/rc.local} erfolgen.
 
-<Deaktivierung der Konsole, Aktivierung des zweiten UART>
+Zusätzlich muss verhindert werden, dass auf diesem \gls{uart} eine Linuxterminal
+betrieben wird. Hierzu muss die Datei \listinlsh{/etc/inittab} modifiziert
+werden.
+
+Diese beiden Änderungen werden wie folgt ebenso mittels des Skripts in
+\listinlsh{/etc/uci-defaults} durchgeführt.
+\begin{lstlisting}[language=sh]
+sed -i '/exit 0/ i\io 0x10000060 0x01' /etc/rc.local
+sed -i '/ttyS0/ s/^/# /' /etc/inittab
+\end{lstlisting}
+
 \section{OpenOCD}
-\begin{itemize}
-  \item Erstellung des Makefiles 
-  \item Vorkonfiguration von OpenWRT
-\end{itemize}
+Für OpenOCD existiert keine Portierung in die Paketverwaltung von OpenWRT. Es
+muss also ein Makefile erstellt werden, das die Einbindung ermöglicht. Der
+grundlegende Aufbau solcher Makefiles ist im Wiki von OpenWRT
+festgelegt\cite{OWRT}.
+
+Um OpenOCD kompilieren zu können, müssen zuerst die Voraussetzungen festgestellt
+werden. Da ein auf dem FT2232-Chip basierender \gls{jtag}-Adapter mit
+USB-Anschluss eingesetzt werden soll, müssen laut \texttt{README} von OpenOCD
+sowohl libftdi als auch libusb installiert sein. Diese Pakete stehen für OpenWRT
+bereits zur Verfügung und müssen im Makefile als Abhängigkeiten definiert
+werden. Dies geschieht mit dem Befehl \listinlsh{DEPENDS:=+libftdi +libusb}.
+
+Der Quellcode von OpenOCD wird durch das Makefile in der Version 0.6.1 von
+Sourceforge selbstständig heruntergeladen, über MD5 verifiziert und entpackt.
+
+Vor dem Kompilierungsvorgang müssen noch die an \listinlsh{./configure}
+zu übergebenden Argumente festgelegt werden. Der verwendete Adapter erfordert
+hier die Option \listinlsh{--enable-ft2232_libftdi}.
+
+<\ldots>
+<Vorkonfiguration von OpenWRT/OpenOCD>
 \section{Server - FreeJTAG}
+Der "`FreeJTAG"' genannte Server des Entwicklungssystems wird auf dem Carambola
+installiert, als Serveranwendung bei jedem Systemstart gestartet und leitet die
+gesammelten Daten an jeden verbundenen Client weiter.
+
+\subsection{Bibliotheken und Abhängigkeiten}
+Als Bibliotheken kommen bei FreeJTAG vor allem Teile der Boost Bibliothek zum
+Einsatz. Diese dienen der asynchronen Netzwerkkommunikation (Boost ASIO), dem
+hierfür nötigen Einsatz von Threads (Boost Thread), der Verwaltung der
+Zeitstempel (Boost Chrono) und dem Speichern von Programmeinstellungen (Boost
+Program\_Options).
+
+Außerdem hängt FreeJTAG von dem Paket "`io"' ab, da dieses für die Aktivierung
+des \gls{uart}, wie in \autoref{subs:aktuart} beschrieben, zuständig ist und
+installiert werden muss. Die in \autoref{subs:aktuart} beschriebene Skriptdatei
+ist ebenso in diesem Paket enthalten. 
+
+Durch die Installation dieser Anwendung wird das Carambola also komplett für den
+Einsatz als Entwicklungssystem konfiguriert.
+
+\subsection{Strukturierung der Serversoftware}
+<Bild!>
+\subsection{ASIO - Asynchrone Netzwerkkommunikation}
 \begin{itemize}
   \item Integration in OpenWRT
   \item Bibliotheken
-  \item ASIO
   \item Aufbau der Anwendung
+  \item ASIO
   \item \ldots
 \end{itemize}
 \section{Client - The Kraken}
