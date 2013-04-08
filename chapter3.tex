@@ -138,8 +138,8 @@ aller mit OpenOCD kompatiblen Adapter findet sich in dessen "`User Guide"'\cite{
 Entscheidend für die Wahl eines Adapters sollte zum einen die Anzahl der
 unterstützten Zielsysteme sein. Diese definiert sich hauptsächlich über die
 vom Adapter unterstützte \textbf{Spannung}. Da viele Mikrocontroller mit
-$3.3\volt$ oder $5.5\volt$ betrieben werden, sollte der Adapter zumindest diese beiden
-Spannungen unterstützen. Je größer diese Spanne jedoch ist, desto flexibler kann
+$\SI{3.3}{\volt}$ oder $\SI{5.5}{\volt}$ betrieben werden, sollte der Adapter
+zumindest diese beiden Spannungen unterstützen. Je größer diese Spanne jedoch ist, desto flexibler kann
 er später eingesetzt werden.
 
 Auch unterscheiden die Adapter sich im Vorhandensein von \textbf{adaptivem
@@ -153,8 +153,8 @@ laufen. \emph{Adaptives Clocking} erlaubt es dem Zielsystem, eine Art
 
 Im Rahmen dieser Arbeit soll der ARM-USB-TINY-H von Olimex zum Einsatz kommen.
 Dieser Adapter besitzt einen der verbreiteten \emph{FT2232}-Chips, bietet
-Adaptives Clocking und unterstützt einen Spannungsbereich von $2.0\volt$ bis
-$5.0\volt$.
+Adaptives Clocking und unterstützt einen Spannungsbereich von $\SI{2.0}{\volt}$
+bis $\SI{5.0}{\volt}$.
 
 \subsection{Zielsetzung}
 \begin{minipage}[c]{\textwidth}
@@ -184,8 +184,34 @@ Korrektheit zu überprüfen.
 So sind mehrere Szenarien denkbar, für die eine Analyse der genauen Abläufe
 wünschenswert wäre.
 
-\subsubsection*{Simple Anfrage}
-\begin{figure}[h!]
+\subsubsection*{Reichweite der Zielsysteme}
+Da ein zu entwerfendes Netzwerk mitunter eine hohe räumliche Verteilung
+aufweist, kann nicht garantiert werden, dass jeder Netzwerkknoten zu jedem
+anderen Knoten eine Verbindung aufbauen kann.
+
+Es ist also wünschenswert, die Reichweite mittels der \emph{Datenanalyse}
+festzustellen. Hierfür könnte man sich zum Beispiel folgendes simple Szenario
+überlegen.
+
+Jeder Netzwerkknoten sendet eine Broadcastmitteilung an das gesamte Netzwerk.
+Jeder Knoten der diese Nachricht empfängt, befindet sich nun also in Reichweite
+des Absenders.
+
+Für diese Auswertung dieses Vorgangs müssen nun von allen Netzwerkknoten die
+erfassten Daten gesammelt und analysiert werden.
+
+\autoref{fig:fikdiag} stellt einen beispielhaften Ablauf eines solchen
+Broadcasting-Vorganges dar. Während die zu Zeitpunkt $t_0$ von \emph{Knoten 2}
+abgesetzte Nachricht sowohl von \emph{Knoten 1} als auch von \emph{Knoten 3}
+empfangen wurde, erreicht die Broadcast-Nachricht von \emph{Knoten1} zu
+Zeitpunkt $t_3$ nur \emph{Knoten 2}. In \autoref{fig:fikmsg} ist der mögliche
+Ablauf dieses Vorganges aufgeführt, wie er mit zentral gesammelten Daten
+erscheinen würde.
+
+Führt man diese Testreihe fort, lässt sich sehr leicht eine Topologie der
+Empfangsstärken bilden.
+
+ \begin{figure}[!ht]
 \begin{sequencediagram}
 \newthread{node1}{Knoten 1}
 \newthread{node2}{Knoten 2}
@@ -195,13 +221,13 @@ wünschenswert wäre.
 \node[anchor=east,inner sep=10pt] (t1) at (mess to) {$t_1$};
 \prelevel{2}
 \mess[1]{node2}{Broadcast}{node3}
-\node[anchor=west,inner sep=10pt] (t3) at (mess to) {$t_3$};
+\node[anchor=west,inner sep=10pt] (t2) at (mess to) {$t_3$};
 \mess[1]{node1}{Broadcast}{node2}
-\node[anchor=east,inner sep=10pt] (t4) at (mess from) {$t_4$};
-\node[anchor=west,inner sep=10pt] (t5) at (mess to) {$t_5$};
+\node[anchor=east,inner sep=10pt] (t3) at (mess from) {$t_4$};
+\node[anchor=west,inner sep=10pt] (t4) at (mess to) {$t_5$};
 \prelevel{2}
 \mess[4]{node1}{Broadcast}{node3}
-\node[anchor=west,inner sep=10pt] (t6) at (mess to) {$t_6$};
+\node[anchor=west,inner sep=10pt] (t5) at (mess to) {$t_6$};
 \node[cross out, draw,minimum size = 18pt, thick] at (mess to){};
 
 \end{sequencediagram} \\
@@ -211,21 +237,17 @@ zeitlichen Verlauf untersuchen und verdeutlichen zu können.}
 \label{fig:fikdiag}
 \end{figure}
 
-In \autoref{fig:fikdiag} sieht man ein einfaches Beispiel für eine
-Verbindungsanfrage eines fiktiven Funksystems. Die zu erfassenden Daten
-bestünden in diesem Fall zum Beispiel aus Textnachrichten der Zielsysteme. Würde
-man diese Daten nun erfassen und in einem System gebündelt anzeigen, könnte man
-den genauen Ablauf, wie in \autoref{fig:fikmsg} dargestellt, genau
-nachvollziehen.
-\begin{figure}[ht!]
+\begin{figure}[!ht]
 \centering
 \par\begin{tabu}{l c l}
 Zielsystem & Zeitstempel & Nachricht\\
 \hline
-\emph{<Netwerkknoten 1>} & \emph{$t_0$} & Verbindungsanfrage gesendet\\ 
-\emph{<Netwerkknoten 2>} & \emph{$t_1$} & Verbindungsanfrage erhalten\\
-\emph{<Netwerkknoten 2>} & \emph{$t_2$} & Bestätigung gesendet\\
-\emph{<Netwerkknoten 1>} & \emph{$t_3$} & Bestätigung erhalten\\
+\emph{<Knoten 2>} & \emph{$t_0$} & Broadcast gesendet\\ 
+\emph{<Knoten 1>} & \emph{$t_1$} & Broadcast von \emph{Knoten 2} erhalten\\
+\emph{<Knoten 3>} & \emph{$t_2$} & Broadcast von \emph{Knoten 2} erhalten\\
+\emph{<Knoten 1>} & \emph{$t_3$} & Broadcst gesendet\\
+\emph{<Knoten 2>} & \emph{$t_4$} & Broadcast von \emph{Knoten 1} erhalten\\
+\multicolumn{3}{c}{\emph{Keine Daten für Zeitpunkt $t_5$}}\\
 \hline
 \end{tabu}\\
 \caption{Erfassung der Daten des Ablaufs aus \autoref{fig:fikdiag}}{Ein Ablauf
@@ -234,48 +256,123 @@ Nachrichten erzeugen.}
 \label{fig:fikmsg}
 \end{figure}
 \subsubsection*{Kollisionen}
+Auch die Kollisionserkennung ist für ein Funksystem von hoher Bedeutung. Senden
+zwei Funkknoten gleichzeitig eine Nachricht, überlagern sich die Funksignale und
+es ist für ein empfangendes System, sofern beide Sender in Reichweite sind,
+nicht mehr möglich, die einzelnen Nachrichten auseinanderzuhalten.
 
-\begin{figure}[h!]
+Hierfür setzt der 802.15.4 Standard in seinem \gls{mac}-Layer zum Beispiel
+CSMA/CA ein\cite{IEEE01}.
+\begin{definition}[CSMA/CA]
+\emph{CSMA/CA} ist ein Algorithmus zur Kollisionsvermeidung innerhalb eines
+Netzwerks. Hierbei prüft der Sender vor dem eigentlichen Sendevorgang über
+einen definierten Zeitraum, ob das Übertragungsmedium (zum Beispiel Funk oder
+Kabel) "`frei"' ist. Wird das Medium bereits verwendet, wartet der der Sender
+eine zufällige Zeitperiode (Back-off Periode) und überprüft den Zustand erneut.
+Sobald der Sendekanal "`frei"' ist, beginnt der Sendevorgang. Der Empfang der Daten muss
+von der Gegenstation mittels \texttt{ACK} bestätigt werden.
+\end{definition}
+Da \emph{CSMA/CA} jedoch im \gls{mac}-Layer stattfindet und dieser bereits
+in das gewählte Funkmodul integriert ist, wird es vermutlich schwierig,
+die Daten aus dem Modul selbst zu beziehen. Hier könnte man sich ebenso durch
+die Analyse der empfangenen Daten behelfen.
+
+Durch das integrierte \emph{CSMA/CA} lässt sich zwar der Versandzeitpunkt nicht
+exakt bestimmen, jedoch aber der Empfangszeitpunkt. Untersucht man nun die
+Differenz zwischen Sende- und Empfangsvorgang, lässt sich unter Umständen
+erkennen, ob ein Backoff und damit eine erfolgreiche Kollisionsvermeidung
+erfolgt ist.
+
+Folgende Rechnung nach\cite{JENN} erläutert die Dauer einer Backoff-Periode.
+
+\begin{align}\label{calc:init}
+\mathit{Initialbackoff}_{max} &=(2^{BE}-1)*\mathit{aUnitBackoffPeriod} \\
+&=(2^3-1)*\SI{320}{\micro\second}\nonumber \\
+&= \SI{2240}{\micro\second} = \SI{2,24}{\milli\second} \nonumber 
+\end{align}
+
+Vor jedem Sendevorgang wird nach Spezifikation des \emph{CSMA/CA} ein zufälliger
+Zeitraum \emph{InitialbackoffPeriod} gewartet. Erst anschließend wird der Kanal
+auf Belegung überprüft. Diese \emph{InitialbackoffPeriod} berechnet sich nach
+\autoref{calc:init}. 
+
+Zu dieser Backoff-Periode kommt die anschließende Prüfung auf Belegung
+(\gls{cca}) mit einer Dauer von 8 Symbol-Perioden (\SI{128}{\micro\second}). 
+
+Im \SI{2,4}{\giga\hertz}-Band besteht ein Symbol aus 4 Bit. Eine Symbol-Periode
+benötigt also, bei einer Übertragungsgeschwindigkeit von
+\SI{250}{\kilo\bit\per\second}, eine Dauer von \SI{16}{\micro\second}.
+($\frac{\SI{4}{\bit}}{\SI{250}{\kilo\bit\per\second}}=\SI{16}{\micro\second}$)
+
+\emph{aUnitBackoffPeriod} ist in der Spezifikation mit 20 Symbol-Perioden also
+\SI{320}{\micro\second} definiert. Zu Beginn ist \emph{BE}, der
+Backoff-Exponent, standardmäßig auf 3 eingestellt. Dieser Zähler erhöht sich
+jedoch mit jedem Mal, den ein \gls{cca} fehlschlägt.
+
+Selbst für einen erfolgreichen Sendevorgang vergehen also bereits bis zu
+\SI{2,24}{\milli\second}. Schlägt das \gls{cca} fehl, wird die
+\autoref{calc:init} mit einem um 1 erhöhten \emph{BE} wiederholt und erneut
+gewartet. Hierdurch kann ein Datenpaket in der von der IEEE vorgegebenen
+Standardkonfiguration um bis zu \SI{9,92}{\milli\second} pro \gls{cca}-Versuch
+verspätet werden ($(2^5-1)*\SI{320}{\micro\second = \SI{9920}{\micro\second}}$
+mit einem maximalen \emph{BE} von 5).
+
+\begin{figure}[!ht]
 \begin{sequencediagram}
 \setthreadbias{east}
 \newthread[2]{node1}{Knoten 1}
 \newthread[2]{node2}{Knoten 2}
 \newthread[2]{node3}{Knoten 3}
-\mess[1]{node1}{Anfrage 1}{node2}
+\mess[2]{node1}{Anfrage 1}{node2}
 \node[anchor=east,inner sep=10pt] (t0) at (mess from) {$t_0$};
 \prelevel{2}
 \mess[1]{node3}{Anfrage 2}{node2}
 \node[anchor=west,inner sep=10pt] (t1) at (mess from) {$t_1$};
 \node[anchor=north west,inner sep=10pt] (t2) at (mess to) {$t_2$};
-\node[cross out,draw,minimum size = 18pt, thick] at (mess to) {};
-\begin{callself}[2]{node1}{random\_wait()}{}
-\end{callself}
-\mess[1]{node1}{Anfrage 1}{node2}
-\node[anchor=east,inner sep=10pt] (t3) at (mess from) {$t_3$};
-\node[anchor=west,inner sep=10pt] (t4) at (mess to) {$t_4$};
-\prelevel{5}
-\begin{callself}[5]{node3}{random\_wait()}{}
+\node[cross out,draw,minimum size = 18pt,very thick] at ($(mess from)!0.5!(mess
+to)$) {};
+\begin{callself}[5]{node3}{random\_backoff()}{}
 \end{callself}
 \mess[1]{node3}{Anfrage 2}{node2}
-\node[anchor=west,inner sep=10pt] (t5) at (mess from) {$t_5$};
-\node[anchor=east,inner sep=10pt] (t6) at (mess to) {$t_6$};
-\end{sequencediagram}
-\caption{Gleichzeitiger Sendevorgang mit Kollision der Daten.}{}
+\node[anchor=east,inner sep=10pt] (t3) at (mess to) {$t_3$};
+\end{sequencediagram}\\
+\caption{Gleichzeitiger Sendevorgang mit Kollisionvermeidung}{Da Knoten 3 vor
+seinem ersten Sendevorgang erkennt, dass bereits Daten übertragen werden, muss
+er einen zufälligen Zeitraum warten, bevor ein Übertragungsversuch erfolgen
+kann.}
 \label{fig:kol}
 \end{figure}
 
-\begin{figure}[ht!]
+\autoref{fig:kol} visualisiert einen Sendevorgang mit einspringender
+Kollisionsvermeidung. Zu Zeitpunkt $t_0$ beginnt \emph{Knoten
+1} mit dem Senden von Daten. \emph{Knoten 3} führt bei $t_1$ ein \gls{cca}
+durch und stellt fest, das bereits Daten gesendet werden. Seine Übertragung
+wird also um eine Backoff-Periode zurückgestellt. \emph{Knoten 2} empfängt bei
+$t_2$ die Daten von \emph{Knoten 1} und eine Weile später bei $t_3$ auch die
+Übertragung von \emph{Knoten 3}. 
+
+Da, wie zuvor erwähnt, das \gls{cca} auf Hardware-Ebene erfolgt, lässt sich der
+tatsächliche Zeitpunkt des Absendens nicht herausfinden. Jedoch kann man anhand
+der Differenz zwischen $t_0$ und $t_2$ erkennen, ob der ursprüngliche
+Absendezeitpunkt $t_1$ von der \emph{Anfrage 2} dazwischen liegt. Auch könnte
+man über die (vergleichbar große) Differenz zwischen $t_1$ und $t_3$ darauf
+schließen, dass die Übertragung aufgrund eines fehlgeschlagenen \gls{cca}
+verzögert wurde.
+
+Will man diesen Ablauf zentralisiert erfassen, ergäbe sich im Optimalfall ein
+Ablauf wie in \autoref{fig:kolmsg}. Zu Zeitpunkt $t_1$ würde \emph{Knoten 3}
+anfänglich die Daten akzeptieren, jedoch hardwareseitig und durch ein
+fehlgeschlagenes \gls{cca} noch nicht direkt absenden.
+
+\begin{figure}[!ht]
 \centering
 \par\begin{tabu}{l c l}
 Zielsystem & Zeitstempel & Nachricht\\
 \hline
 \emph{<Knoten 1>} & \emph{$t_0$} & Anfrage 1 gesendet\\ 
 \emph{<Knoten 3>} & \emph{$t_1$} & Anfrage 2 gesendet\\
-\multicolumn{3}{c}{\emph{Keine Daten für Zeitpunkt $t_2$}}\\
-\emph{<Knoten 1>} & \emph{$t_3$} & Anfrage 1 gesendet\\
-\emph{<Knoten 2>} & \emph{$t_4$} & Anfrage 1 erhalten\\
-\emph{<Knoten 3>} & \emph{$t_5$} & Anfrage 2 gesendet\\
-\emph{<Knoten 2>} & \emph{$t_6$} & Anfrage 2 erhalten\\
+\emph{<Knoten 2>} & \emph{$t_2$} & Anfrage 1 erhalten\\
+\emph{<Knoten 2>} & \emph{$t_3$} & Anfrage 2 erhalten\\
 \hline
 \end{tabu}\\
 \caption{Erfassung der Daten des Ablaufs aus \autoref{fig:kol}}{Ein Ablauf
@@ -284,12 +381,25 @@ Nachrichten erzeugen.}
 \label{fig:kolmsg}
 \end{figure}
 
+Bei einer maximal spezifizierten Größe des Payloads eines
+802.15.4-Paketes von \SI{114}{\byte} werden \SI{4.256}{\milli\second}
+zur Übertragung benötigt. Dies zeigt \autoref{calc:data}. Hierbei sind der
+\emph{overhead}-Anteil \SI{31}{\byte} bestehend unter anderem aus
+Sequenznummer, Adressfeldern und Längenangabe aus \texttt{PHY}- und
+\texttt{MAC}-Layer.
+\begin{align}\label{calc:data}
+\frac{(114+\mathit{overhead)*8}}{\SI{250}{\kilo\bit\per\second}}=\SI{4.256}{\milli\second}
+\end{align}
 
-Mit steigender Komplexität des zu
-entwerfenden Funkprotokolls steigt jedoch auch die Komplexität solcher Abläufe.
-So ist zum Beispiel, wie im Funkprotokoll ZigBee vorgesehen, denkbar, dass die
-Funkknoten verschiedene Aufgaben im Routing und Aufbau des eigenen
-Funknetzwerkes übernehmen.
+Will man nun die erwähnten Abläufe sinnvoll erfassen, muss die Präzision der
+Timer also bei \textbf{mindestens \SI{1}{\milli\second}} liegen. Erst diese
+Genauigkeit würde ein sinnvolles Sortieren und Zuordnen der Abläufe ermöglichen.
+\subsubsection*{Allgemeines}
+Mit steigender Komplexität des zu entwerfenden Funkprotokolls steigt die
+Komplexität solcher Abläufe. So ist zum Beispiel, wie im Funkprotokoll ZigBee
+vorgesehen, denkbar, dass die Funkknoten verschiedene Aufgaben im Routing und
+Aufbau des eigenen Funknetzwerkes übernehmen. Auch hierfür ist unter
+Umständen eine möglichst genaue Erfassung der Abläufe nötig.
 
 \subsection{Anforderungen}
 Aufgabe dieses Teils des Entwicklungssystems wird es sein, die Erfassung der in
@@ -414,14 +524,14 @@ Rückweg im Netzwerk, auszugleichen, werden mehrere dieser Vorgänge durchgefüh
 und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieser
 Mittelwert ist eine etwas bessere Annäherung an die tatsächliche Differenz.
 
-Der übertragene Zeitstempel stellt die vergangenen $\mu\second$ seit
+Der übertragene Zeitstempel stellt die vergangenen $\si{\micro\second}$ seit
 eines am Entwickler-Rechner festgelegten Zeitpunktes dar. Eine 32-Bit Zahl
 reicht unter diesen Umständen für die Betrachtung längerer Zeitabstände nicht
-mehr aus ($2^{32}\mu\second\approx 71\minute$).
+mehr aus ($2^{32}\si{\micro\second}\approx \SI{71}{\minute}$).
 
 Eine 64-Bit Zahl bleibt somit als einzige Möglichkeit. Sie bietet ausreichend
-viel Platz ($2^{64}\mu\second\approx 584942~years$), um auch über sehr große
-Zeiträume Daten aufzuzeichnen.
+viel Platz ($2^{64}\si{\micro\second}\approx 584942~years$), um auch
+über sehr große Zeiträume Daten aufzuzeichnen.
 \subsection{Protokoll}
 Damit der Client und die Serveranwendungen über das Netzwerk kommunizieren
 können, wird ein Protokoll zum Datenaustausch spezifiziert. Dieses Protokoll

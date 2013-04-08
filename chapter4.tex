@@ -104,7 +104,7 @@ Durch die Installation dieser Anwendung wird das Carambola also komplett für de
 Einsatz als Entwicklungssystem konfiguriert.
 
 \subsection{Strukturierung der Serversoftware}
-\begin{figure}[h]
+\begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth]{server.eps}
 \caption{Grober Aufbau der Serveranwendung}{Diese Abbildung verdeutlicht den
@@ -205,7 +205,8 @@ abgewickelt werden, werden hierfür keine weiteren Threads benötigt (Siehe
 Nun muss nun \listinlcpp{Freejtag::run();} aufgerufen werden, um den Start der
 Anwendung zu vollziehen. Dies startet ein asynchrones Accept auf dem Socket des
 Netzwerkmoduls, so dass es nun möglich ist, eine Verbindung zum Server
-herzustellen.
+herzustellen. Der \gls{uart}-Anschluss wird auf dem angegebenen Gerät geöffnet
+und mit den eingestellten Parametern konfiguriert.
 
 <\ldots>
 
