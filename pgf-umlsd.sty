@@ -40,7 +40,7 @@
 Sequence Diagrams.]
 
 \RequirePackage{tikz}
-\usetikzlibrary{arrows,shadows}
+\usetikzlibrary{arrows,shadows,shapes.misc}
 
 \RequirePackage{ifthen}
 
@@ -85,12 +85,12 @@ Sequence Diagrams.]
 % new an instance thread
 % Example:
 % \newinst[color]{var}{name}{class}
-\newcommand{\newthread}[3][gray!30]{
-  \newinst[3]{#2}{#3}
+\newcommand{\newthread}[3][3]{
+  \newinst[#1]{#2}{#3}
   \stepcounter{threadnum}
   \node[below of=inst\theinstnum,node distance=0.8cm] (thread\thethreadnum) {};
-  \tikzstyle{threadcolor\thethreadnum}=[fill=#1]
-  \tikzstyle{instcolor#2}=[fill=#1]
+  \tikzstyle{threadcolor\thethreadnum}=[fill=gray!30]
+  \tikzstyle{instcolor#2}=[fill=gray!30]
 }
 
 % draw running (thick) line, should not call directly
@@ -231,10 +231,10 @@ Sequence Diagrams.]
 \newcommand{\setthreadbias}[1]{\global\def\threadbias{#1}}
 
 % This function makes the call earlier.
-\newcommand{\prelevel}{\addtocounter{seqlevel}{-1}}
+\newcommand{\prelevel}[1]{\addtocounter{seqlevel}{-#1}}
 
 % This function makes the call later.
-\newcommand{\postlevel}{\addtocounter{seqlevel}{+1}}
+\newcommand{\postlevel}[1]{\addtocounter{seqlevel}{+#1}}
 
 % a block box with caption
 % \begin{sdblock}[caption background color]{caption}{comments}
