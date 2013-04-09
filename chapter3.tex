@@ -212,8 +212,9 @@ Führt man diese Testreihe fort, lässt sich sehr leicht eine Topologie der
 Empfangsstärken bilden.
 
  \begin{figure}[!ht]
+ \centering
 \begin{sequencediagram}
-\newthread{node1}{Knoten 1}
+\newthread[0]{node1}{Knoten 1}
 \newthread{node2}{Knoten 2}
 \newthread{node3}{Knoten 3}
 \mess[1]{node2}{Broadcast}{node1}
@@ -255,7 +256,7 @@ wie in \autoref{fig:fikdiag} dargestellt, könnte diese Reihenfolge von
 Nachrichten erzeugen.}
 \label{fig:fikmsg}
 \end{figure}
-\subsubsection*{Kollisionen}
+\subsubsection*{Kollisionen}\label{subs:kollision}
 Auch die Kollisionserkennung ist für ein Funksystem von hoher Bedeutung. Senden
 zwei Funkknoten gleichzeitig eine Nachricht, überlagern sich die Funksignale und
 es ist für ein empfangendes System, sofern beide Sender in Reichweite sind,
@@ -318,9 +319,10 @@ verspätet werden ($(2^5-1)*\SI{320}{\micro\second = \SI{9920}{\micro\second}}$
 mit einem maximalen \emph{BE} von 5).
 
 \begin{figure}[!ht]
+\centering
 \begin{sequencediagram}
-\setthreadbias{east}
-\newthread[2]{node1}{Knoten 1}
+\setthreadbias{center}
+\newthread[0]{node1}{Knoten 1}
 \newthread[2]{node2}{Knoten 2}
 \newthread[2]{node3}{Knoten 3}
 \mess[2]{node1}{Anfrage 1}{node2}
@@ -448,7 +450,7 @@ bestehen.
   \item \textbf{Protokoll} --- Definiert die Kommunikation zwischen Server und
   Client.
 \end{itemize}
-\end{minipage}
+\end{minipage}\par
 Für die \emph{Clientanwendung} ist es von großer Bedeutung, dass sie sich zu
 mehreren Serverinstanzen verbinden kann. Nur hierdurch wird es möglich, die
 Daten von mehreren Zielsystemen erfassen und auswerten zu können.
@@ -460,78 +462,22 @@ Ein wichtiger Punkt im Entwurf dieses Systems ist die \textbf{Synchronisation
 der Uhren} der jeweiligen Module. Nur so kann eine Vergleichbarkeit der
 verarbeiteten Daten gewährleistet werden.
 
-Ein erster Ansatz wäre hier, bereits bestehende Synchronisationstechniken wie
-\gls{ntp} zu verwenden. Diese haben jedoch den Nachteil, dass sie für die
-Synchronisation immer eine aktive Verbindung zum Internet oder einen lokalen
-NTP-Server  benötigen. Außerdem sind, da die Carambola-Systeme keine
-Echtzeituhren besitzen, Datum und Uhrzeit nach einem Start des Systems auf die
-Unix Epoche gesetzt. Da NTP direkt die Systemzeit beeinflusst, würde dies 
-unter Umständen Auswirkungen auf andere Prozesse bedeuten.
+Aus \autoref{subs:kollision} ergibt sich, dass eine Präzision von mindestens
+\SI{1}{\milli\second} gewährleistet werden sollte. Zu den nicht beeinflussbaren
+Größen zählen hierbei zum Beispiel die für einen Kontextwechsel durch den
+Scheduler des Betriebssystems nötige Zeit oder die Genauigkeit des
+Systemquarzes.
 
-Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von
-Christian\cite{CHR} zum Einsatz kommen. Entscheidend ist hierbei, dass der
-Synchronisationsvorgang vom Zeitgeber angestoßen wird. Dies erfordert eine zusätzliche
-abschließende Datenübertragung.
-
-Da TCP durch seine Flusskontrolle die Messung der Netzwerklatenz
-durch eventuell Neuübertragungsversuche negativ beeinflussen kann, ist für die
-Zeitsynchronisation die Verwendung von UDP nötig. Dies bedingt allerdings die
-Verwendung einer Sequenznummer.
-
-\begin{itemize}
-  \item Der Client stößt den Synchronisationsvorgang an, indem er dem Server
-  seinen aktuellen Zeitstempel $t_0$ mittels einer \texttt{PING}-Nachricht
-  übermittelt.
-  \item Bei Erhalt der Nachricht erfasst der Server seinen eigenen Zeitstempel
-  als $t_1$.
-  \item Anschließend bereitet er das Senden einer \texttt{PONG}-Nachricht als
-  Antwort vor, erfasst einen weiteren Zeitstempel ($t_2$) und sendet die
-  Nachricht.
-  \item Bei Erhalt der Nachricht durch den Client, erfasst dieser seine eigene
-  Zeit $t_3$ und übermittelt sie dem Server in einer, diesen
-  Synchronisierungsprozess abschließenden, \texttt{STIM}-Nachricht.
-\end{itemize} 
-Dieser Vorgang ist in \autoref{fig:timeseq} visualisiert.
-
-\begin{figure}
-\begin{sequencediagram}[ht]
-\newthread[3]{client}{:Client}
-\newthread[3]{server}{:Server}
-\mess[2]{client}{PING}{server}
-\node[anchor=east,inner sep=10pt] (t0) at (mess from) {$t_0$};
-\node[anchor=west,inner sep=4pt,label=above right:{$t_1$}] (t1) at (mess to)
-{};
-\mess[2]{server}{PONG}{client}
-\node[anchor=west,inner sep=4pt,label=below right:{$t_2$}] (t2) at (mess from)
-{}; \node[anchor=east,inner sep=10pt] (t3) at (mess to) {$t_3$};
-\mess[2]{client}{STIM}{server}
-\path (t0.east) |- coordinate(t01) (t1);
-\draw[dashed] (t1) -- (t01);
-\path (t3.east) |- coordinate(t23) (t2);
-\draw[dashed] (t2) -- (t23);
-\end{sequencediagram}
-\caption{Ablauf der Zeitsynchronisation eines Servers}
-\label{fig:timeseq}
-\end{figure}
-
-Nach Abschluss dieser Kommunikation lässt sich die Zeitdifferenz durch folgende
-Formel errechnen.
-\begin{equation}
-\frac{t_1-t_0-t_3+t_2}{2}=\Delta t
-\end{equation}
-Um Abweichungen, zum Beispiel durch unterschiedliche Latenzen auf dem Hin- und
-Rückweg im Netzwerk, auszugleichen, werden mehrere dieser Vorgänge durchgeführt
-und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieser
-Mittelwert ist eine etwas bessere Annäherung an die tatsächliche Differenz.
-
-Der übertragene Zeitstempel stellt die vergangenen $\si{\micro\second}$ seit
-eines am Entwickler-Rechner festgelegten Zeitpunktes dar. Eine 32-Bit Zahl
-reicht unter diesen Umständen für die Betrachtung längerer Zeitabstände nicht
-mehr aus ($2^{32}\si{\micro\second}\approx \SI{71}{\minute}$).
+Da der zu übertragene Zeitstempel die seit eines durch den Entwickler-Rechner
+festgelegten Zeitpunktes vergangenen $\si{\micro\second}$ darstellt, muss diese
+Zahl ausreichend groß dimensioniert sein. Eine 32-Bit Zahl reicht unter
+Umständen für die Betrachtung längerer Zeitabstände nicht mehr aus
+($2^{32}\si{\micro\second}\approx \SI{71}{\minute}$).
 
 Eine 64-Bit Zahl bleibt somit als einzige Möglichkeit. Sie bietet ausreichend
 viel Platz ($2^{64}\si{\micro\second}\approx 584942~years$), um auch
 über sehr große Zeiträume Daten aufzuzeichnen.
+
 \subsection{Protokoll}
 Damit der Client und die Serveranwendungen über das Netzwerk kommunizieren
 können, wird ein Protokoll zum Datenaustausch spezifiziert. Dieses Protokoll
@@ -587,8 +533,10 @@ die Angabe der \textbf{Länge} 16 Bit benötigt werden.
 \wordbox[lrt]{1}{Data (n Byte)} \\
 \skippedwords \\
 \wordbox[lrb]{1}{}
-\end{bytefield}
-\caption{Systematischer Aufbau eines Datenpaketes}
+\end{bytefield} \\
+\caption{Systematischer Aufbau eines Datenpaketes}{Der Aufbau eines TCP-Paketes
+ist mit dem eines UDP-Paketes identisch. Die Menge \emph{n} der Daten ist
+auf 512 Byte beschränkt.}
 \label{fig:bytefield}
 \end{figure}
 Aus dem Ablauf in \autoref{subs:time} ist ersichtlich, dass einzig für die
@@ -645,3 +593,4 @@ Grundvoraussetzung ist hierfür jedoch, dass sich das \gls{rom} des Zielsystems
 \subsection{Zielsetzung}
 Es muss ein Skript für einen \gls{gdb}-Client erstellt werden, das es erlaubt,
 eine beliebige Anzahl Zielsysteme mit einer neuen Firmware zu versorgen.
+<\ldots>
