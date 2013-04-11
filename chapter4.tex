@@ -2,6 +2,17 @@
 \minitoc
 In diesem Kapitel wird die Realisierung des Entwicklungssystems
 beschrieben. <\ldots>
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{aufbau.png}
+\caption{Aufbau des Entwicklungssystems}{Diese Fotografie zeigt einen
+Teil des aufgebauten Entwicklungssystems. Erkennen lassen sich im
+Vordergrund die "`Carambolas"', die über zwei Leitungen mit dem \gls{uart} des
+roten "`Zielsystems"' verbunden sind. Über USB sind an die "`Carambolas"' die
+grauen \gls{jtag}-Adapter angeschlossen, die ihrerseits ebenso mit den
+"`Zielsystemen"' verbunden sind.}
+\label{fig:aufbau}
+\end{figure}
 \section{Konfiguration des Carambola}\label{sec:conf}
 OpenWRT bietet mit dem Programm \gls{uci} eine Anwendung, Einstellungen
 zentralisiert zu verwalten. Über das \gls{uci}-System lassen sich unter anderem
@@ -33,8 +44,8 @@ uci batch <<-EOF_network
 	EOF_network
 \end{lstlisting}
 \begin{definition}[Here document]
-Ein \emph{Here document} ermöglicht es, einem Unix-Befehl mehrere, durch
-Zeilenumbrüche getrennte, Befehle zu übergeben.
+Ein \emph{Here document} ermöglicht es, einem einzelnen Unix-Befehl mehrere,
+durch Zeilenumbrüche getrennte, Befehle zu übergeben.
 \end{definition}
 Da diese Einstellungen nur einmalig getätigt werden müssen, wird dafür die in
 \autoref{sec:conf} erwähnte Datei in \listinlsh{/etc/uci-defaults/} verwendet.
@@ -68,7 +79,7 @@ Für OpenOCD existiert keine Portierung in die Paketverwaltung von OpenWRT. Es
 muss also ein Makefile erstellt werden, das die Einbindung ermöglicht. Der
 grundlegende Aufbau solcher Makefiles ist im Wiki von OpenWRT
 festgelegt\cite{OWRT}.
-
+\subsection{Portierung auf OpenWRT}
 Um OpenOCD kompilieren zu können, müssen zuerst die Voraussetzungen festgestellt
 werden. Da ein auf dem FT2232-Chip basierender \gls{jtag}-Adapter mit
 USB-Anschluss eingesetzt werden soll, müssen laut \texttt{README} von OpenOCD
@@ -105,7 +116,18 @@ Zu den Kompilerargumenten muss die Option
 \texttt{-Wno-error=maybe-uninitialized} hinzugefügt werden, da anderenfalls
 eine den Kompiliervorgang abbrechende Warnung beim Kompilieren der Datei
 \texttt{src/target/dsp5680xx.c} auftritt.
+\subsection{Integration in Eclipse}
+Da OpenOCD neben einer Telnet-Konsole auch die Möglichkeit bietet, über einen
+\gls{gdb}-Client darauf zuzugreifen, ist die Einbindung in verschiedenste
+Entwicklungsumgebungen oft denkbar einfach.
 
+So bieten zum Beispiel "`Qt Creator"', "`Netbeans"' oder auch "`Eclipse"' eine
+Unterstützung für gdb. <cite>
+
+Für diese Arbeit soll exemplarisch eine Verbindung zum Entwicklungssystem
+mittels Eclipse hergestellt werden.
+
+Hierfür 
 \section{Server - FreeJTAG}
 Der "`FreeJTAG"' genannte Server des Entwicklungssystems wird auf dem Carambola
 installiert, als Serveranwendung bei jedem Systemstart gestartet und leitet die
@@ -400,9 +422,10 @@ Dieser führt anschließend folgende Schritte aus:
 \section{Client - The Kraken}
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=\textwidth]{TheKraken.png}
+\includegraphics[width=\textwidth]{client.png}
 \caption{Die Clientanwendung}{Diese Abbildung zeigt die Clientanwendung
-"`The Kraken"', die zum Sammeln der erfassten Daten dient.}
+"`The Kraken"' beim Erfassen der gesammelten Daten. Ein bei den
+Zielsystemen gleichzeitig ausgelöster Interrupt ist erkennbar.}
 \label{fig:client}
 \end{figure}
 \subsection{Funktionalität}
@@ -455,5 +478,110 @@ $\mathit{AnzahlVerbindungen}*3$.
   \item Einbindung in Eclipse
 \end{itemize}
 <\ldots>
+\section{Aufgetretene Probleme}
+Während der Inbetriebnahme von OpenOCD traten häufig Probleme mit der
+Verbindung zum \gls{jtag}-Adapter auf. Dies äußerte sich darin, dass das
+Linux-System regelmäßig die Verbindung zu dem Adapter verlor. Dies
+erschwerte den Betrieb von OpenOCD erheblich.
+
+Jedoch ist dies offensichtlich ein bekanntes Konstruktionsproblem der
+"`Carambolas"' hervorgerufen durch eine unzulängliche Schirmung des
+USB-Anschlusses gegenüber Elektromagnetischen Wellen.\cite{CARAM2} Dies bewirkt,
+dass die integrierte WLAN-Antenne den Betrieb von USB-Geräten unter Umständen
+stark beeinflusst.
+
+Um dieses Problem zu beheben wurde ein \SI{32}{\mm} langer Draht an die Masse
+der WLAN-Antenne gelötet. Anschließend lies sich der \gls{jtag}-Adapter
+problemlos betreiben. Alternativ hätte auch die Möglichkeit bestanden, die
+Sendeleistung des WLAN-Moduls über die Einstellung \listinlsh{option txpower 10}
+in der Datei \listinlsh{/etc/config/wireless} zu reduzieren.
 \section{Analyse des Systems}
-<Genauigkeit etc>
+Da die Präzision der Zeitstempel von zentraler Bedeutung für die Aussagekraft
+der gesammelten Daten ist, muss festgestellt werden, wie exakt zum Beispiel die
+Zeitsynchronisation funktioniert.
+
+Um die Genauigkeit messen zu können, müssen alle Zielsysteme möglichst
+zeitgleich ein Signal erhalten, um dann unverzüglich über \gls{uart} eine
+Nachricht an die angeschlossenen "`Carambolas"' zu übermitteln.
+
+Hierfür wurde exemplarisch das \gls{rtos} ChibiOS/RT\cite{CHIB} auf den
+Zielsystemen installiert. Es wurde so konfiguriert, dass ein Interrupt ausgelöst
+wird, sobald ein bestimmter Pin als "`Auslöser"' auf Masse gezogen wird.
+
+Da die "`Carambolas"' alle verschiedene Massepotentiale haben, müssen diese
+zuerst miteinander verbunden werden. Anschließend kann man alle
+"`Auslöser"'-Pins miteinander verbinden. Dies erlaubt es einem, mittels eines
+Knopfes oder eines Überbrückungskabels, die so verbundenen Pins zeitgleich
+auszulösen.
+
+Hat man vorher einen Synchronisierungsvorgang durch den Client durchgeführt,
+lässt sich durch die Differenz der Zeitstempel nun die tatsächliche Abweichung
+voneinander messen. Im Idealfall ist die Differenz hierbei möglichst gering
+(Nach \autoref{subs:time} weniger als \SI{1}{\milli\second}). Das Eintreffen
+dieser erwähnten Interrupts ist auch auf \autoref{fig:client} zu erkennen.
+
+Allerdings kann dies natürlich nur die Differenzen der Zielysteme untereinander
+aufzeigen. Die Abweichung gegenüber dem Entwicklerrechner ist für eine Analyse
+der Netzwerkabläufe jedoch auch von untergeordneter Relevanz, da dieser in den
+Abläufen keine Rolle spielt.
+
+\begin{figure}
+\centering
+\begin{tabu}{r|r r|r r | r}
+& \multicolumn{2}{c|}{\textbf{Knoten 0}} & \multicolumn{2}{c|}{\textbf{Knoten
+1}} & \textbf{Knoten 2}\\ \cline{2-6}
+Minute & Zeitstempel & Diff zu Knoten 1& Zeitstempel &
+Diff zu Knoten 2& Zeitstempel \\ \hline
+0  & 10613705   & -21\us   & 10613684   & 175\us   & 10613859   \\
+15 & 950992475  & 6423\us  & 950998898  & 12465\us & 951011363  \\
+30 & 1854818581 & 12581\us & 1854831162 & 24298\us & 1854855460 \\
+45 & 2754582459 & 18743\us & 2754601202 & 36158\us & 2754637360 \\
+60 & 3655782708 & 24897\us & 3655807605 & 47868\us & 3655855473 \\
+75 & 4554104959 & 30989\us & 4554135948 & 59647\us & 4554195595 \\
+90 & 5453785960 & 37080\us & 5453823040 & 71543\us & 5453894583 \\ \hline
+& \multicolumn{2}{p{4,7cm}}{\textbf{Drift pro \SI{15}{\minute}
+gegenüber Knoten 1}} & \multicolumn{2}{|p{4,7cm}|}{\textbf{Drift pro \SI{15}{\minute}
+gegenüber Knoten 2}} &
+\\
+& \multicolumn{2}{c}{\textbf{\SI{6,180}{\ms}}} &
+\multicolumn{2}{|c|}{\textbf{\SI{11,924}{\ms}}}&
+\\
+\end{tabu}\\
+\caption{Testdaten einer Testreihe zur Prüfung der Genauigkeit der
+"`Carambolas"'}{Die Zeitstempel sind die von der Clientsoftware
+ausgegebenen Werte. Der durchschnittliche Drift über \SI{15}{\minute} errechnet
+sich über die Differenz zwischen den einzelnen Knoten nach einer Testzeit von
+\SI{90}{\minute}.}
+\label{fig:testtab}
+\end{figure}
+
+Es wurde ein Testtlauf über \SI{90}{\minute} durchgeführt. Direkt vor dessen
+Durchführung wurde eine Zeitsynchronisation des gesamten
+Entwicklungssystems und damit aller "`Carambolas"' durchgeführt.
+
+Im Versuchsablauf wurde, wie weiter oben erläutert, ungefähr alle
+\SI{15}{\minute} ein Interrupt bei allen Zielsystemen gleichzeitig ausgelöst.
+Bei diese Testreihe war nicht entscheidend, den Interrupt exakt alle
+\SI{15}{\minute} auszulösen, da hauptsächlich die sich verändernden Differenzen
+gezeigt werden sollten.
+
+Wie aus \autoref{fig:testtab} ersichtlich, ist direkt nach der Synchronisation
+die absolute Differenz zwischen "`Knoten 0"' und "`Knoten 1"' bei nur
+\SI{21}{\us} und zwischen "`Knoten 1"' und "`Knoten 2"' bei \SI{175}{\us}. Dies
+zeigt, dass die Zeitsynchronisation eine ziemlich hohe Genauigkeit erreicht.
+
+Aus dem Verlauf der Testreihe ist jedoch auch ersichtlich, dass die Differenz
+zwischen den Systemen nicht gleichbleibend ist. So steigt über einen Zeitraum
+von \SI{15}{\minute} die Differenz zwischen "`Knoten 0"' und "`Knoten 1"' um
+ungefähr \SI{6,180}{\ms} und zwischen "`Knoten 1"' und "`Knoten 2"' um
+\SI{11,924}{\ms}.
+
+Dies erklärt sich aus den Fertigungstoleranzen der Schwingquarze. Die Abweichung
+zwischen "`Knoten 0"' und "`Knoten"' vergrößert sich alle \SI{15}{\minute} um
+ungefähr \SI{18}{\us} was einer Abweichung von 20 ppm entspricht
+($\frac{\SI{18}{\us}}{\SI{15}{\minute}}*1000000=20\mathit{ppm}$).
+Diese Abweichung ist für einen Schwingquarz noch innerhalb der üblichen
+Frequenztoleranz.
+
+Die Genauigkeit der Zeitsynchronisation selbst jedoch liegt in der in
+\autoref{subs:time} geforderten Genauigkeit von ungefähr \SI{1}{\ms}.

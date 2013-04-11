@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{548.45bp}%
+    \setlength{\unitlength}{556.25bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,16 +48,18 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.03149786)%
+  \begin{picture}(1,1.01703371)%
     \put(0,0){\includegraphics[width=\unitlength]{system.pdf}}%
-    \put(0.230747,0.50545481){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Modul 1}}}%
-    \put(0.78158573,0.93290098){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Entwicklersystem}}}%
-    \put(0.18690324,0.35568616){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Ziel 1}}}%
-    \put(0.46547933,0.20833962){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Ziel 2}}}%
-    \put(0.81593048,0.31148217){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Ziel 3}}}%
-    \put(0.5093345,0.35810829){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Modul 2}}}%
-    \put(0.8597564,0.46125084){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Modul 3}}}%
-    \put(0.12615044,0.95737432){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{= WLAN}}}%
-    \put(0.12492978,0.85755788){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{= Zielfunksystem}}}%
+    \put(0.22796079,0.49836708){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Modul 1}}}%
+    \put(0.7710754,0.9198194){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Entwicklersystem}}}%
+    \put(0.18473183,0.35069856){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Ziel 1}}}%
+    \put(0.4594016,0.20541819){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Ziel 2}}}%
+    \put(0.80493855,0.30711442){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Ziel 3}}}%
+    \put(0.50264181,0.35308673){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Modul 2}}}%
+    \put(0.84814993,0.45478296){\color[rgb]{0,0,0}\makebox(0,0)[b]{\smash{Modul 3}}}%
+    \put(0.12483093,0.94394957){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{= WLAN}}}%
+    \put(0.12362739,0.8455328){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{= Zielfunksystem}}}%
+    \put(0.01848747,0.45669843){\color[rgb]{0.4,0.4,0.4}\rotatebox{-90}{\makebox(0,0)[rb]{\smash{Entwicklungssystem}}}}%
+    \put(0.01833811,0.40713){\color[rgb]{0.4,0.4,0.4}\rotatebox{-90}{\makebox(0,0)[lb]{\smash{Zielsystem}}}}%
   \end{picture}%
 \endgroup%

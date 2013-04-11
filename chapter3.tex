@@ -1,17 +1,143 @@
 \chapter{Konzeption}
 \minitoc
 In diesem Kapitel soll das Entwicklungssystem konzipiert werden.
-Dazu muss jedes Element auf seine zu erfüllende Funktion untersucht werden.
 
-Hieraus ergibt sich im Anschluss der anzufordernde Funktionsumfang, den der
-jeweilige Bestandteil zu erfüllen hat.
+Hierfür muss anfänglich ein grundsätzliches Entwicklungskonzept festgelegt
+werden. Aus diesem Konzept ergeben sich dann die Voraussetzungen, die die zu
+wählende Hardware erfüllen muss.
 
-Nach einer Analyse bereits existierender Systeme folgt schließlich die
-Festlegung auf ein Entwicklungsziel.
+Das Entwicklungssystem soll außerdem dazu verwendet werden, ein
+beispielhaftes Zielsystem entwickeln zu können. Auch über die Hardware dieses
+Zielsystems muss eine Entscheidung getroffen werden, die möglichst
+repräsentativ für eine Vielzahl möglicher Zielsysteme ist.
 
 Letztendlich muss sichergestellt werden, dass alle einzelnen Komponenten in dem
 zu planenden System miteinander interagieren. Es müssen
 Schnittstellenspezifikationen festgelegt werden.
+\section{Grundlegende Konzeption}
+\begin{figure}[!ht]
+\centering
+\def\svgwidth{0.88\columnwidth}
+\input{res/system.pdf_tex}\\
+\caption{Das geplante Gesamtsystem}{Die "'Module"' werden über WLAN
+vom Entwicklersystem gesteuert und übermitteln an dieses auch alle
+Daten, die sie von ihrem jeweils angeschlossenen "`Ziel"' erhalten.}
+\label{fig:sys}
+\end{figure}
+Der Umstand, dass die einzelnen Zielsysteme räumlich von einander und dem
+Entwicklersystem getrennt sind erfordert gewisse Änderungen an den
+Entwicklungsabläufen.
+
+Ein direkter Zugriff auf die einzelnen Zielsysteme ist nicht ohne Weiteres
+möglich beziehungsweise vergleichsweise umständlich. Würde man die in
+\autoref{chap:analyse} aufgezählten Abläufe für ein verteiltes System umsetzen
+wollen, müsste man die Zielsysteme zum Beispiel neben das Entwicklersystem
+legen, da für viele Vorgänge eine physikalische Verbindung bestehen muss.
+
+So benötigt zum Beispiel das Debugging über \gls{jtag} oder \gls{swd} eine
+Verbindung zwischen einem Adapter und dem Zielsystem sowie zwischen
+Entwicklersystem und Adapter. Sollen beliebige Daten vom Zielsystem erfasst
+werden, so wird auch hierfür oft eine Verbindung in Form von direkter
+Verkabelung benötigt.
+
+Der Ansatz, das Funknetzwerk der Zielsysteme selbst für das Deployment von
+Firmware oder das Analysieren von internen Vorgängen zu nutzen, hat den
+Nachteil, dass dafür ein solches Netzwerk bereits bestehen muss.
+Dies kann jedoch nicht immer garantiert werden.
+
+Wünschenswert wäre es also, ein von dem Zielsystem und dessen Hardwäre völlig
+unabhängiges System zu entwickeln. Dies hat gleichzeitig den Vorteil, dass es
+bezüglich der Entscheidungen über ein Zielsystem größtmögliche Flexibilität
+bietet.
+
+Der Grundgedanke hinter dem zu entwerfenden \emph{Entwicklungssystem} ist
+deshalb der, dass bereits bestehende Infrastruktur wie Ethernet oder WLAN für
+die Verbindung von \emph{Modulen} zum Entwicklersystem genutzt wird. Die
+\emph{Module} übernehmen dann die Funktion einer Art "`Daten- und
+Debuggingbrücke"'. Sie ermöglichen die entfernte Steuerung der \emph{"`Ziele"'}
+und die Erfassung von Daten, die anschließend auf dem System des Entwicklers
+verfügbar gemacht und zusammengefasst werden.
+
+In \autoref{fig:sys} ist dargestellt, wie die eingezeichneten \emph{"`Module"'}
+über WLAN in die bestehende Infrastruktur, symbolisiert durch einen
+Access-Point, eingegliedert werden. Auch eine Verbindung über Ethernet wäre
+hierbei denkbar.
+\begin{definition}[Zielsystem]
+Das \emph{Zielsystem} ist das System, welches mit Hilfe des
+\emph{Entwicklungssystems} relisiert werden soll.
+\end{definition}
+Die einzelnen \emph{"`Module"'} sind in der Lage, die Ein- und Ausgänge
+der \emph{Zielsysteme ("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
+ermöglicht es, Daten zu sammeln und weiterzuleiten, sowie auf die "`Ziele"'
+zuzugreifen.
+\section{Vorentscheidungen}
+In diesem Abschnitt sollen die Vorgaben für das Entwicklungssystem und ein
+beispielhaftes Zielsystem getroffen und erläutert werden.
+\subsection{Entwicklungssystem}
+Für das Entwicklungssystem selbst muss eine Entscheidung über das
+verwendete Modul getroffen werden, dass als "`Brücke"' zwischen Entwicklersystem
+und Zielsystem funktioniert.
+
+<Warum wir das Carambola wählten>
+<Was das Carambola ist>
+Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten
+Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
+portierter Softwarepakete, unterstützt viele Architekturen (unter anderem ARM,
+MIPS, PowerPC, x86) und gewährleistet durch simple Konfigurationsdateien einen
+hohen Grad an Konfigurierbarkeit.
+\subsection{Zielsystem}
+Das zu entwerfende Entwicklungssystem sollte ein möglichst
+großes Spektrum potentieller Architekturen und Funksysteme abdecken können, so
+dass es später einfach ist, das exemplarisch zu entwickelnde Zielsystem durch
+ein anderes zu ersetzen. Dies sollte sich in einer möglichst generischen Wahl
+der Komponenten eines beispielhaften Zielsystems zeigen.
+
+Da Mikroprozessoren mit \textbf{ARM-Architektur} einen Anteil von rund
+71\%\cite{IDC01} an allen verkauften \glspl{cpu} haben, scheint es beinahe
+selbstverständlich, sich für eine solche \gls{cpu} zu entscheiden.
+
+Bedingt durch die hohe Verbreitung von ARM \glspl{cpu} existiert allerdings
+auch eine große Anzahl an Entwicklungsboards, die in Frage kommen.
+
+Dabei ist es wichtig, eine Entscheidung eher nach Kriterien der Energieeffizienz
+als der Rechenleistung zu treffen, da das Zielsystem später stark integriert
+arbeiten können soll.
+
+Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
+Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
+in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diesem
+Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau
+dafür.
+
+ <Warum der ARM von Olimex gut ist>
+
+\subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
+zwei Kategorien einteilen.
+
+Jedes Funkmodul besteht mindestens aus einem \textbf{Transceiver}. Dieser
+Transceiver umfasst zumindest die analogen Komponenten der physikalischen
+Schicht wie Analog-Digital-Wandler, Digital-Analog-Wandler, Filter, Verstärker,
+Frequenzerzeuger. Je nach Ausführung werden, ahängig davon ob der Transceiver
+für ein spezifisches Protokoll eingesetzt werden soll, auch die Bauteile des
+Medium-Access-Layers (Checksummenprüfung, Buffer, Kollisionsvermeidung) in
+einen Transceiver integriert.
+
+Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
+zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
+neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
+Aufgaben höherer Schichten und wird dafür oft über einfache Protokolle wie UART
+oder SPI angesprochen.
+
+Dies bedeutet jedoch gleichzeitig mehr Hardware, da ein integrierter
+Mikroprozessor betrieben werden muss und somit Strom benötigt.
+Außerdem verhindert die hohe Abstraktion der Kommunikation genauere Einblicke in
+deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll die
+Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
+Abstraktion hinderlich sein.
+
+
+ <Warum genau dieses Modul die einfachste Wahl ist>
+
 \section{Debugging}
 \subsection{Definition}
 Das Debugging eines eingebetteten Systems erfordert meist eine kombinierte Hard-
@@ -176,91 +302,48 @@ Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die Analyse
 von Daten, die das Zielsystem erzeugt. Da das Zielsystem über eine
 Funkschnittstelle verfügt, muss die für das Zielsystem zu entwickelnde
 Software diese Schnittstelle sicher auch in Betrieb nehmen können.
-\subsection{Szenarien}
-Soll für diese Funkschnittstelle nun also z.B. ein neues Funkprotokoll entworfen
-werden, ist es sicher nützlich, die Abläufe innerhalb des Funknetzwerkes auf
-Korrektheit zu überprüfen.
+\subsection{Anforderungen}
+Aufgabe dieses Teils des Entwicklungssystems wird es sein, die Erfassung der in
+\autoref{sec:datenan} erwähnten Abläufe zu erleichtern.
 
-So sind mehrere Szenarien denkbar, für die eine Analyse der genauen Abläufe
-wünschenswert wäre.
+Bedingung für die Erfassung von Daten seitens des Entwicklungssystems ist, dass
+das Zielsystem diese Daten überhaupt in einer erfassbaren Form zur Verfügung
+stellt. Hierbei muss jedoch beachtet werden, dass nicht jedes Zielsystem über
+alle Anschlussmöglichkeiten verfügen kann.
 
-\subsubsection*{Reichweite der Zielsysteme}
-Da ein zu entwerfendes Netzwerk mitunter eine hohe räumliche Verteilung
-aufweist, kann nicht garantiert werden, dass jeder Netzwerkknoten zu jedem
-anderen Knoten eine Verbindung aufbauen kann.
+Um die Daten vom Zielsystem zu erfassen, bietet sich zum Beispiel die Nutzung
+des \textbf{\gls{uart}} an. Hierfür muss jedoch die Software des Zielsystems so
+angepasst werden, dass es die zu sammelnden Daten über \gls{uart} ausgibt.
 
-Es ist also wünschenswert, die Reichweite mittels der \emph{Datenanalyse}
-festzustellen. Hierfür könnte man sich zum Beispiel folgendes simple Szenario
-überlegen.
+\begin{definition}[UART]
+Der \gls{uart} ist eine, in Mikrocontrollern sehr weit verbreitete,
+elektronische Schaltung zur seriellen Übertragung von Daten. In
+seiner Minimalkonfiguration benötigt der \gls{uart} nur zwei Pins (RX ---
+Receive, TX --- Transmit), da, durch Festlegung auf einen gemeinsamen Takt, auf
+ein Taktsignal verzichtet werden kann. Dies ermöglicht eine Nutzung von
+\gls{uart} auch in einem stark integriertem Zielsystem.
+\end{definition}
 
-Jeder Netzwerkknoten sendet eine Broadcastmitteilung an das gesamte Netzwerk.
-Jeder Knoten der diese Nachricht empfängt, befindet sich nun also in Reichweite
-des Absenders.
+\begin{minipage}[c]{\textwidth}
+Um die Daten später sortieren und analysieren zu können, müssen vom
+Entwicklungssystem folgende Daten erfasst werden.
+\begin{itemize}
+  \item Vom Zielsystem ausgegebene Daten
+  \item Zeitpunkt der Erfassung der Daten
+\end{itemize}
+\end{minipage}
 
-Für diese Auswertung dieses Vorgangs müssen nun von allen Netzwerkknoten die
-erfassten Daten gesammelt und analysiert werden.
+Besonderes Augenmerk muss hierbei auf die Synchronizität der einzelnen Module
+des Entwicklungssystems gelegt werden. Auf diesen Umstand wird in
+\autoref{subs:time} weiter eingegangen. 
 
-\autoref{fig:fikdiag} stellt einen beispielhaften Ablauf eines solchen
-Broadcasting-Vorganges dar. Während die zu Zeitpunkt $t_0$ von \emph{Knoten 2}
-abgesetzte Nachricht sowohl von \emph{Knoten 1} als auch von \emph{Knoten 3}
-empfangen wurde, erreicht die Broadcast-Nachricht von \emph{Knoten1} zu
-Zeitpunkt $t_3$ nur \emph{Knoten 2}. In \autoref{fig:fikmsg} ist der mögliche
-Ablauf dieses Vorganges aufgeführt, wie er mit zentral gesammelten Daten
-erscheinen würde.
+\subsection{Erforderliche Präzision}
+Für viele Vorgänge der Funkschnittstelle ist eine gewisse Genauigkeit wichtig.
+Diese drückt sich insbesondere in der Genauigkeit der vom Entwicklungssystem
+verwendeten Zeitstempel aus.
 
-Führt man diese Testreihe fort, lässt sich sehr leicht eine Topologie der
-Empfangsstärken bilden.
-
- \begin{figure}[!ht]
- \centering
-\begin{sequencediagram}
-\newthread[0]{node1}{Knoten 1}
-\newthread{node2}{Knoten 2}
-\newthread{node3}{Knoten 3}
-\mess[1]{node2}{Broadcast}{node1}
-\node[anchor=south west,inner sep=8pt] (t0) at (mess from) {$t_0$};
-\node[anchor=east,inner sep=10pt] (t1) at (mess to) {$t_1$};
-\prelevel{2}
-\mess[1]{node2}{Broadcast}{node3}
-\node[anchor=west,inner sep=10pt] (t2) at (mess to) {$t_3$};
-\mess[1]{node1}{Broadcast}{node2}
-\node[anchor=east,inner sep=10pt] (t3) at (mess from) {$t_4$};
-\node[anchor=west,inner sep=10pt] (t4) at (mess to) {$t_5$};
-\prelevel{2}
-\mess[4]{node1}{Broadcast}{node3}
-\node[anchor=west,inner sep=10pt] (t5) at (mess to) {$t_6$};
-\node[cross out, draw,minimum size = 18pt, thick] at (mess to){};
-
-\end{sequencediagram} \\
-\caption{Möglicher Ablauf eines fiktiven Funkprotokolls}{Hier können zu vier
-verschiedenen Zeitpunkten Daten aufgezeichnet werden, um einen
-zeitlichen Verlauf untersuchen und verdeutlichen zu können.}
-\label{fig:fikdiag}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\par\begin{tabu}{l c l}
-Zielsystem & Zeitstempel & Nachricht\\
-\hline
-\emph{<Knoten 2>} & \emph{$t_0$} & Broadcast gesendet\\ 
-\emph{<Knoten 1>} & \emph{$t_1$} & Broadcast von \emph{Knoten 2} erhalten\\
-\emph{<Knoten 3>} & \emph{$t_2$} & Broadcast von \emph{Knoten 2} erhalten\\
-\emph{<Knoten 1>} & \emph{$t_3$} & Broadcst gesendet\\
-\emph{<Knoten 2>} & \emph{$t_4$} & Broadcast von \emph{Knoten 1} erhalten\\
-\multicolumn{3}{c}{\emph{Keine Daten für Zeitpunkt $t_5$}}\\
-\hline
-\end{tabu}\\
-\caption{Erfassung der Daten des Ablaufs aus \autoref{fig:fikdiag}}{Ein Ablauf
-wie in \autoref{fig:fikdiag} dargestellt, könnte diese Reihenfolge von
-Nachrichten erzeugen.}
-\label{fig:fikmsg}
-\end{figure}
-\subsubsection*{Kollisionen}\label{subs:kollision}
-Auch die Kollisionserkennung ist für ein Funksystem von hoher Bedeutung. Senden
-zwei Funkknoten gleichzeitig eine Nachricht, überlagern sich die Funksignale und
-es ist für ein empfangendes System, sofern beide Sender in Reichweite sind,
-nicht mehr möglich, die einzelnen Nachrichten auseinanderzuhalten.
+Eine Möglichkeit die erforderliche Präzision analysieren zu können ist die
+Untersuchen des Kollisionsvermeidungs-Algorithmus'.
 
 Hierfür setzt der 802.15.4 Standard in seinem \gls{mac}-Layer zum Beispiel
 CSMA/CA ein\cite{IEEE01}.
@@ -396,52 +479,11 @@ Sequenznummer, Adressfeldern und Längenangabe aus \texttt{PHY}- und
 Will man nun die erwähnten Abläufe sinnvoll erfassen, muss die Präzision der
 Timer also bei \textbf{mindestens \SI{1}{\milli\second}} liegen. Erst diese
 Genauigkeit würde ein sinnvolles Sortieren und Zuordnen der Abläufe ermöglichen.
-\subsubsection*{Allgemeines}
-Mit steigender Komplexität des zu entwerfenden Funkprotokolls steigt die
-Komplexität solcher Abläufe. So ist zum Beispiel, wie im Funkprotokoll ZigBee
-vorgesehen, denkbar, dass die Funkknoten verschiedene Aufgaben im Routing und
-Aufbau des eigenen Funknetzwerkes übernehmen. Auch hierfür ist unter
-Umständen eine möglichst genaue Erfassung der Abläufe nötig.
-
-\subsection{Anforderungen}
-Aufgabe dieses Teils des Entwicklungssystems wird es sein, die Erfassung der in
-\autoref{sec:datenan} erwähnten Abläufe zu erleichtern.
-
-Bedingung für die Erfassung von Daten seitens des Entwicklungssystems ist, dass
-das Zielsystem diese Daten überhaupt in einer erfassbaren Form zur Verfügung
-stellt. Hierbei muss jedoch beachtet werden, dass nicht jedes Zielsystem über
-alle Anschlussmöglichkeiten verfügen kann.
-
-Um die Daten vom Zielsystem zu erfassen, bietet sich zum Beispiel die Nutzung
-des \textbf{\gls{uart}} an. Hierfür muss jedoch die Software des Zielsystems so
-angepasst werden, dass es die zu sammelnden Daten über \gls{uart} ausgibt.
-
-\begin{definition}[UART]
-Der \gls{uart} ist eine, in Mikrocontrollern sehr weit verbreitete,
-elektronische Schaltung zur seriellen Übertragung von Daten. In
-seiner Minimalkonfiguration benötigt der \gls{uart} nur zwei Pins (RX ---
-Receive, TX --- Transmit), da, durch Festlegung auf einen gemeinsamen Takt, auf
-ein Taktsignal verzichtet werden kann. Dies ermöglicht eine Nutzung von
-\gls{uart} auch in einem stark integriertem Zielsystem.
-\end{definition}
-
-\begin{minipage}[c]{\textwidth}
-Um die Daten später sortieren und analysieren zu können, müssen vom
-Entwicklungssystem folgende Daten erfasst werden.
-\begin{itemize}
-  \item Vom Zielsystem ausgegebene Daten
-  \item Zeitpunkt der Erfassung der Daten
-\end{itemize}
-\end{minipage}
-
-Besonderes Augenmerk muss hierbei auf die Synchronizität der einzelnen Module
-des Entwicklungssystems gelegt werden. Auf diesen Umstand wird in
-\autoref{subs:time} weiter eingegangen. 
 
 \subsection{Bestandteile}\label{subs:best}
 \begin{minipage}[c]{\textwidth}
-Die Software zur Analyse der gesammelten Daten muss im Kern aus drei Teilen
-bestehen.
+Der Teil des Entwicklungssystems, der für die Analyse der gesammelten Daten
+zuständig ist, muss im Kern aus drei Teilen bestehen.
 \begin{itemize}
   \item \textbf{Server} --- Läuft als Anwendung auf dem Carambola. Empfängt
   Daten über \gls{uart} und leitet diese an den Client weiter.

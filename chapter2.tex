@@ -10,32 +10,6 @@ bestimmten Softwareprojektes zu erreichen. Die einzelnen Bestandteile eines
 solchen \emph{Entwicklungssystems} sollen im Verlauf dieses Kapitels
 identifiziert werden.
 \end{definition}
-\section{Grundlegende Konzeption}
-\begin{figure}[!ht]
-\centering
-\def\svgwidth{\columnwidth}
-\input{res/system.pdf_tex}
-\caption{Das geplante Gesamtsystem}{Die "'Module"' werden über WLAN
-vom Entwicklersystem gesteuert und übermitteln an dieses auch alle
-Daten, die sie von ihrem jeweils angeschlossenen "`Ziel"' erhalten.}
-\label{fig:sys}
-\end{figure}
-Der Grundgedanke hinter dem zu entwerfenden \emph{Entwicklungssystem} ist, dass
-bereits bestehende Infrastruktur wie Ethernet oder WLAN für die \emph{"`Module"'}
-genutzt wird, um die Steuerung der emph{"`Ziele"'} und die Erfassung der Daten auf
-dem System des Entwicklers verfügbar zu machen und zusammenzufassen.
-
-In \autoref{fig:sys} ist dargestellt, wie die eingezeichneten \emph{"`Module"'}
-über WLAN in die bestehende Infrastruktur, symbolisiert durch einen
-Access-Point, eingegliedert werden.
-\begin{definition}[Zielsystem]
-Das \emph{Zielsystem} ist das System, welches mit Hilfe des
-\emph{Entwicklungssystems} relisiert werden soll.
-\end{definition}
-Die einzelnen \emph{"`Module"'} sind in der Lage, die Ein- und Ausgänge
-der \emph{Zielsysteme ("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
-ermöglicht es, Daten zu sammeln und weiterzuleiten, sowie auf die "`Ziele"'
-zuzugreifen.
 
 \section{Elemente eines Entwicklungssystems}
 Die Elemente eines Entwicklungssystems lassen sich grob drei Kategorien
@@ -252,93 +226,114 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   Auch bieten manche Zielsysteme eine Übertragung des Programmcodes über die
   \gls{jtag}-Schnittstelle an.
 \end{itemize}
-%%==================================================================
-\section{Vorgaben des Zielsystems}
-Die hier angeführten Punkte wurden als grundlegend für die Arbeit erachtet und
-sind aus diesem Grund feste Vorgaben an das System und keine
-Designentscheidungen. An dieser Stelle sollen lediglich die Gründe für
-die Wahl dieser Vorgaben erläutert werden.
-
-Das zu entwerfende Entwicklungssystem sollte ein möglichst
-großes Spektrum potentieller Architekturen und Funksysteme abdecken können, so
-dass es später einfach ist, das zu entwickelnde Zielsystem durch ein anderes zu
-ersetzen.
-
-Da Mikroprozessoren mit \textbf{ARM-Architektur} einen Anteil von rund
-71\%\cite{IDC01} an allen verkauften \glspl{cpu} haben, sorgt dies allein für
-eine hohe Austauschbarkeit. Dieser Umstand bedingt die Vorgabe, dass das
-\emph{Entwicklungssystem} speziell auf die Entwicklung eines Zielsystems
-mit ARM-Architektur ausgelegt sein soll. 
-
-Es ist wünschenswert, die hohe Austauschbarkeit einzelner Bestandteile in
-den weiteren Entscheidungen ebenso widerzuspiegeln.
 
 <\ldots>
+%%=====================================================================
+\section{Szenarien}
+Soll für eine Funkschnittstelle ein neues Funkprotokoll entworfen
+werden, ist es sicher nützlich, die Abläufe innerhalb des Funknetzwerkes auf
+Korrektheit zu überprüfen.
 
-\section{Vorentscheidungen für das  Zielsystem} In diesem Abschnitt sollen die
-Vorgaben für ein beispielhaftes Zielsystem erläutert und festgelegt werden. 
-\subsection{Entwicklungssystem}
-<Warum wir das Carambola wählten>
-<Was das Carambola ist>
-Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten
-Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
-portierter Softwarepakete, unterstützt viele Architekturen (unter anderem ARM,
-MIPS, PowerPC, x86) und gewährleistet durch simple Konfigurationsdateien einen
-hohen Grad an Konfigurierbarkeit.
-\subsection{Zielsystem}
-Bedingt durch die hohe Verbreitung von ARM \glspl{cpu}
-existiert eine große Anzahl an Entwicklungsboards, die in Frage kommen.
+So sind mehrere Szenarien denkbar, für die eine Analyse der genauen Abläufe
+wünschenswert wäre.
 
-Es ist wichtig eine Entscheidung eher nach Kriterien der Energieeffizienz als
-der Rechenleistung zu treffen, da das Zielsystem später stark integriert
-arbeiten können soll.
+\subsection{Reichweite der Zielsysteme}
+Da ein zu entwerfendes Netzwerk mitunter eine hohe räumliche Verteilung
+aufweist, kann nicht garantiert werden, dass jeder Netzwerkknoten zu jedem
+anderen Knoten eine Verbindung aufbauen kann.
 
-Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
-Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
-in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diesem
-Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau
-dafür.
+Es ist also wünschenswert, die Reichweite mittels der \emph{Datenanalyse}
+festzustellen. Hierfür könnte man sich zum Beispiel folgendes simple Szenario
+überlegen.
 
- <Warum der ARM von Olimex gut ist>
+Jeder Netzwerkknoten sendet eine Broadcastmitteilung an das gesamte Netzwerk.
+Jeder Knoten der diese Nachricht empfängt, befindet sich nun also in Reichweite
+des Absenders.
 
-\subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
-zwei Kategorien einteilen.
+Für diese Auswertung dieses Vorgangs müssen nun von allen Netzwerkknoten die
+erfassten Daten gesammelt und analysiert werden.
 
-Jedes Funkmodul besteht mindestens aus einem \textbf{Transceiver}. Dieser
-Transceiver umfasst zumindest die analogen Komponenten der physikalischen
-Schicht wie Analog-Digital-Wandler, Digital-Analog-Wandler, Filter, Verstärker,
-Frequenzerzeuger. Je nach Ausführung werden, ahängig davon ob der Transceiver
-für ein spezifisches Protokoll eingesetzt werden soll, auch die Bauteile des
-Medium-Access-Layers (Checksummenprüfung, Buffer, Kollisionsvermeidung) in
-einen Transceiver integriert.
+\autoref{fig:fikdiag} stellt einen beispielhaften Ablauf eines solchen
+Broadcasting-Vorganges dar. Während die zu Zeitpunkt $t_0$ von \emph{Knoten 2}
+abgesetzte Nachricht sowohl von \emph{Knoten 1} als auch von \emph{Knoten 3}
+empfangen wurde, erreicht die Broadcast-Nachricht von \emph{Knoten1} zu
+Zeitpunkt $t_3$ nur \emph{Knoten 2}. In \autoref{fig:fikmsg} ist der mögliche
+Ablauf dieses Vorganges aufgeführt, wie er mit zentral gesammelten Daten
+erscheinen würde.
 
-Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
-zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
-neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
-Aufgaben höherer Schichten und wird dafür oft über einfache Protokolle wie UART
-oder SPI angesprochen.
+Führt man diese Testreihe fort, lässt sich sehr leicht eine Topologie der
+Empfangsstärken bilden.
 
-Dies bedeutet jedoch gleichzeitig mehr Hardware, da ein integrierter
-Mikroprozessor betrieben werden muss und somit Strom benötigt.
-Außerdem verhindert die hohe Abstraktion der Kommunikation genauere Einblicke in
-deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll die
-Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
-Abstraktion hinderlich sein.
+ \begin{figure}[!ht]
+ \centering
+\begin{sequencediagram}
+\newthread[0]{node1}{Knoten 1}
+\newthread{node2}{Knoten 2}
+\newthread{node3}{Knoten 3}
+\mess[1]{node2}{Broadcast}{node1}
+\node[anchor=south west,inner sep=8pt] (t0) at (mess from) {$t_0$};
+\node[anchor=east,inner sep=10pt] (t1) at (mess to) {$t_1$};
+\prelevel{2}
+\mess[1]{node2}{Broadcast}{node3}
+\node[anchor=west,inner sep=10pt] (t2) at (mess to) {$t_3$};
+\mess[1]{node1}{Broadcast}{node2}
+\node[anchor=east,inner sep=10pt] (t3) at (mess from) {$t_4$};
+\node[anchor=west,inner sep=10pt] (t4) at (mess to) {$t_5$};
+\prelevel{2}
+\mess[4]{node1}{Broadcast}{node3}
+\node[anchor=west,inner sep=10pt] (t5) at (mess to) {$t_6$};
+\node[cross out, draw,minimum size = 18pt, thick] at (mess to){};
 
+\end{sequencediagram} \\
+\caption{Möglicher Ablauf eines fiktiven Funkprotokolls}{Hier können zu vier
+verschiedenen Zeitpunkten Daten aufgezeichnet werden, um einen
+zeitlichen Verlauf untersuchen und verdeutlichen zu können.}
+\label{fig:fikdiag}
+\end{figure}
 
- <Warum genau dieses Modul die einfachste Wahl ist>
+\begin{figure}[!ht]
+\centering
+\par\begin{tabu}{l c l}
+Zielsystem & Zeitstempel & Nachricht\\
+\hline
+\emph{<Knoten 2>} & \emph{$t_0$} & Broadcast gesendet\\ 
+\emph{<Knoten 1>} & \emph{$t_1$} & Broadcast von \emph{Knoten 2} erhalten\\
+\emph{<Knoten 3>} & \emph{$t_2$} & Broadcast von \emph{Knoten 2} erhalten\\
+\emph{<Knoten 1>} & \emph{$t_3$} & Broadcst gesendet\\
+\emph{<Knoten 2>} & \emph{$t_4$} & Broadcast von \emph{Knoten 1} erhalten\\
+\multicolumn{3}{c}{\emph{Keine Daten für Zeitpunkt $t_5$}}\\
+\hline
+\end{tabu}\\
+\caption{Erfassung der Daten des Ablaufs aus \autoref{fig:fikdiag}}{Ein Ablauf
+wie in \autoref{fig:fikdiag} dargestellt, könnte diese Reihenfolge von
+Nachrichten erzeugen.}
+\label{fig:fikmsg}
+\end{figure}
+\subsection{Kollisionen}\label{subs:kollision}
+Auch die Kollisionserkennung ist für ein Funksystem von hoher Bedeutung. Senden
+zwei Funkknoten gleichzeitig eine Nachricht, überlagern sich die Funksignale und
+es ist für ein empfangendes System, sofern beide Sender in Reichweite sind,
+nicht mehr möglich, die einzelnen Nachrichten auseinanderzuhalten.
+
+Will man diese Kollisionen nun während der Entwicklung untersuchen, so muss eine
+Möglichkeit existieren, diese auch darstellen zu können. Des Weiteren wird
+für die Darstellung sicher auch eine gewisse Präzision erforderlich sein, da
+Kollisionen innerhalb eines Netzwerkes immer eine Gleichzeitigkeit bedeuten.
+\subsubsection*{Allgemeines}
+Mit steigender Komplexität des zu entwerfenden Funkprotokolls steigt die
+Komplexität solcher Abläufe. So ist zum Beispiel, wie im Funkprotokoll ZigBee
+vorgesehen, denkbar, dass die Funkknoten verschiedene Aufgaben im Routing und
+Aufbau des eigenen Funknetzwerkes übernehmen. Auch hierfür ist unter
+Umständen eine möglichst genaue Erfassung der Abläufe nötig.
 %%======================================================================
-\section{Anforderungen an ein konkretes System (Lastenheft)}
-Nachdem nun klar ist, aus welchen Bestandteilen ein Entwicklungssytem besteht
-und welches Zielsystem eingesetzt werden soll, müssen nun die
-konkreten Anforderungen gestellt werden.
+\section{Anforderungen an das Entwicklungssystem}
+Nachdem nun klar ist, aus welchen Bestandteilen ein Entwicklungssytem besteht,
+müssen nun die konkreten Anforderungen gestellt werden.
 
-Diese Anforderungen sollen als Ziel dieser Arbeit erfüllt werden und eine
-Entwicklung des Zielsystems ermöglichen.
-
-All diesen Anforderungen ist gemein, dass sie "`ferngesteuert"' funktionieren
-müssen. Hierfür können bereits existierende Infrastrukturen (WLAN,
-Ethernet) genutzen werden.
+Diese Anforderungen sollen als Ziel dieser Arbeit erfüllt werden und die
+Entwicklung eines Zielsystems, bestehend aus mehreren unabhängigen
+Modulen, ermöglichen. Um dies zu zeigen, soll außerdem exemplarisch ein
+minimales Zielsystem entwickelt werden.
 
 \subsection{Debugging} Die Entwicklung einer Software und die Suche nach Fehlern
 in dieser wird durch den Einsatz eines Debuggers enorm erleichtert. 
@@ -346,23 +341,25 @@ in dieser wird durch den Einsatz eines Debuggers enorm erleichtert.
 \begin{minipage}[c]{\textwidth}
 Gefordert wird:
 \begin{itemize}
-  \item Die Möglichkeit, das Zielsystem schrittweise zu Debuggen
-  \item Eine Integration in eine Entwicklungsoberfläche(\gls{ide})
+  \item Die Möglichkeit, das Zielsystem \textbf{schrittweise zu Debuggen}
+  \item Eine \textbf{Integration} in eine \gls{ide}
+  \item 
 \end{itemize}
 \end{minipage}
 
 \subsection{Deployment} Für das Deployment, sowohl testweise und zu
 Debuggingzwecken während der Entwicklung als auch für die endgültige
 Fertigstellung, ist es erforderlich, die einzelnen Knoten des Zielsystems mit
-einer neuen Firmware beschreiben zu können.
+einer \textbf{neuen Firmware beschreiben} zu können.
 
 Da es sich bei dem Zielsystem in seiner Gesamtheit um eine Vielzahl identischer
 Komponenten handelt, sollte sich dieser Prozess im Idealfall auf
 eine beliebige Anzahl an Zielsystemen ausweiten lassen. Es wäre wünschenswert,
-eine Anzahl von Komponenten in einem einzigen Schritt mit einer Firmware
-beschreiben zu können.
+eine Anzahl von Komponenten \textbf{in einem einzigen Schritt} mit einer
+Firmware beschreiben zu können.
 
-\subsection{Datenanalyse} Die Möglichkeit ein Entwicklungssystem beliebige
+\subsection{Datenanalyse}
+Die Möglichkeit ein Entwicklungssystem beliebige
 Daten als "`Debuginformationen"' ausgeben zu lassen erlaubt es, eine
 Übersicht über die zeitlichen Abläufe zu erstellen. Gerade für die
 Zusammenarbeit miteinander interagierender Module ist es also wichtig, diese
@@ -371,15 +368,12 @@ Fehlersuche heranziehen zu können.
 
 Zur Umsetzung dieses Systems müssen also zwei Komponenten erstellt werden:
 \begin{enumerate}
-  \item Eine zentrale Verwaltungseinheit, die Daten aggregieren und verwalten
-  kann
-  \item Ein Gegenstück, das die Daten eines einzelnen Moduls sammelt und an die
-  Verwaltungseinheit weiterleitet
+  \item Eine Software zur Anzeige und Organisation der, von mehreren
+  Quellen(Modulen des Zielsystems) gesammelten, Daten
+  \item Eine Möglichkeit, die Daten eines einzelnen Moduls zu sammeln
 \end{enumerate}
 
-
 \iffalse
-
 %%=============================================================================
 \section{Softwareunterstützung}
 Für eine neue Entwicklungsplattform ist es wünschenswert, sich nicht von einem
