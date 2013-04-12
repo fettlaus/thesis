@@ -24,7 +24,7 @@ Nach Systemstart werden außerdem alle Dateien im Ordner
 \listinlsh{/etc/uci-defaults/} eingelesen, ausgeführt und anschließend gelöscht.
 Dies erlaubt es Softwarepaketen, Einstellungen am System vorzunehmen. Werden
 diese Softwarepakete bereits in die Firmware integriert, entspricht dies einer
-Art Vorkonfiguration des Systems.
+Art \textbf{Vorkonfiguration} des gesamten Systems.
 
 Da alle diese Einstellungen für das zu entwerfende Entwicklungssystem spezifisch
 sind, wird diese Datei zusammen mit der kompilierten Serveranwendung installiert
@@ -37,31 +37,38 @@ werden, wenn das Netzwerk vorkonfiguriert werden soll.
 \gls{uci} bietet mit \listinlsh{uci batch} explizit einen Befehl an, um
 umfangreiche Einstellungsändeurngen vorzunehmen. Hierfür werden die einzelnen
 Befehle mittels \emph{Here document} übergeben.
-\begin{lstlisting}[language=sh]
-uci batch <<-EOF_network
-	...
-	commit network
-	EOF_network
-\end{lstlisting}
+
 \begin{definition}[Here document]
 Ein \emph{Here document} ermöglicht es, einem einzelnen Unix-Befehl mehrere,
 durch Zeilenumbrüche getrennte, Befehle zu übergeben.
 \end{definition}
+Die Verwendung des \emph{Here documents} ist dabei wie folgt. Die zu tätigenden
+Einstellungen befinden sich dabei an der Stelle des mit
+\listinlsh{<Einstellungen>} bezeichneten Bereichs. Ein abschließendes
+\listinlsh{commit network} weist das \gls{uci} an, die Einstellungen zu
+speichern.
+ \begin{lstlisting}[language=sh]
+uci batch <<-EOF_network
+	<Einstellungen>
+	commit network
+	EOF_network
+\end{lstlisting}
 Da diese Einstellungen nur einmalig getätigt werden müssen, wird dafür die in
 \autoref{sec:conf} erwähnte Datei in \listinlsh{/etc/uci-defaults/} verwendet.
 
 \subsection{Aktivierung des UART}\label{subs:aktuart}
 Der Mikrochip\cite{RA01} des Carambolas besitzt zwei \glspl{uart}. Einer dieser
-\glspl{uart} wird für die Serielle Konsole verwendet und somit kann der zweite
-Anschluss für die Datenschnittstelle des Entwicklungssystems verwendet werden.
+\glspl{uart} wird für die Serielle Konsole über den RS232-Anschluss des
+Carambolas verwendet. Somit kann der zweite Anschluss für die
+Datenschnittstelle des Entwicklungssystems verwendet werden.
 Da die Pins des Carambolas für den zweiten \gls{uart} standardmäßig auf
 \gls{gpio}-Betrieb eingestellt sind, müssen diese erst umgestellt werden.
 
 Hierzu muss das Tool \texttt{io} installiert und mittels 
-\listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies setzt im Speicher des
-Mikrocontrollers das Flag, den \gls{uart} zu aktivieren. Dieser Vorgang muss
-nach jedem Systemstart erfolgen und kann durch die, bei jedem Systemstart
-aufgerufene, \listinlsh{/etc/rc.local} erfolgen.
+\listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies weist den
+Mikrocontroller an, den \gls{uart} zu aktivieren. Dieser Vorgang muss nach jedem
+Systemstart erfolgen und kann durch die, bei jedem Systemstart aufgerufene,
+Datei \listinlsh{/etc/rc.local} erfolgen.
 
 Zusätzlich muss verhindert werden, dass auf diesem \gls{uart} eine Linuxterminal
 betrieben wird. Hierzu muss die Datei \listinlsh{/etc/inittab} modifiziert
@@ -113,9 +120,9 @@ CONFIGURE_ARGS+= \
 \end{lstlisting}
 
 Zu den Kompilerargumenten muss die Option
-\texttt{-Wno-error=maybe-uninitialized} hinzugefügt werden, da anderenfalls
+\listinlsh{-Wno-error=maybe-uninitialized} hinzugefügt werden, da anderenfalls
 eine den Kompiliervorgang abbrechende Warnung beim Kompilieren der Datei
-\texttt{src/target/dsp5680xx.c} auftritt.
+\listinlsh{src/target/dsp5680xx.c} auftritt.
 \subsection{Integration in Eclipse}
 Da OpenOCD neben einer Telnet-Konsole auch die Möglichkeit bietet, über einen
 \gls{gdb}-Client darauf zuzugreifen, ist die Einbindung in verschiedenste
@@ -127,7 +134,9 @@ Unterstützung für gdb. <cite>
 Für diese Arbeit soll exemplarisch eine Verbindung zum Entwicklungssystem
 mittels Eclipse hergestellt werden.
 
-Hierfür 
+Hierfür
+
+<\ldots>
 \section{Server - FreeJTAG}
 Der "`FreeJTAG"' genannte Server des Entwicklungssystems wird auf dem Carambola
 installiert, als Serveranwendung bei jedem Systemstart gestartet und leitet die
@@ -135,16 +144,17 @@ gesammelten Daten an jeden verbundenen Client weiter.
 
 
 \subsection{Bibliotheken und Abhängigkeiten}
-Als Bibliotheken kommen bei FreeJTAG vor allem Teile der Boost Bibliothek zum
-Einsatz. Diese dienen der asynchronen Netzwerkkommunikation (Boost ASIO), dem
-hierfür nötigen Einsatz von Threads (Boost Thread), der Verwaltung der
-Zeitstempel (Boost Chrono) und dem Speichern von Programmeinstellungen (Boost
-Program\_Options).
+Als Bibliotheken kommen bei FreeJTAG vor allem Teile der \emph{Boost Bibliothek}
+zum Einsatz. Diese dienen der asynchronen Netzwerkkommunikation (\emph{Boost
+ASIO}), dem hierfür nötigen Einsatz von Threads (\emph{Boost Thread}), der
+Verwaltung der Zeitstempel (\emph{Boost Chrono}) und dem Speichern und
+Einlesen von Programmeinstellungen (\emph{Boost Program\_Options}).
 
 Außerdem hängt FreeJTAG von dem Paket "`io"' ab, da dieses für die Aktivierung
 des \gls{uart}, wie in \autoref{subs:aktuart} beschrieben, zuständig ist und
-installiert werden muss. Die in \autoref{subs:aktuart} beschriebene Skriptdatei
-ist ebenso in diesem Paket enthalten. 
+installiert werden muss. Die in \autoref{sec:conf} beschriebene Skriptdatei,
+die mittels \listinlsh{/etc/uci-defaults/} eine Vorkonfiguration durchführt, ist
+ebenso in diesem Paket enthalten.
 
 Durch die Installation dieser Anwendung wird das Carambola also komplett für den
 Einsatz als Entwicklungssystem konfiguriert.
@@ -255,74 +265,10 @@ und mit den eingestellten Parametern konfiguriert.
 Schließlich ruft der startende Thread die blockierende Methode
 \listinlcpp{io_service_.run();} auf und dient nun zur Abarbeitung der
 asynchronen Netzwerkvorgänge.
-\subsubsection*{Zeitsynchronisation}\label{subs:servertime}
-Die Synchronisation soll nach den Vorüberlegungen aus \autoref{subs:time}
-erfolgen und auch die dort angegebenen Vorgaben einhalten.
+\subsubsection*{Zeitsynchronisation}
+Der Ablauf erfolgt wie in \autoref{subs:time} beschrieben.
 
-Ein erster Ansatz wäre, bereits bestehende Synchronisationstechniken wie
-\gls{ntp} zu verwenden. Diese haben jedoch den Nachteil, dass sie für die
-Synchronisation immer eine aktive Verbindung zum Internet oder einen lokalen
-NTP-Server  benötigen. Außerdem sind, da die Carambola-Systeme keine
-Echtzeituhren besitzen, Datum und Uhrzeit nach einem Start des Systems auf die
-Unix Epoche gesetzt. Da NTP direkt die Systemzeit beeinflusst, würde dies 
-unter Umständen Auswirkungen auf andere Prozesse bedeuten.
-
-Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von
-Christian\cite{CHR} zum Einsatz kommen. Entscheidend ist hierbei, dass der
-Synchronisationsvorgang vom Zeitgeber angestoßen wird. Dies erfordert eine
-zusätzliche abschließende Datenübertragung.
-
-Da TCP durch seine Flusskontrolle die Messung der Netzwerklatenz
-durch eventuell Neuübertragungsversuche negativ beeinflussen kann, ist für die
-Zeitsynchronisation die Verwendung von UDP nötig. Dies bedingt allerdings die
-Verwendung einer Sequenznummer.
-
-\begin{itemize}
-  \item Der Client stößt den Synchronisationsvorgang an, indem er dem Server
-  seinen aktuellen Zeitstempel $t_0$ mittels einer \texttt{PING}-Nachricht
-  übermittelt.
-  \item Bei Erhalt der Nachricht erfasst der Server seinen eigenen Zeitstempel
-  als $t_1$.
-  \item Anschließend bereitet er das Senden einer \texttt{PONG}-Nachricht als
-  Antwort vor, erfasst einen weiteren Zeitstempel ($t_2$) und sendet die
-  Nachricht.
-  \item Bei Erhalt der Nachricht durch den Client, erfasst dieser seine eigene
-  Zeit $t_3$ und übermittelt sie dem Server in einer, diesen
-  Synchronisierungsprozess abschließenden, \texttt{STIM}-Nachricht.
-\end{itemize} 
-Dieser Vorgang ist in \autoref{fig:timeseq} visualisiert.
-
-\begin{figure}
-\centering
-\begin{sequencediagram}[ht]
-\newthread[0]{client}{:Client}
-\newthread[3]{server}{:Server}
-\mess[2]{client}{PING}{server}
-\node[anchor=east,inner sep=10pt] (t0) at (mess from) {$t_0$};
-\node[anchor=west,inner sep=4pt,label=above right:{$t_1$}] (t1) at (mess to)
-{};
-\mess[2]{server}{PONG}{client}
-\node[anchor=west,inner sep=4pt,label=below right:{$t_2$}] (t2) at (mess from)
-{}; \node[anchor=east,inner sep=10pt] (t3) at (mess to) {$t_3$};
-\mess[2]{client}{STIM}{server}
-\path (t0.east) |- coordinate(t01) (t1);
-\draw[dashed] (t1) -- (t01);
-\path (t3.east) |- coordinate(t23) (t2);
-\draw[dashed] (t2) -- (t23);
-\end{sequencediagram}
-\caption{Ablauf der Zeitsynchronisation eines Servers}
-\label{fig:timeseq}
-\end{figure}
-
-Nach Abschluss dieser Kommunikation lässt sich die Zeitdifferenz durch folgende
-Formel errechnen.
-\begin{equation}
-\frac{t_1-t_0-t_3+t_2}{2}=\Delta t
-\end{equation}
-Um Abweichungen, zum Beispiel durch unterschiedliche Latenzen auf dem Hin- und
-Rückweg im Netzwerk, auszugleichen, werden mehrere dieser Vorgänge durchgeführt
-und ein arithmetisches Mittel über die gesammelten Differenzen gebildet. Dieser
-Mittelwert ist eine etwas bessere Annäherung an die tatsächliche Differenz.
+<näher erläutern>
 
 Da nun die Abweichung zur Clientsoftware ermittelt wurde, kann die Funktion
 \newline\listinlcpp{TimeKeeper::set(microseconds difference)} verwendet werden,
@@ -496,8 +442,8 @@ problemlos betreiben. Alternativ hätte auch die Möglichkeit bestanden, die
 Sendeleistung des WLAN-Moduls über die Einstellung \listinlsh{option txpower 10}
 in der Datei \listinlsh{/etc/config/wireless} zu reduzieren.
 \section{Analyse des Systems}
-Da die Präzision der Zeitstempel von zentraler Bedeutung für die Aussagekraft
-der gesammelten Daten ist, muss festgestellt werden, wie exakt zum Beispiel die
+Da die Präzision der Zeitstempel von zentraler Bedeutung für die
+Aussagekraft der gesammelten Daten ist, muss festgestellt werden, wie exakt zum Beispiel die
 Zeitsynchronisation funktioniert.
 
 Um die Genauigkeit messen zu können, müssen alle Zielsysteme möglichst

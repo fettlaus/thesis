@@ -2,15 +2,18 @@
 \minitoc
 In diesem Kapitel soll aufgezeigt werden, woraus ein Entwicklungssystem
 im Allgemeinen besteht und welche Anforderungen sich also für ein zu
-entwerfendes \emph{Entwicklungssystem} ergeben.
+entwerfendes Entwicklungssystem ergeben.
 \begin{definition}[Entwicklungssystem]
 Zu einem \emph{Entwicklungssystem} gehören
 alle Hard- und Softwareelemente, die nötig sind, um die Umsetzung eines
-bestimmten Softwareprojektes zu erreichen. Die einzelnen Bestandteile eines
-solchen \emph{Entwicklungssystems} sollen im Verlauf dieses Kapitels
-identifiziert werden.
+bestimmten Softwareprojektes zu erreichen. Dies ist oft eine Vielzahl
+unterschiedlichster, miteinander interagierender Bestandteile.
 \end{definition}
-
+Da die grundlegenden Abläufe während der Entwicklung eines eingebetteten
+Systems oft gleich sind, wird in diesem Kapitel hauptsächlich eine allgemeine
+Sicht dargestellt. Die Umsetzung auf ein Entwicklungssystem für verteilte
+Funknetzwerke erfolgt in \autoref{chap:konzeption}.
+\clearpage
 \section{Elemente eines Entwicklungssystems}
 Die Elemente eines Entwicklungssystems lassen sich grob drei Kategorien
 zuordnen. 
@@ -21,8 +24,8 @@ einzelnen Elemente, auch kategorieübergreifend, miteinander interagieren.
 Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
 Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
 die in Industrie und Wirtschaft weit verbreitet sind. Als Beispiele lassen sich
-hier das Wasserfallmodell, das V-Modell, Scrum oder auch Extreme Programming
-nennen.
+hier das \emph{Wasserfallmodell}, das \emph{V-Modell}, \emph{Scrum} oder auch
+\emph{Extreme Programming} nennen.
 
 All diesen Modellen ist gemein, dass einige ihrer Schritte
 unbedingt Unterstützung durch Soft- und Hardware bedürfen oder
@@ -37,8 +40,8 @@ untergeordneter Relevanz, da die zentralen Entwicklungsschritte
 identisch sind.
 
 \subsubsection*{Wasserfallmodell}
-Das Wasserfallmodell ist ein klassisches, nicht-iteratives Vorgehensmodell,
-dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann. 
+Das \emph{Wasserfallmodell} ist ein klassisches, nicht-iteratives
+Vorgehensmodell, dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann. 
 
 \begin{figure}[!ht]
 \centering
@@ -46,28 +49,28 @@ dessen Ablauf man sich anhand eines Wasserfalls gut visualisieren kann.
 \input{res/wasserfallmodell.pdf_tex}
 \caption{Ablauf eines Softwareprojektes nach dem Wasserfallmodell. Erstellt nach
 \cite{WP01}}{Jedes Element in diesem Diagramm stellt einen der Schritte und
-damit eine Phase des Waserfallmodells dar. Die Übergänge zwischen dein
-einzelnen Phsen sind oft fest definiert.}
+damit eine Phase des \emph{Wasserfallmodells} dar. Die Übergänge zwischen den
+einzelnen Phasen sind oft fest definiert.}
 \label{fig:wasser}
 \end{figure}
 
-In \autoref{fig:wasser} ist der mögliche Ablauf eines Wasserfallsmodells
+In \autoref{fig:wasser} ist der mögliche Ablauf eines \emph{Wasserfallsmodells}
 dargestellt.
 
-In den \emph{Initialisierungs- und Analysephasen} wird oft der Kunde in die
+In den \textbf{Initialisierungs- und Analysephasen} wird oft der Kunde in die
 Entwicklung eingebunden. Typischerweise werden hier deshalb keine oder nur
 wenige spezialisierte Tools verwendet. Zu der verwendeten Software zählt hier
 unter anderem \emph{Projektmanagementsoftware}.
 
-Die \emph{Entwurfs- und Realisierungsphasen} jedoch benötigen oft eine hohe
+Die \textbf{Entwurfs- und Realisierungsphasen} jedoch benötigen oft eine hohe
 Softwareunterstützung. Während in der Entwurfsphase meist Tools zur
 Visualisierung und Strukturierung von Softwarearchitektur eingesetzt werden
 \emph{(\gls{uml}, Struktogramme, etc.)}, werden in der Realisierungsphase
 meist Werkzeuge eingesetzt, die von der konkreten Anforderung abhängen
 \emph{(Compiler, \glspl{ide}, Debugger)}.
 
-Um einen Übergang in die \emph{Einführungs- und Nutzungsphasen} zu ermöglichen,
-muss die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
+Um einen Übergang in die \textbf{Einführungs- und Nutzungsphasen} zu
+ermöglichen, muss die Software beziehungsweise das Gesamtsystem oft Tests durchlaufen, die das
 System auf eine Erfüllung der Anforderungen überprüfen. Hierfür werden
 häufig Testpraktiken benutzt, die auch soft- und hardwaregestützt
 ablaufen. \emph{(\gls{jtag}, Unittests, In-circuit Tests)}
@@ -76,7 +79,7 @@ Um ein Ausliefern der Software zu ermöglichen, werden Werkzeuge zum Deployment
 benötigt. Dies erfordert oft ein Zusammenspiel aus Hardware-
 und Softwarekomponenten. \emph{(Installer, Softwarepakete, Flasher)}
 
-Oft durchläuft ein System in seiner Nutzungsphase auch Wartungszyklen.
+Oft durchläuft ein System in seiner Nutzungsphase auch \textbf{Wartungszyklen}.
 Diese Zyklen setzen eine möglichst einfache Wartbarkeit des Systems voraus.
 
 \subsection{Software}\label{sub:software}
@@ -86,26 +89,32 @@ Obwohl viele dieser einzelnen Elemente auf Hardwareunterstützung angewiesen
 sind, sollen in diesem Abschnitt nur die Softwarebestandteile beschrieben
 werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
 \autoref{sub:hardware} beschrieben.
+
+Im Gegensatz zu den Hardwareelementen wird die hier erwähnte Software oft
+nicht oder nur geringfügig modifiziert, soll sie zur Entwicklung verschiedener
+eingebetteter Systeme verwendet werden.
 \begin{itemize}
-  \item \subsubsection*{\glspl{ide}} \glspl{ide} sind zentrale
-  Entwicklungsoberflächen der Softwareentwickler. In dieser Umgebung werden
+  \item \subsubsection*{\glspl{ide}} \emph{\glspl{ide}} sind \textbf{zentrale
+  Entwicklungsoberflächen} der Softwareentwickler. In dieser Umgebung werden
   oftmals viele Tools zusammengefasst, die für den Entwicklungszyklus notwendig
-  sind. Sie dienen dazu Quelltext zu verwalten und zu schreiben,
+  sind. Sie dienen dazu, Quelltext zu verwalten und zu schreiben,
   Versionsverwaltung zu betreiben, Code zu kompilieren, die entwickelte Software
   zu testen, zu deployen und zu debuggen.
   
-  Oft werden die in den folgenden Punkten aufgeführten Tools in eine IDE
-  integriert, um Entwicklungsabläufe zu vereinfachen und zu beschleunigen.
+  Oft werden die in den folgenden Punkten aufgeführten Tools in eine
+  \emph{\gls{ide}} integriert, um Entwicklungsabläufe zu vereinfachen und zu
+  beschleunigen.
   
-  \emph{Beispiele:} Eclipse, NetBeans, CodeWarrior, Microsoft Visual Studio, Qt
-  Creator
+  \textbf{Beispiele:} Eclipse, NetBeans, CodeWarrior, Microsoft Visual Studio,
+  Qt Creator
   \item \subsubsection*{Compiler} Compiler sind für viele Softwareprojekte von
   essentieller Bedeutung. Speziell im eingebetteten Bereich werden überwiegend
   kompilierte Programmiersprachen wie C oder C++ eingesetzt, da sie nach dem
-  Kompiliervorgang in nativem Maschinencode vorliegen und so oft eine höhere
-  Ausführungsgeschwindigkeit gewährleisten können. Außerdem können sie meist
-  besser an das Zielsystem angepasst werden, da sie keiner weiteren Frameworks
-  oder Interpreter mit "`überflüssigen"' Funktionen bedürfen.
+  Kompiliervorgang in \textbf{nativem Maschinencode} vorliegen und so oft eine
+  höhere Ausführungsgeschwindigkeit erzielen. Außerdem können sie meist
+  besser an das Zielsystem angepasst werden, da sie keine weiteren Frameworks
+  oder Interpreter mit ungenutzte Funktionen benötigen, die auf dem System
+  unter Umständen wertvollen Speicherplatz "`verbrauchen"'.
   
   Soll eine kompilierte Software auf einem anderen als dem Entwicklungssystem
   eingesetzt werden, so wird ein sogenannter \textbf{Cross-Compiler} benötigt.
@@ -113,29 +122,31 @@ werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
   später auf einer andere Rechnerarchitektur (z.B. ARM statt Intel) und/oder auf
   einem anderen Betriebssystem (z.B. Linux statt Windows) betrieben werden soll.
   
-  \emph{Beispiele:} GCC, IAR C/C++ Compiler, ARM RVCT Compiler, Intel C++
+  \textbf{Beispiele:} GCC, IAR C/C++ Compiler, ARM RVCT Compiler, Intel C++
   Compiler, CodeWarrior Compiler
-  \item \subsubsection*{Debugger}\label{subs:swdebugger} Der Debugger ist ein
-  Tool, mithilfe dessen ein Entwickler eine Software während ihrer Laufzeit
+  \item \subsubsection*{Debugger}\label{subs:swdebugger} Der \emph{Debugger} ist
+  ein Tool, mithilfe dessen ein Entwickler eine Software während ihrer Laufzeit
   untersuchen, steuern und, in einem gewissen Rahmen, modifizieren kann. Er
-  dient dem Entwickler hauptsächlich zur Fehlersuche, da es mit seiner Hilfe
-  sehr leicht ist, die Vorgänge in einer Software nachzuvollziehen.
+  dient dem Entwickler hauptsächlich zur \textbf{Fehlersuche}, da es mit seiner
+  Hilfe sehr leicht ist, die Vorgänge in einer Software nachzuvollziehen.
   
   Der Entwickler ist durch das Setzen von Breakpoints\footnote{Willkürliche,
   vom Entwickler vor dem Start der Software zu setzende, "`Haltepunkte"' im
-  Programmablauf.} mittels des Debuggers in der Lage, eine Software in einen
-  definierten Zustand zu bringen. Anschließend kann er den weiteren
-  Programmablauf schrittweise ausführen lassen (single-stepping) oder mitunter
-  auch geringfügige Änderung am Speicher des Systems vornehmen.
+  Programmablauf.} mittels des \emph{Debuggers} in der Lage, das System bis zu
+  einem festgelegten Systemzustand laufen zu lassen. Anschließend kann
+  er den weiteren Programmablauf schrittweise ausführen (single-stepping)
+  oder mitunter auch geringfügige Änderung am Speicher des Systems vornehmen.
+  Außerdem sind die meisten \emph{Debugger} in der Lage, das Zielsystem
+  zurückzusetzen und so einen definierten Ausgangszustand herzustellen.
   
   Debugger sind in integrierten Systemen oft auf eine hohe Hardwareunterstützung
   angewiesen. In \autoref{subs:hwdebugger} wird dies näher beschrieben.
   
-   \emph{Beispiele:} GDB , IDB (Intel Debugger), Valgrind
-  \item \subsubsection*{Testtools} In die Kategorie der Testtools fallen
-  alle Elemente die benötigt werden, um die Funktionsfähigkeit eines Systems zu
-  prüfen. Außerdem dienen diese auch oft dazu, ein Gesamtsystem sowie dessen
-  Teilsysteme auf die Erfüllung der Anforderungen zu prüfen.
+  \textbf{Beispiele:} GDB , IDB (Intel Debugger), Valgrind
+  \item \subsubsection*{Testtools} In die Kategorie der \emph{Testtools} fallen
+  alle Elemente die benötigt werden, um die Funktionsfähigkeit eines Systems
+  \textbf{zu prüfen}. Außerdem dienen diese auch oft dazu, ein Gesamtsystem
+  sowie dessen Teilsysteme auf die Erfüllung der Anforderungen zu prüfen.
   
   Um die einzelnen Bestandteile eines Systems zu überprüfen, existieren viele
   verschiedene Ansätze. Meist werden Tests grob in \emph{Modultests},
@@ -145,22 +156,26 @@ werden. Soweit es nötig ist, werden die zugehörigen Gegenstücke in
   Alle diese Testarten setzen jedoch eine grundlegende Testbarkeit des Systems
   voraus.
   
-  \emph{Beispiele:} Unittests, \ldots  
+  \textbf{Beispiele:} Unittests, <\ldots>  
   \item \subsubsection*{Deploymenttools}\label{subs:deployment} Um ein System
   ausliefern zu können, muss es für den Endanwender vorbereitet werden.
   
-  Im Embeddedbereich erfolgt dies meist durch ein Übertragen der
-  Firmware in den \gls{rom} des Zielsystems. Dieser Vorgang wird jedoch, zu
+  Im Embeddedbereich erfolgt dies meist durch ein \textbf{Übertragen der
+  Firmware} in den \gls{rom} des Zielsystems. Dieser Vorgang wird jedoch, zu
   Testzwecken, auch in der Entwicklungsphase eines Projektes oft durchgeführt
   und muss daher entsprechend einfach und möglichst unkompliziert sein.
   
-  \emph{Beispiele:} Installer, Paketverwaltungssysteme, Skripte
+  \textbf{Beispiele:} Installer, Paketverwaltungssysteme, Skripte
 \end{itemize}
 
 \subsection{Hardware}\label{sub:hardware}
 Welche Art von Unterstützung in welchem Umfang von Hardware geleistet werden
 muss, ergibt sich oft aus den Projektvorgaben. Im Speziellen ist hierbei von
 Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
+
+Insbesondere im Bereich der eingebetteten Systeme ist die Hardware eines
+Entwicklungssystems von hohere Bedeutung, das sie oftmals eine Art Schnittstelle
+zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
 \begin{itemize}
   \item \subsubsection*{Testtools} Um Tests durchführen zu können, wird
   oft auch eine Unterstützung durch Hardware benötigt. 
@@ -168,20 +183,24 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
     \centering
     \def\svgwidth{\columnwidth}
     \input{res/boundaryscan.pdf_tex}
-    \caption{Funktionsweise von \gls{jtag}. Erstellt nach \cite{ALT01}}
+    \caption{Funktionsweise von \gls{jtag}. Erstellt nach \cite{ALT01}}{Diese
+    Abbildung zeigt den vereinfachten Aufbau einer Verkettung
+    mehrerer \gls{jtag}-Komponenten zu einer \gls{jtag}-Chain. Ein
+    \gls{jtag}-Adapter liefert über "`Seriell In"' Testdaten und überprüft die
+    Ausgabe der zugehörigen Daten von "`Seriell Out"'. }
     \label{fig:ALT01}
   \end{figure}
   Der \gls{jtag}-Port ist ein System, welches ursprünglich für genau diese
-  Zwecke konzipiert wurde. Er ermöglicht es, einen sogenannten boundary-scan
+  Zwecke konzipiert wurde. Er ermöglicht es, einen sogenannten "`boundary-scan"'
   durchzuführen. Jedes in \autoref{fig:ALT01} mit "`\gls{ic}"' markierte
   Bauteil muss dafür über einen, in der Abbildung nicht eingezeichneten, sogenannten \gls{tap} oder
   \gls{dap}\footnote{Wird von neueren ARM Kernen benutzt.
   Ermöglicht auch Tracing.} verfügen. Diese befinden sich \emph{nicht} in der
   Logik des Bauteils, sondern stellen eine separate Steuerschaltung dar.
   
-  Die \glspl{tap}/\glspl{dap} werden verkettet und ermöglichen es, die Ein-
-  und Ausgänge der einzelnen Bauteile mit Prüfdaten zu betreiben, Bauteile komplett
-  zu überbrücken oder auch sie in ihrem Betrieb anzuhalten.
+  Die \glspl{tap}/\glspl{dap} werden zu einer sogenannten
+  \gls{jtag}-Chain verkettet und ermöglichen es, die Ein- und Ausgänge der
+  einzelnen Bauteile mit Prüfdaten zu betreiben, Bauteile komplett zu überbrücken oder auch sie in ihrem Betrieb anzuhalten.
   Die in \autoref{fig:ALT01} als "`Zu testende Verbindung"' markierte Leitung
   kann so auf Unterbrechungen oder Überbrückungen geprüft werden.
   
@@ -194,7 +213,7 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   \emph{boundary-scan} das Testen von Widerständen, Kapazitäten und anderen
   elektrischen Kenngrößen.
    
-  \emph{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger, Spy-Bi-Wire,
+  \textbf{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger, Spy-Bi-Wire,
   DebugWIRE, In-circuit Testanlagen
   \item \subsubsection*{Debugger}\label{subs:hwdebugger}  Um
   Softwaredebugging wie in \autoref{subs:swdebugger} beschrieben im Umfeld eines
@@ -202,9 +221,9 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   besitzen diese oft verschiedene Eigenschaften.
   Um eine Software Schritt-für-Schritt auszuführen, wird eine Unterstützung von
   der CPU vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich zum
-  Beispiel mittels des \gls{dap}/\gls{tap} in einen Debug-Modus bringen.
-  Dieser Debug-Modus ist Voraussetzung dafür, Single-Step-Debugging duchführen
-  oder Breakpoints setzen zu können.
+  Beispiel mittels des \gls{dap}/\gls{tap} in einen \emph{Debug-Modus}
+  bringen. Dieser \emph{Debug-Modus} ist Voraussetzung dafür,
+  Single-Step-Debugging duchführen oder Breakpoints setzen zu können.
   
   Da ein \gls{jtag}-Port einen direkt Zugriff auf alle Eingänge eines
   Mikrocontrollers bietet und der \gls{dap}/\gls{tap} tief in die Hardware
@@ -213,26 +232,29 @@ Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
   \gls{jtag}-Debugger mitunter auch als \emph{Flasher} eingesetzt werden, wenn
   er in der Lage ist, den \gls{rom} zu beschreiben.
   
-  \emph{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger
+  \textbf{Beispiele:} \gls{jtag}-Debugger, \gls{swd}-Debugger
   \item \subsubsection*{Flasher} Um, wie in \autoref{subs:deployment}
   beschrieben, ein Zielsystem mit einer Firmware beschreiben zu können, wird
   oft ein Hardwarebauteil benötigt.
   
   Abhängig vom verwendeten Zielsystem erfolgt ein "`Flashen"' dabei häufig über
-  extra dafür bestimmte Hardware. Gängige Variante ist hierbei zum Beispiel die
-  Verwendung eines \glspl{isp}. Ein \gls{isp} ist ein System, das speziell
-  dafür ausgelegt ist, Firmware auf ein bereits eingebautes Bauteil zu übertragen.
+  extra dafür bestimmte Hardware. Eine mögliche Variante ist hierbei zum
+  Beispiel die Verwendung eines \glspl{isp}. Ein \gls{isp} ist ein System, das
+  speziell dafür ausgelegt ist, Firmware auf ein bereits eingebautes Bauteil zu
+  übertragen.
   
-  Auch bieten manche Zielsysteme eine Übertragung des Programmcodes über die
-  \gls{jtag}-Schnittstelle an.
-\end{itemize}
+  Die meisten Zielsysteme bieten jedoch eine Übertragung des Programmcodes über
+  die \gls{jtag}-Schnittstelle oder eine Variante davon an.
 
-<\ldots>
+  \textbf{Beispiele:} AVRISP mkII, Waveshare LPC ISP(mini), \gls{jtag}-Debugger
+\end{itemize}
 %%=====================================================================
-\section{Szenarien}
-Soll für eine Funkschnittstelle ein neues Funkprotokoll entworfen
-werden, ist es sicher nützlich, die Abläufe innerhalb des Funknetzwerkes auf
-Korrektheit zu überprüfen.
+\section{Szenarien}\label{sect:szenarien}
+Für das Design eines Entwicklungssystems ist außerdem entscheidend, dass die
+Zielsysteme über eine Funkschnittstelle verfügen.
+
+Soll nun also ein neues Funkprotokoll entworfen werden, ist es sicher nützlich,
+die Abläufe innerhalb des Funknetzwerkes auf Korrektheit zu überprüfen.
 
 So sind mehrere Szenarien denkbar, für die eine Analyse der genauen Abläufe
 wünschenswert wäre.
@@ -242,26 +264,37 @@ Da ein zu entwerfendes Netzwerk mitunter eine hohe räumliche Verteilung
 aufweist, kann nicht garantiert werden, dass jeder Netzwerkknoten zu jedem
 anderen Knoten eine Verbindung aufbauen kann.
 
-Es ist also wünschenswert, die Reichweite mittels der \emph{Datenanalyse}
-festzustellen. Hierfür könnte man sich zum Beispiel folgendes simple Szenario
-überlegen.
+Um die Empfangbarkeit der verschiedenen Netzwerkknoten untereinander zu
+überprüfen, muss von jedem Knoten bekannt sein, welche Knoten er empfangen kann
+und welche Knoten ihn empfangen können.
+
+Hierfür ließe sich folgender simpler Ablauf konstruieren:
 
 Jeder Netzwerkknoten sendet eine Broadcastmitteilung an das gesamte Netzwerk.
 Jeder Knoten der diese Nachricht empfängt, befindet sich nun also in Reichweite
 des Absenders.
 
-Für diese Auswertung dieses Vorgangs müssen nun von allen Netzwerkknoten die
-erfassten Daten gesammelt und analysiert werden.
+Für die Auswertung dieses Vorgangs müssen nun jedoch von allen Netzwerkknoten
+die erfassten Daten gesammelt und analysiert werden. Erst aus diesen gesammelten
+Daten lassen sich Rückschlüsse auf die Verbindungsqualität ziehen.
+
+Falls sich das Funkprotokoll jedoch noch in seiner Entwicklungsphase befindet,
+benötigt man eine \textbf{physische Verbindung} zu den jeweiligen
+Netzwerkknoten, um an diese Informationen zu gelangen. Anderenfalls könnte man
+das Funknetzwerk der Netzwerkknoten selbst nutzen, um diese Informationen
+drahtlos abzufragen.
 
 \autoref{fig:fikdiag} stellt einen beispielhaften Ablauf eines solchen
 Broadcasting-Vorganges dar. Während die zu Zeitpunkt $t_0$ von \emph{Knoten 2}
 abgesetzte Nachricht sowohl von \emph{Knoten 1} als auch von \emph{Knoten 3}
-empfangen wurde, erreicht die Broadcast-Nachricht von \emph{Knoten1} zu
-Zeitpunkt $t_3$ nur \emph{Knoten 2}. In \autoref{fig:fikmsg} ist der mögliche
-Ablauf dieses Vorganges aufgeführt, wie er mit zentral gesammelten Daten
-erscheinen würde.
+empfangen wurde, erreicht die zu Zeitpunkt $t_4$ gesendete Broadcast-Nachricht
+von \emph{Knoten1} bei Zeitpunkt $t_5$ nur \emph{Knoten 2}.
 
-Führt man diese Testreihe fort, lässt sich sehr leicht eine Topologie der
+Sammelt man die Daten dieser Abläufe nun und sortiert sie nach den Zeitpunkten
+ihres Auftretens, ergibt sich ein Ablauf wie in \autoref{fig:fikmsg}
+dargestellt. 
+
+Führte man diese Testreihe fort, ließe sich sehr leicht eine Topologie der
 Empfangsstärken bilden.
 
  \begin{figure}[!ht]
@@ -280,7 +313,8 @@ Empfangsstärken bilden.
 \node[anchor=east,inner sep=10pt] (t3) at (mess from) {$t_4$};
 \node[anchor=west,inner sep=10pt] (t4) at (mess to) {$t_5$};
 \prelevel{2}
-\mess[4]{node1}{Broadcast}{node3}
+\mess[4]{node1}{}{node3}
+\node[above, outer sep=3pt] (bc) at ($(mess from)!0.75!(mess to)$) {Broadcast};
 \node[anchor=west,inner sep=10pt] (t5) at (mess to) {$t_6$};
 \node[cross out, draw,minimum size = 18pt, thick] at (mess to){};
 
@@ -303,7 +337,7 @@ Zielsystem & Zeitstempel & Nachricht\\
 \emph{<Knoten 2>} & \emph{$t_4$} & Broadcast von \emph{Knoten 1} erhalten\\
 \multicolumn{3}{c}{\emph{Keine Daten für Zeitpunkt $t_5$}}\\
 \hline
-\end{tabu}\\
+\end{tabu}\vspace{5pt}\\
 \caption{Erfassung der Daten des Ablaufs aus \autoref{fig:fikdiag}}{Ein Ablauf
 wie in \autoref{fig:fikdiag} dargestellt, könnte diese Reihenfolge von
 Nachrichten erzeugen.}
@@ -319,7 +353,7 @@ Will man diese Kollisionen nun während der Entwicklung untersuchen, so muss ein
 Möglichkeit existieren, diese auch darstellen zu können. Des Weiteren wird
 für die Darstellung sicher auch eine gewisse Präzision erforderlich sein, da
 Kollisionen innerhalb eines Netzwerkes immer eine Gleichzeitigkeit bedeuten.
-\subsubsection*{Allgemeines}
+\subsection{Weitere mögliche Szenarien}
 Mit steigender Komplexität des zu entwerfenden Funkprotokolls steigt die
 Komplexität solcher Abläufe. So ist zum Beispiel, wie im Funkprotokoll ZigBee
 vorgesehen, denkbar, dass die Funkknoten verschiedene Aufgaben im Routing und
@@ -327,30 +361,40 @@ Aufbau des eigenen Funknetzwerkes übernehmen. Auch hierfür ist unter
 Umständen eine möglichst genaue Erfassung der Abläufe nötig.
 %%======================================================================
 \section{Anforderungen an das Entwicklungssystem}
-Nachdem nun klar ist, aus welchen Bestandteilen ein Entwicklungssytem besteht,
+Nachdem klar ist, aus welchen Bestandteilen ein Entwicklungssytem besteht,
 müssen nun die konkreten Anforderungen gestellt werden.
 
 Diese Anforderungen sollen als Ziel dieser Arbeit erfüllt werden und die
 Entwicklung eines Zielsystems, bestehend aus mehreren unabhängigen
-Modulen, ermöglichen. Um dies zu zeigen, soll außerdem exemplarisch ein
+Modulen, ermöglichen. Um dies zu demonstrieren, soll außerdem exemplarisch ein
 minimales Zielsystem entwickelt werden.
 
 \subsection{Debugging} Die Entwicklung einer Software und die Suche nach Fehlern
-in dieser wird durch den Einsatz eines Debuggers enorm erleichtert. 
+in dieser wird durch den Einsatz eines Debuggers enorm erleichtert.
+
+Da es sich um ein verteiltes Netzwerk handelt, wäre es wünschenswert, mehrere
+Systeme gleichzeitig debuggen zu können. Hierdurch könnte man zum Beispiel
+genauestens untersuchen, warum ein System zu einem Zeitpunkt eine bestimmte
+Nachricht sendet.
+
+Da Debugging häufig auch ein Reset des Zielsystems erlaubt, sollte diese
+Funktion auch für mehrere Systeme simultan durchführbar sein. So kann man das
+gesamte Netzwerk aus Zielsystemen jederzeit in einen wohldefinierten
+Ausgangszustand bringen.
 
 \begin{minipage}[c]{\textwidth}
 Gefordert wird:
 \begin{itemize}
-  \item Die Möglichkeit, das Zielsystem \textbf{schrittweise zu Debuggen}
+  \item Die Möglichkeit, ein Zielsystem \textbf{schrittweise zu Debuggen}
   \item Eine \textbf{Integration} in eine \gls{ide}
-  \item 
+  \item \textbf{Gleichzeitiger Start/Reset} mehrerer Zielsysteme
 \end{itemize}
 \end{minipage}
 
-\subsection{Deployment} Für das Deployment, sowohl testweise und zu
-Debuggingzwecken während der Entwicklung als auch für die endgültige
-Fertigstellung, ist es erforderlich, die einzelnen Knoten des Zielsystems mit
-einer \textbf{neuen Firmware beschreiben} zu können.
+\subsection{Deployment} Für das \emph{Deployment} des Zielystems ist es
+erforderlich, die einzelnen Knoten des Zielsystems mit einer \textbf{neuen Firmware
+beschreiben} zu können. Dies geschieht sowohl testweise und zu Debuggingzwecken
+während der Entwicklung als auch für die endgültige Fertigstellung. 
 
 Da es sich bei dem Zielsystem in seiner Gesamtheit um eine Vielzahl identischer
 Komponenten handelt, sollte sich dieser Prozess im Idealfall auf
@@ -362,15 +406,15 @@ Firmware beschreiben zu können.
 Die Möglichkeit ein Entwicklungssystem beliebige
 Daten als "`Debuginformationen"' ausgeben zu lassen erlaubt es, eine
 Übersicht über die zeitlichen Abläufe zu erstellen. Gerade für die
-Zusammenarbeit miteinander interagierender Module ist es also wichtig, diese
-Informationen zentral zu sammeln und sortieren, um sie später zur
+Analyse der Abläufe miteinander interagierender Zielsysteme ist es wichtig,
+diese Informationen zentral zu sammeln und sortieren, um sie später zur
 Fehlersuche heranziehen zu können.
 
 Zur Umsetzung dieses Systems müssen also zwei Komponenten erstellt werden:
 \begin{enumerate}
   \item Eine Software zur Anzeige und Organisation der, von mehreren
-  Quellen(Modulen des Zielsystems) gesammelten, Daten
-  \item Eine Möglichkeit, die Daten eines einzelnen Moduls zu sammeln
+  Zielsystemen gesammelten, Daten
+  \item Eine Möglichkeit, die Daten mehrerer Module zu sammeln
 \end{enumerate}
 
 \iffalse

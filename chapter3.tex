@@ -1,4 +1,4 @@
-\chapter{Konzeption}
+\chapter{Konzeption}\label{chap:konzeption}
 \minitoc
 In diesem Kapitel soll das Entwicklungssystem konzipiert werden.
 
@@ -25,14 +25,14 @@ Daten, die sie von ihrem jeweils angeschlossenen "`Ziel"' erhalten.}
 \label{fig:sys}
 \end{figure}
 Der Umstand, dass die einzelnen Zielsysteme räumlich von einander und dem
-Entwicklersystem getrennt sind erfordert gewisse Änderungen an den
+Entwicklersystem getrennt sind, erfordert gewisse Änderungen an den
 Entwicklungsabläufen.
 
 Ein direkter Zugriff auf die einzelnen Zielsysteme ist nicht ohne Weiteres
 möglich beziehungsweise vergleichsweise umständlich. Würde man die in
 \autoref{chap:analyse} aufgezählten Abläufe für ein verteiltes System umsetzen
 wollen, müsste man die Zielsysteme zum Beispiel neben das Entwicklersystem
-legen, da für viele Vorgänge eine physikalische Verbindung bestehen muss.
+legen, da für viele Vorgänge eine \textbf{physische Verbindung} bestehen muss.
 
 So benötigt zum Beispiel das Debugging über \gls{jtag} oder \gls{swd} eine
 Verbindung zwischen einem Adapter und dem Zielsystem sowie zwischen
@@ -40,57 +40,80 @@ Entwicklersystem und Adapter. Sollen beliebige Daten vom Zielsystem erfasst
 werden, so wird auch hierfür oft eine Verbindung in Form von direkter
 Verkabelung benötigt.
 
+Die Auswahl existierender Netzwerk-Debugging-Lösungen ist geradezu
+minimal. Als eigenständige Lösung findet sich hier zum Beispiel \emph{ZY1000
+(Ultimate Solutions Inc.)}\cite{ULT} oder \emph{WiFiDemon (Macraigor
+Systems)}\cite{MAC}. Beide Systeme stellen eine Schnittstelle zwischen Ethernet
+oder WLAN dar und sind somit bereits existierende Teilumsetzungen des geplanten
+\emph{Entwicklungssystems}.
+
+Beide Lösungen sind jedoch auch geschlossene Systeme. Wollte man also, wie
+vorgesehen, zusätzliche Daten sammeln, müsste man ein weiteres Gerät (mit
+eigenem Anschluss an das Netzwerk) verwenden.
+
 Der Ansatz, das Funknetzwerk der Zielsysteme selbst für das Deployment von
 Firmware oder das Analysieren von internen Vorgängen zu nutzen, hat den
 Nachteil, dass dafür ein solches Netzwerk bereits bestehen muss.
-Dies kann jedoch nicht immer garantiert werden.
+Dies kann jedoch nicht immer garantiert werden. Insbesondere nicht dann, wenn
+erwähntes Funknetzwerk erst noch entwickelt werden muss.
 
-Wünschenswert wäre es also, ein von dem Zielsystem und dessen Hardwäre völlig
+Wünschenswert wäre es also, ein von dem Zielsystem und dessen Hardware völlig
 unabhängiges System zu entwickeln. Dies hat gleichzeitig den Vorteil, dass es
-bezüglich der Entscheidungen über ein Zielsystem größtmögliche Flexibilität
-bietet.
+bezüglich der Entscheidungen über ein Zielsystem \textbf{größtmögliche
+Flexibilität} bietet.
 
-Der Grundgedanke hinter dem zu entwerfenden \emph{Entwicklungssystem} ist
+Der Grundgedanke hinter dem zu entwerfenden Entwicklungssystem ist
 deshalb der, dass bereits bestehende Infrastruktur wie Ethernet oder WLAN für
-die Verbindung von \emph{Modulen} zum Entwicklersystem genutzt wird. Die
-\emph{Module} übernehmen dann die Funktion einer Art "`Daten- und
-Debuggingbrücke"'. Sie ermöglichen die entfernte Steuerung der \emph{"`Ziele"'}
+die Verbindung von "`Modulen"' zum Entwicklersystem genutzt wird. Die
+"`Module"' übernehmen dann die Funktion einer Art "`Daten- und
+Debuggingbrücke"'. Sie ermöglichen die entfernte Steuerung der Zielsysteme
 und die Erfassung von Daten, die anschließend auf dem System des Entwicklers
 verfügbar gemacht und zusammengefasst werden.
 
-In \autoref{fig:sys} ist dargestellt, wie die eingezeichneten \emph{"`Module"'}
+In \autoref{fig:sys} ist dargestellt, wie die eingezeichneten "`Module"'
 über WLAN in die bestehende Infrastruktur, symbolisiert durch einen
 Access-Point, eingegliedert werden. Auch eine Verbindung über Ethernet wäre
 hierbei denkbar.
-\begin{definition}[Zielsystem]
-Das \emph{Zielsystem} ist das System, welches mit Hilfe des
-\emph{Entwicklungssystems} relisiert werden soll.
-\end{definition}
-Die einzelnen \emph{"`Module"'} sind in der Lage, die Ein- und Ausgänge
-der \emph{Zielsysteme ("`Ziele"')} direkt zu erfassen und zu manipulieren. Dies
+
+Die einzelnen "`Module"' sind in der Lage, die Ein- und Ausgänge
+der Zielsysteme ("`Ziele"') direkt zu erfassen und zu manipulieren. Dies
 ermöglicht es, Daten zu sammeln und weiterzuleiten, sowie auf die "`Ziele"'
 zuzugreifen.
 \section{Vorentscheidungen}
 In diesem Abschnitt sollen die Vorgaben für das Entwicklungssystem und ein
 beispielhaftes Zielsystem getroffen und erläutert werden.
 \subsection{Entwicklungssystem}
-Für das Entwicklungssystem selbst muss eine Entscheidung über das
+Für das \emph{Entwicklungssystem} selbst muss eine Entscheidung über das
 verwendete Modul getroffen werden, dass als "`Brücke"' zwischen Entwicklersystem
 und Zielsystem funktioniert.
 
 <Warum wir das Carambola wählten>
+
 <Was das Carambola ist>
+
 Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten
-Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine große Anzahl
-portierter Softwarepakete, unterstützt viele Architekturen (unter anderem ARM,
-MIPS, PowerPC, x86) und gewährleistet durch simple Konfigurationsdateien einen
-hohen Grad an Konfigurierbarkeit.
+Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine
+große Anzahl portierter Softwarepakete, unterstützt viele Architekturen (unter
+anderem ARM, MIPS, PowerPC, x86) und gewährleistet durch simple
+Konfigurationsdateien einen hohen Grad an Konfigurierbarkeit.
+
+Um Software für das Carambola zu erstellen muss ein Cross-Compiler eingesetzt
+werden.
+\begin{definition}[Cross-Compiler]
+Ein Cross-Compiler ist ein spezieller Compiler, der den Quellcode einer
+Software für eine andere als die ausführende Architektur kompilieren kann. Er
+kommt dann zum Einsatz, wenn es nicht praktikabel oder schlicht unmöglich ist,
+die Anwendung auf dem Zielsystem zu kompilieren. Dies kann zum Beispiel dann der
+Fall sein, wenn ein eingebettetes System über nicht ausreichend Ressourcen
+(Speicherplatz) verfügt, um den Kompilationsvorgang durchzuführen.
+\end{definition}
 \subsection{Zielsystem}
 Das zu entwerfende Entwicklungssystem sollte ein möglichst
 großes Spektrum potentieller Architekturen und Funksysteme abdecken können, so
 dass es später einfach ist, das exemplarisch zu entwickelnde Zielsystem durch
-ein anderes zu ersetzen. Dies sollte sich in einer möglichst generischen Wahl
-der Komponenten eines beispielhaften Zielsystems zeigen.
+ein anderes zu ersetzen. Dies sollte sich in einer möglichst
+\textbf{generischen} Wahl der Komponenten eines beispielhaften Zielsystems
+widerspiegeln.
 
 Da Mikroprozessoren mit \textbf{ARM-Architektur} einen Anteil von rund
 71\%\cite{IDC01} an allen verkauften \glspl{cpu} haben, scheint es beinahe
@@ -139,7 +162,7 @@ Abstraktion hinderlich sein.
  <Warum genau dieses Modul die einfachste Wahl ist>
 
 \section{Debugging}
-\subsection{Definition}
+\subsection{Schnittstellen}
 Das Debugging eines eingebetteten Systems erfordert meist eine kombinierte Hard-
 und Softwarelösung.
 
@@ -150,38 +173,40 @@ vom Softwaretreiber anschließend in Steuerbefehle des Hardwarebauteils
 umgesetzt. Das Hardwaremodul übernimmt hierauf, unter Nutzung eine
 standardisierten Schnittstelle, die Kommunikation mit dem Zielsystem.
 
-Als Schnittstellen sind für diese Zwecke vor allem \gls{jtag} und \gls{swd}
-verbreitet. Während \gls{jtag} ursprünglich primär zum Testen von Bauteilen
+Als \emph{Schnittstellen} sind für diese Zwecke vor allem \gls{jtag} und
+\gls{swd} verbreitet. Während \gls{jtag} ursprünglich primär zum Testen von Bauteilen
 konzipiert wurde, erweitert \gls{swd} dieses Konzept um speziell für das
 Debuggen nützliche Funktionen (Tracing, Paritätschecks) und reduziert die Anzahl
 zwingend notwendiger Pins von 4 auf 2. Da \gls{swd} aber von
-ARM speziell für Prozessoren mit eingebautem CoreSight-Modul entwickelt wurde,
-ist Unterstützung hierfür nicht auf allen ARM-Controllern anzutreffen. \gls{jtag}
+ARM speziell für Prozessoren mit eingebautem \emph{CoreSight}-Modul entwickelt
+wurde, ist Unterstützung hierfür nicht auf allen ARM-Controllern anzutreffen. \gls{jtag}
 hat hier eine wesentlich größere Verbreitung und wird auch
-architekturübergreifend genutzt. Die Wahl von \gls{jtag} würde eine spätere
-Erweiterung auf andere Architekturen somit erleichtern.
-\subsection{Marktübersicht}
-Die Auswahl bereits existierender Netzwerk-Debugging-Lösungen ist geradezu
-minimal.
-Als eigenständige Lösung findet sich hier zum Beispiel \emph{ZY1000 (Ultimate
-Solutions Inc.)}\cite{ULT} oder \emph{WiFiDemon (Macraigor Systems)}\cite{MAC}.
-Beide Systeme stellen eine Schnittstelle zwischen Ethernet oder WLAN dar und sind somit
-bereits existierende Umsetzungen des geplanten \emph{Entwicklungssystems}, wenn
-man es auf den Aspekt des Debugging reduzieren würde.
+architekturübergreifend genutzt. Die \textbf{Wahl von \gls{jtag}} würde eine
+spätere Erweiterung auf andere Architekturen somit erleichtern.
+\subsection{OpenOCD - Open On-Chip Debugger}
+Betrachtet man die Möglichkeiten zum Debuggen von ARM-Mikrocontrollern via
+\gls{jtag} unter einem Linuxsystem, landet man beinahe zwangsläufig beim Open
+Source Projekt \textbf{OpenOCD}. Dieses Projekt ist im Rahmen einer
+Diplomarbeit\cite{OOCD2} an der \emph{FH Augsburg} entstanden und hatte die
+Entwicklung einer quelloffenen Software zum Debuggen von ARM-Mikrocontrollern zum Ziel.
+OpenOCD fungiert dabei als Schnittstelle zwischen einem \gls{jtag}-Debugger und
+einer Benutzeroberfläche.
 
-Beide Lösungen sind jedoch geschlossene Systeme. Wollte man also, wie
-vorgesehen, zusätzliche Daten sammeln, müsste man ein weiteres Gerät (mit
-eigenem Anschluss an das Netzwerk) verwenden.
+OpenOCD ist hochgradig modular gehalten und unterstützt daher eine große
+Bandbreite von \gls{jtag}-Adaptern, verschiedenste Mikrocontroller und
+Architekturen (unter anderem \emph{ARMv7}, \emph{ARMv4}, \emph{AVR32},
+\emph{MIPS}), einige Echtzeitbetriebssysteme(\emph{FreeRTOS}, \emph{ChibiOS},
+\emph{ThreadX}) und diverse Flash-Speicher.
 
-Betrachtet man die Softwareseite des Debuggings, landet man beinahe
-zwangsläufig beim Open Source Projekt \textbf{OpenOCD}. Dieses Projekt ist im
-Rahmen einer Diplomarbeit\cite{OOCD2} an der FH Augsburg entstanden und hatte
-die Entwicklung einer quelloffenen Software zum Debuggen von
-ARM-Mikrocontrollern zum Ziel. OpenOCD fungiert dabei als Schnittstelle zwischen
-einem \gls{jtag}-Debugger und einer Benutzeroberfläche.
+Die Konfiguration von OpenOCD erfolgt dabei über simple Skripte, die vom
+Hauptprogramm beim Start eingelesen werden.
+
+Auch der auf dem Olimex-Board verwendete Mikrocontroller "`STM32L152VB"' wird
+von OpenOCD als "`STM32L"' unterstützt.
 
 OpenOCD lässt sich dabei entweder über eine eigene Benutzeroberfläche via
 Telnet-Protokoll oder mittels eines \gls{gdb}-Clients bedienen.
+
 \begin{definition}[GDB]
 Der \gls{gdb} ist der Standard-Debugger unter
 Unix-Betriebssystemen. Er bietet unter Anderem die Möglichkeit, ein Programm im
@@ -190,16 +215,37 @@ durchzuführen. Der GDB besitzt keine grafische Oberfläche, sondern
 lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
 einem Client über TCP/IP ferngesteuert zu werden. 
 \end{definition}
-\subsection{Cross-Compilierung}
-In einigen Fällen ist es nicht praktikabel oder schlicht unmöglich, dass eine
-Anwendung auf der CPU-Architektur kompiliert wird, die auch später die
-ausführende Architektur ist. Dies kann zum Beispiel dann der Fall sein, wenn ein
-engebettetes System über nicht ausreichend Ressourcen (Speicherplatz) verfügt,
-um den Kompilationsvorgang durchzuführen.
 
-In diesen Fällen kommt ein sogenannter \emph{Cross-Compiler} zum Einsatz.
-\subsection{OpenWRT - Paketverwaltung und Kompiliervorgang}
-OpenWRT besitzt mit \textbf{opkg} ein Tool zur Paketverwaltung von Anwendungen.
+Der entscheidende Punkt hierbei ist, dass \gls{gdb}(und auch OpenOCD)
+grundsätzlich einen "`Remote"'-Modus anbietet. Dies wird dadurch möglich, dass
+\gls{gdb} in einen "`Server"' und einen "`Client"' unterteilt ist. Dabei
+übernimmt der "`Server"' die Kontrolle des Zielsystems oder der Zielsoftware,
+wird aber gleichzeitig selbst vom \gls{gdb}-"`Client"' gesteuert. Der Entwickler
+bedient dann den Client und damit nur indirekt den Debugger selbst.
+
+Verwendet man \gls{gdb} im "`Remote"'-Modus, kann diese Steuerung über einen
+beliebigen TCP-Port und damit auch über das Netzwerk erfolgen.
+
+Setzt man OpenOCD nun also auf dem Carambola ein, lässt sich diese Trennung
+ausnutzen, um ein Debugging über eine beliebige Netzwerkverbindung zu
+realisieren.
+\subsection{OpenWRT}
+OpenWRT ist ein ursprünglich aus dem von Linksys zur Verfügung
+gestellten Quellcode des Routers "`WRT54G"' \cite{OWRT} hervorgegangenes
+Opensource Projekt.
+
+Ziel dieses Projektes ist die Entwicklung eines Betriebsystems, das sich
+über ein Paketverwaltungssystem beliebig anpassen und dessen Dateisystem sich
+beliebig beschreiben lässt. Dies soll es dem Nutzer ermöglichen, das System von
+nicht benötigten Funktionen zu befreien, beziehungsweise auf seine Bedürfnisse
+zuzuschneiden.
+
+OpenWRT wird hauptsächlich als Firmware auf Routern verschiedenster Hersteller
+angeboten. Es zeichnet sich durch eine hohe Konfigurierbarkeit bei
+gleichzeitiger Unterstützung verschiedenster Plattformen aus.
+ \subsubsection*{Paketverwaltung
+und Kompiliervorgang} \emph{OpenWRT} besitzt mit \textbf{opkg} ein Tool zur Paketverwaltung von
+Anwendungen.
 Hierbei kann die Software in Form von *.ipk-Files aus "`Repositories"'
 installiert werden. Durch dieses Tool wird es möglich, das eingebettete System
 für die eigenen Bedürfnisse anzupassen.
@@ -221,15 +267,15 @@ Grad an Abstraktion können \emph{Makefiles} jedoch auch für andere Aufgaben
 \end{definition}
 
 \begin{minipage}[c]{\textwidth}
-OpenWRT liefert alle nötigen Bestandteile mit, um ein vollständiges Image für
-das eingebettete System zu erstellen.
+\emph{OpenWRT} liefert alle nötigen Bestandteile mit, um ein vollständiges Image
+für das eingebettete System zu erstellen.
 Der Ablauf ist dabei wie folgt:
 \begin{itemize}
-  \item Mittels \texttt{make menuconfig} lässt sich der folgende
+  \item Mittels des Befehls \listinlsh{make menuconfig} lässt sich der folgende
   Kompiliervorgang in einer grafischen Oberfläche anpassen. Dazu zählen die zu
   erstellenden Anwendungen, Konfigurationsparameter des Kernels und
   Voreinstellungen der Anwendungen.
-  \item Durch das Eingeben von \texttt{make} wird der Kompiliervorgang
+  \item Durch das Eingeben von \listinlsh{make} wird der Kompiliervorgang
   gestartet
   \item Der Quellcode der Toolchain wird heruntergeladen und kompiliert
   \item Der Quellcode des Basissystems wird heruntergeladen und kompiliert
@@ -243,12 +289,16 @@ Der Ablauf ist dabei wie folgt:
 \end{itemize}
 \end{minipage}
 
-Soll OpenOCD nun auf ARM portiert werden, ist es wünschenswert, das Programm
-direkt in diesen Prozess des Paketverwaltungssystems einzubinden. Hierfür muss
-ein geeignetes \emph{Makefile} erstellt werden.
+Soll OpenOCD nun auf diese Plattform portiert werden, ist es wünschenswert,
+das Programm direkt in diesen Prozess des Paketverwaltungssystems einzubinden.
+Hierfür muss ein geeignetes \emph{Makefile} erstellt werden.
+
+Diese hohe Abstraktion hat gleichzeitig den Vorteil, dass statt des Carambolas
+jede beliebige Plattform verwendet werden kann, die von OpenWRT unterstützt
+wird.
 
 \subsection{Wahl eines JTAG-Adapters}
-OpenOCD unterstützt eine große Anzahl verschiedener \gls{jtag}-Adapter.
+OpenOCD unterstützt eine große Anzahl verschiedener \emph{\gls{jtag}-Adapter}.
 Viele dieser Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
 
 Neben den industriellen Lösungen mit speziell entwickelten Bauteilen(Segger
@@ -277,7 +327,8 @@ und die aktuelle Taktzahl des Zielsystems oftmals die maximal mögliche
 laufen. \emph{Adaptives Clocking} erlaubt es dem Zielsystem, eine Art
 "`Rückmeldung"' über die, aktuell gültige, maximale \gls{jtag}-Taktzahl zu geben.
 
-Im Rahmen dieser Arbeit soll der ARM-USB-TINY-H von Olimex zum Einsatz kommen.
+Im Rahmen dieser Arbeit soll der \textbf{ARM-USB-TINY-H} von Olimex zum Einsatz
+kommen.
 Dieser Adapter besitzt einen der verbreiteten \emph{FT2232}-Chips, bietet
 Adaptives Clocking und unterstützt einen Spannungsbereich von $\SI{2.0}{\volt}$
 bis $\SI{5.0}{\volt}$.
@@ -287,24 +338,24 @@ bis $\SI{5.0}{\volt}$.
 Folgende Punkte sollen im Rahmen dieser Arbeit für ein funktionierendes
 Debugsystem umgesetzt werden:
 \begin{itemize}
-  \item OpenWRT muss kompiliert und konfiguriert werden werden.
+  \item OpenWRT muss \textbf{kompiliert} und konfiguriert werden werden.
   \item Für OpenOCD muss ein \textbf{Makefile} erstellt werden, mithilfe
   dessen über den \linebreak(Cross-)Kompiliervorgang eine Paketdatei für
   OpenWRT erstellt wird.
-  \item OpenOCD muss so (vor-)konfiguriert werden, dass sich das Zielsystem
-  damit debuggen lässt.
-  \item Eine IDE muss so eingerichtet werden, dass sie OpenOCD über \gls{gdb}
-  als entfernete Debugging-Schnittstelle verwendet.
+  \item OpenOCD muss so \textbf{(vor-)konfiguriert} werden, dass sich das
+  Zielsystem damit debuggen lässt.
+  \item Eine \textbf{IDE} muss so eingerichtet werden, dass sie OpenOCD über
+  \gls{gdb} als entfernete Debugging-Schnittstelle verwendet.
 \end{itemize}
 \end{minipage}
 \section{Datenanalyse}\label{sec:datenan}
-Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die Analyse
-von Daten, die das Zielsystem erzeugt. Da das Zielsystem über eine
-Funkschnittstelle verfügt, muss die für das Zielsystem zu entwickelnde
+Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die
+\emph{Analyse} von Daten, die das Zielsystem erzeugt. Da das Zielsystem über
+eine Funkschnittstelle verfügt, muss die für das Zielsystem zu entwickelnde
 Software diese Schnittstelle sicher auch in Betrieb nehmen können.
 \subsection{Anforderungen}
 Aufgabe dieses Teils des Entwicklungssystems wird es sein, die Erfassung der in
-\autoref{sec:datenan} erwähnten Abläufe zu erleichtern.
+\autoref{sec:szenarien} erwähnten Szenarien zu erleichtern.
 
 Bedingung für die Erfassung von Daten seitens des Entwicklungssystems ist, dass
 das Zielsystem diese Daten überhaupt in einer erfassbaren Form zur Verfügung
@@ -326,10 +377,10 @@ ein Taktsignal verzichtet werden kann. Dies ermöglicht eine Nutzung von
 
 \begin{minipage}[c]{\textwidth}
 Um die Daten später sortieren und analysieren zu können, müssen vom
-Entwicklungssystem folgende Daten erfasst werden.
+Entwicklungssystem mindestens folgende Daten erfasst werden.
 \begin{itemize}
-  \item Vom Zielsystem ausgegebene Daten
-  \item Zeitpunkt der Erfassung der Daten
+  \item Vom Zielsystem \textbf{ausgegebene Daten}
+  \item \textbf{Zeitpunkt} der Erfassung der Daten
 \end{itemize}
 \end{minipage}
 
@@ -337,7 +388,7 @@ Besonderes Augenmerk muss hierbei auf die Synchronizität der einzelnen Module
 des Entwicklungssystems gelegt werden. Auf diesen Umstand wird in
 \autoref{subs:time} weiter eingegangen. 
 
-\subsection{Erforderliche Präzision}
+\subsection{Erforderliche Präzision}\label{subs:praezision}
 Für viele Vorgänge der Funkschnittstelle ist eine gewisse Genauigkeit wichtig.
 Diese drückt sich insbesondere in der Genauigkeit der vom Entwicklungssystem
 verwendeten Zeitstempel aus.
@@ -345,8 +396,8 @@ verwendeten Zeitstempel aus.
 Eine Möglichkeit die erforderliche Präzision analysieren zu können ist die
 Untersuchen des Kollisionsvermeidungs-Algorithmus'.
 
-Hierfür setzt der 802.15.4 Standard in seinem \gls{mac}-Layer zum Beispiel
-CSMA/CA ein\cite{IEEE01}.
+Hierfür setzt der, in unserem Funkmodul verwendete, 802.15.4 Standard in seinem
+\gls{mac}-Layer zum Beispiel CSMA/CA ein\cite{IEEE01}.
 \begin{definition}[CSMA/CA]
 \emph{CSMA/CA} ist ein Algorithmus zur Kollisionsvermeidung innerhalb eines
 Netzwerks. Hierbei prüft der Sender vor dem eigentlichen Sendevorgang über
@@ -358,7 +409,7 @@ von der Gegenstation mittels \texttt{ACK} bestätigt werden.
 \end{definition}
 Da \emph{CSMA/CA} jedoch im \gls{mac}-Layer stattfindet und dieser bereits
 in das gewählte Funkmodul integriert ist, wird es vermutlich schwierig,
-die Daten aus dem Modul selbst zu beziehen. Hier könnte man sich ebenso durch
+die Daten aus dem Modul selbst zu beziehen. Hier könnte man sich durch
 die Analyse der empfangenen Daten behelfen.
 
 Durch das integrierte \emph{CSMA/CA} lässt sich zwar der Versandzeitpunkt nicht
@@ -370,7 +421,7 @@ erfolgt ist.
 Folgende Rechnung nach\cite{JENN} erläutert die Dauer einer Backoff-Periode.
 
 \begin{align}\label{calc:init}
-\mathit{Initialbackoff}_{max} &=(2^{BE}-1)*\mathit{aUnitBackoffPeriod} \\
+\mathit{InitialbackoffPeriod} &=(2^{BE}-1)*\mathit{aUnitBackoffPeriod} \\
 &=(2^3-1)*\SI{320}{\micro\second}\nonumber \\
 &= \SI{2240}{\micro\second} = \SI{2,24}{\milli\second} \nonumber 
 \end{align}
@@ -470,10 +521,10 @@ Bei einer maximal spezifizierten Größe des Payloads eines
 802.15.4-Paketes von \SI{114}{\byte} werden \SI{4.256}{\milli\second}
 zur Übertragung benötigt. Dies zeigt \autoref{calc:data}. Hierbei sind der
 \emph{overhead}-Anteil \SI{31}{\byte} bestehend unter anderem aus
-Sequenznummer, Adressfeldern und Längenangabe aus \texttt{PHY}- und
-\texttt{MAC}-Layer.
+Sequenznummer, Adressfeldern und Längenangabe aus PHY- und
+MAC-Layer.
 \begin{align}\label{calc:data}
-\frac{(114+\mathit{overhead)*8}}{\SI{250}{\kilo\bit\per\second}}=\SI{4.256}{\milli\second}
+\frac{(\SI{114}{\byte}+\mathit{overhead)*8}}{\SI{250}{\kilo\bit\per\second}}=\SI{4.256}{\milli\second}
 \end{align}
 
 Will man nun die erwähnten Abläufe sinnvoll erfassen, muss die Präzision der
@@ -504,7 +555,7 @@ Ein wichtiger Punkt im Entwurf dieses Systems ist die \textbf{Synchronisation
 der Uhren} der jeweiligen Module. Nur so kann eine Vergleichbarkeit der
 verarbeiteten Daten gewährleistet werden.
 
-Aus \autoref{subs:kollision} ergibt sich, dass eine Präzision von mindestens
+Aus \autoref{subs:praezision} ergibt sich, dass eine Präzision von mindestens
 \SI{1}{\milli\second} gewährleistet werden sollte. Zu den nicht beeinflussbaren
 Größen zählen hierbei zum Beispiel die für einen Kontextwechsel durch den
 Scheduler des Betriebssystems nötige Zeit oder die Genauigkeit des
@@ -516,11 +567,103 @@ Zahl ausreichend groß dimensioniert sein. Eine 32-Bit Zahl reicht unter
 Umständen für die Betrachtung längerer Zeitabstände nicht mehr aus
 ($2^{32}\si{\micro\second}\approx \SI{71}{\minute}$).
 
-Eine 64-Bit Zahl bleibt somit als einzige Möglichkeit. Sie bietet ausreichend
-viel Platz ($2^{64}\si{\micro\second}\approx 584942~years$), um auch
+Eine \textbf{64-Bit} Zahl bleibt somit als einzige Möglichkeit. Sie bietet
+ausreichend viel Platz ($2^{64}\si{\micro\second}\approx 584942~years$), um auch
 über sehr große Zeiträume Daten aufzuzeichnen.
 
+Ein erster Ansatz für den Synchronisationsvorgang wäre, bereits bestehende
+Synchronisationstechniken wie \gls{ntp} zu verwenden. Diese haben jedoch den
+Nachteil, dass sie für die Synchronisation immer eine aktive Verbindung zum
+Internet oder einen lokalen NTP-Server  benötigen. Außerdem sind, da die
+Carambola-Systeme keine Echtzeituhren besitzen, Datum und Uhrzeit nach einem
+Start des Systems auf die Unix Epoche gesetzt. Da NTP direkt die Systemzeit
+beeinflusst, würde dies unter Umständen Auswirkungen auf andere Prozesse
+bedeuten.
+
+Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von
+Christian\cite{CHR} zum Einsatz kommen. Entscheidend ist hierbei, dass der
+Synchronisationsvorgang vom Zeitgeber angestoßen wird. Dies erfordert eine
+zusätzliche abschließende Datenübertragung.
+
+Da TCP durch seine Flusskontrolle die Messung der Netzwerklatenz
+durch eventuell Neuübertragungsversuche negativ beeinflussen kann, ist für die
+Zeitsynchronisation die Verwendung von UDP nötig. Dies bedingt allerdings die
+Verwendung einer Sequenznummer.
+
+\begin{itemize}
+  \item Der Client stößt den Synchronisationsvorgang an, indem er dem Server
+  seinen aktuellen Zeitstempel $t_0$ mittels einer \texttt{PING}-Nachricht
+  übermittelt.
+  \item Bei Erhalt der Nachricht erfasst der Server seinen eigenen Zeitstempel
+  als $t_1$.
+  \item Anschließend bereitet er das Senden einer \texttt{PONG}-Nachricht als
+  Antwort vor, erfasst einen weiteren Zeitstempel ($t_2$) und sendet die
+  Nachricht.
+  \item Bei Erhalt der Nachricht durch den Client, erfasst dieser seine eigene
+  Zeit $t_3$ und übermittelt sie dem Server in einer, diesen
+  Synchronisierungsprozess abschließenden, \texttt{STIM}-Nachricht.
+\end{itemize} 
+Dieser Vorgang ist in \autoref{fig:timeseq} visualisiert.
+
+\begin{figure}
+\centering
+\begin{sequencediagram}[ht]
+\newthread[0]{client}{:Client}
+\newthread[3]{server}{:Server}
+\mess[2]{client}{PING}{server}
+\node[anchor=east,inner sep=10pt] (t0) at (mess from) {$t_0$};
+\node[anchor=west,inner sep=4pt,label=above right:{$t_1$}] (t1) at (mess to)
+{};
+\mess[2]{server}{PONG}{client}
+\node[anchor=west,inner sep=4pt,label=below right:{$t_2$}] (t2) at (mess from)
+{}; \node[anchor=east,inner sep=10pt] (t3) at (mess to) {$t_3$};
+\mess[2]{client}{STIM}{server}
+\path (t0.east) |- coordinate(t01) (t1);
+\draw[dashed] (t1) -- (t01);
+\path (t3.east) |- coordinate(t23) (t2);
+\draw[dashed] (t2) -- (t23);
+\end{sequencediagram}
+\caption{Ablauf der Zeitsynchronisation eines Servers}
+\label{fig:timeseq}
+\end{figure}
+
+Nach Abschluss dieser Kommunikation lässt sich die Zeitdifferenz durch folgende
+Formel errechnen.
+\begin{equation}
+\frac{t_1-t_0-t_3+t_2}{2}=\Delta t
+\end{equation}
+Um Abweichungen, zum Beispiel durch unterschiedliche Latenzen auf dem Hin- und
+Rückweg im Netzwerk, auszugleichen, sollten mehrere dieser Vorgänge durchgeführt
+und ein arithmetisches Mittel über die gesammelten Differenzen gebildet werden.
+Dieser Mittelwert ist eine etwas bessere Annäherung an die tatsächliche
+Differenz.
+
 \subsection{Protokoll}
+Insgesamt müssen für das Entwicklungssystem zwei \emph{Protokolle} spezifiziert
+werden, da drei verschiedene Systeme eingesetzt werden.
+
+\subsubsection*{Zielsystem --- Serveranwendung}
+Für die Kommunikation zwischen dem Zielsystem und dem Carambola und damit der
+Serveranwendung wird \gls{uart} als Schnittstelle eingesetzt.
+
+\gls{uart} ist relativ flexibel in seiner Umsetzung. So lassen sich
+diverse Paramter verändern (Baudrate, Stopbits, Paritätsbits). <cite> Dies
+bedeutet jedoch auch gleichzeitig, dass es keine einheitliche Lösung geben kann.
+Aus diesem Grund muss es möglich sein, diese Parameter unter Umständen an die
+Bedürfnisse des Zielsystems anpassen zu können.
+
+Eine hohe Flexibilität soll auch in der Art der übertragenen Daten
+gewährleisten werden.
+
+Es wird nur spezifiziert, dass über den \gls{uart}-Anschluss
+gesendete Daten mit einem Zeilenumbruch enden müssen. Anschließend wird von der
+Serveranwendung ein Zeitstempel generiert und die Daten im System
+weitergereicht.
+
+Dies erlaubt es dem Zielsystem, neben Debugausgaben des Funkmoduls auch
+beliebige andere Nachrichten an das Entwicklersystem abzusetzen.
+
+\subsubsection*{Serveranwendung --- Entwicklersystem}
 Damit der Client und die Serveranwendungen über das Netzwerk kommunizieren
 können, wird ein Protokoll zum Datenaustausch spezifiziert. Dieses Protokoll
 legt sowohl den Aufbau der Datenpakete als auch die Abläufe der Kommunikation
@@ -542,22 +685,22 @@ I$^2$C-Schnittstelle erweitern zu können.
 \begin{minipage}[c]{\textwidth}
 Das Protokoll soll folgende Funktionen erlauben:
 \begin{itemize}
-  \item Zeitsynchronisation wie in \autoref{subs:time} aufgeführt
-  \item Übertragung von UART-Daten
-  \item Erweiterungsmöglichkeit für andere Datentypen
+  \item \textbf{Zeitsynchronisation} wie in \autoref{subs:time} aufgeführt
+  \item Übertragung von \textbf{UART-Daten}
+  \item \textbf{Erweiterungsmöglichkeit} für andere Datentypen
 \end{itemize}
 \end{minipage}
 
 Jedes Datenpaket besteht dafür aus einem \textbf{Pakettyp}, der \textbf{Länge}
 (Anzahl Byte) der Nutzdaten, einem \textbf{Zeitstempel} und optional den
-\textbf{Nutzdaten}. Die Übertragung erfolgt dabei, wie für die meisten
+\textbf{Nutzdaten} selbst. Die Übertragung erfolgt dabei, wie für die meisten
 Netzwerkprotokolle üblich, in Big-Endian. Der Aufbau eines Datenpaketes ist in
 \autoref{fig:bytefield} visualisiert.
 
 Die Größe des Headers beträgt 11 Byte und setzt sich wie folgt zusammen:\\
 Für die Bestimmung des \textbf{Typs} eines Datenpaketes reichen 8 Bit. Dies
 ermöglicht 256 verschiedene Pakettypen und somit ausreichend Spielraum für
-potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} mit 64 Bit ist in
+potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} von 64 Bit ist in
 \autoref{subs:time} erläutert worden. Die maximale Größe der an ein
 Datenpaket anhängbaren Nutzdaten ist auf 512 Byte beschränkt. Dies erscheint
 ausreichend groß für "`kurze"' Statusnachrichten. Hieraus ergibt sich, dass für
