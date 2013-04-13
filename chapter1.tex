@@ -4,11 +4,11 @@
 \section{Motivation}
 Eingebettete Systeme sind aus unseren heutigen Welt nicht mehr wegzudenken. Sie
 dienen zur Heimautomatisierung, Prozesssteuerung und vielem
-Anderen. Diese Systeme kommunizieren
-häufig über Funkprotokolle, die auf eine hohe Energieeffizienz ausgelegt sind
-und sich oftmals dynamisch organisieren können. Als Beispiel für diese
-Funksysteme lassen sich \emph{ZigBee}, \emph{ANT}, \emph{Z-Wave},
-\emph{Bluetooth low energy} oder \emph{MiWi} nennen.
+Anderen. Diese Systeme kommunizieren häufig über Funkprotokolle, die auf eine
+hohe Energieeffizienz ausgelegt sind und sich in ihrem Netzwerkaufbau oftmals
+dynamisch organisieren können. Als Beispiel für derartige Funksysteme lassen
+sich \emph{ZigBee}, \emph{ANT}, \emph{Z-Wave}, \emph{Bluetooth low energy} oder
+\emph{MiWi} nennen.
 
 Gleichzeitig sind diese Systeme stark in bestehende Umgebungen wie Anlagen oder
 Bausubstanz integriert beziehungsweise müssen in eine solche Umgebung
@@ -16,8 +16,8 @@ integriert werden.
 
 Die Problematik liegt hierbei in der Entwicklung dieser vernetzten Systeme. Wird
 ein einzelnes System entwickelt, sind die Randbedingungen meist recht klar
-definiert und gängige Testverfahren können die Einhaltung der Vorgaben
-überprüfen.
+definiert, Anwendungen zur Softwareentwicklung sind weit verbreitet und gängige
+Testverfahren können die Einhaltung der Vorgaben überprüfen.
 
 Soll jedoch ein Funknetzwerk, bestehend aus mehreren einzelnen Systemen,
 entwickelt werden, offenbaren sich manche Schwierigkeiten erst im
@@ -25,24 +25,58 @@ Zusammenspiel der einzelnen Komponenten. Auch können störende
 Umwelteinflüsse in der Konzeption nicht unbedingt immer vollständig erfasst und
 bedacht werden.
 
+Dazu kommt, dass meist eine Vielzahl identischer Systeme miteinander
+kommuniziert und so auch oft die gleiche Software auf diesen Systemen zum
+Einsatz kommt.
+
 Und auch eine fortlaufende Wartung dieser Systeme ist, aufgrund der teilweise
 hohen räumlichen Abstände, nicht immer sehr einfach zu handhaben. 
 
-Es wäre also wünschenswert, die Entwicklung,  <\ldots>
-\section{Existierende Lösungen}
-<TinyOS, andere Ideen>
-\section{Ziele}
-Ziel dieser Bachelorarbeit ist es, eine Entwicklungsplattform zu schaffen,
-mit deren Hilfe sich integrierte und mit einem Funksystem ausgestattete
-Zielsysteme entwickeln und in ihrem Betrieb untersuchen lassen.
+\section{Existierende Lösungen}\label{sec:exist}
+Für stark in ihren Ressourcen eingeschränkte, verteilte Funksysteme existieren
+eine Anzahl hierfür optimierter Betriebssysteme. Das TinyOS-Projekt\cite{TINY}
+zum Beispiel ist ein an der Universität Berkeley entstandenes und spezifisch für
+den Betrieb drahtloser Sensornetzwerke entwickeltes Betriebssystem. Weitere
+Beispiele wären Contiki\cite{CONT} oder FreeRTOS\cite{FREE}.
+
+Die meisten dieser Betriebssysteme benötigen zum Ändern oder
+Aktualisieren der Firmware eine direkte Verbindung zu dem Rechner des
+Entwicklers. Dies kann, insbesondere mit einer Hohen Anzahl Sensorknoten,
+durchaus zu einer logistischen Herausforderung werden.
+
 \begin{definition}[Zielsystem]
 Das \emph{Zielsystem} ist das System, welches mit Hilfe des
-\emph{Entwicklungssystems} relisiert werden soll.
+\emph{Entwicklungssystems} realisiert werden soll.
 \end{definition}
-Hierzu werden verschiedene Hilfsmittel benötigt.
 
-Die einzelnen Bestandteile eines Entwicklungssystems müssen herausgearbeitet,
-entworfen und implementiert werden
-<Genauer abgrenzen>
+Um dieses Problem zu umgehen, verfolgt TinyOS einen anderen Ansatz. Will man auf
+mehrere TinyOS-basierte Zielsysteme beziehungsweise Sensorknoten eine neue
+Softwareversion aufspielen, kann man sich die in das System integrierte Software
+"`Deluge 2"'\cite{DELUG} zunutze machen. Diese Software ermöglicht es, eine neue
+Softwareversion mittels eines Bootloaders und über das bereits bestehende
+Funknetzwerk zu verteilen. Hierbei funktioniert die Verteilung "`epidemisch"'
+und wird damit größtenteils durch die Sensorknoten selbst verwaltet.
+
+Dieses Vorgehen hat jedoch wiederum den Nachteil, dass für eine Verteilung der
+Software überhaupt erst einmal ein Netzwerk unter den Sensorknoten existieren
+muss. So wird dieses Verfahren unmöglich, sobald ein komplett neues
+Funkprotokoll entwickelt werden soll.
+
+Wünschenswert wäre es also, die Verteilung neuer Softwareversionen möglichst
+kabellos und gkeichzeitig ohne starke Abhängigkeit vom Zielsystem oder dem
+verwendeten Funksystem durchführen zu können.
+
+Während der Entwicklung eines solchen Funksystems spielen auch andere
+Aspekte eine Rolle. So ist es ab einem gewissen Punkt in der Entwicklung sicher
+wichtig, diese Systeme und die Abläufe im Funknetz im laufenden Betrieb
+analysieren zu können.
+
+\section{Ziele}
+Ziel dieser Bachelorarbeit ist es, ein Entwicklungssystem zu schaffen,
+mit dessen Hilfe sich integrierte und mit einem Funkmodul ausgestattete
+Zielsysteme entwickeln und in ihrem Betrieb untersuchen lassen.
+
+Hierzu werden verschiedene Hilfsmittel benötigt, deren einzelne Bestandteile
+herausgearbeitet, entworfen und implementiert werden sollen.
 \section{Gliederung}
 Im ersten Teil werden bestehende Systeme analysiert, um <\ldots>

@@ -129,7 +129,7 @@ Da OpenOCD neben einer Telnet-Konsole auch die Möglichkeit bietet, über einen
 Entwicklungsumgebungen oft denkbar einfach.
 
 So bieten zum Beispiel "`Qt Creator"', "`Netbeans"' oder auch "`Eclipse"' eine
-Unterstützung für gdb. <cite>
+Unterstützung für \gls{gdb}. <cite>
 
 Für diese Arbeit soll exemplarisch eine Verbindung zum Entwicklungssystem
 mittels Eclipse hergestellt werden.
@@ -196,7 +196,7 @@ und dem \texttt{NetworkService} eingesetzt. Sie ist nötig, da jeder dieser
 Dienste in einem anderen Thread läuft und der Datenaustausch aus diesem Grund
 synchronisiert werden muss.
 
-\subsection{Funktionsweise der Serversoftware}
+\subsection{Funktionsweise der Serversoftware}\label{subs:abl}
 In diesem Abschnitt sollen die wichtigsten Abläufe in der Serveranwendung
 erläutert werden. Der Schwerpunkt liegt hierbei hauptsächlich auf der
 Synchronisierung der Zeit und dem Weiterleiten der gesammelten Daten.
@@ -236,8 +236,8 @@ Da es möglich sein soll mehrere Verbindungen (Siehe auch \autoref{subs:best}) z
 verwalten, muss in der \texttt{BlockingQueue} zusammen mit der \texttt{Message}
 auch immer die Verbindung von der sie erhalten wurde gespeichert werden.
 
-Eine zweite \texttt{BlockingQueue} dient zur Erfassung der über UART gesammelten
-Daten mit zugehörigen Zeitstempeln. 
+Eine zweite \texttt{BlockingQueue} dient zur Erfassung der über \gls{uart}
+gesammelten Daten mit zugehörigen Zeitstempeln. 
 
 Nun werden sowohl \texttt{NetworkService} als auch \texttt{DatagramService}
 initialisiert.
@@ -250,8 +250,8 @@ diesen Dienst erfolgende Zeitsynchronisation kein Zugriff auf den
 Nachrichten-Buffer nötig ist.
 
 Anschließend werden zwei Threads gestartet, die für die Abwicklung der, durch
-den Empfang von UART- oder Netzwerkdaten angestoßenen, Vorgänge zuständig
-ist. Hierfür warten die Threads mittels \listinlcpp{UARTMessage msg =
+den Empfang von \gls{uart}- oder Netzwerkdaten angestoßenen, Vorgänge
+zuständig ist. Hierfür warten die Threads mittels \listinlcpp{UARTMessage msg =
 input_uart_.pop();} beziehungsweise \newline\listinlcpp{MessageDatagram msgd =
 input_network_.pop();} auf die Ankunft neuer Daten in ihrere zugehörigen
 \texttt{BlockingQueue}. Dies schließt die Initialisierung ab.
@@ -305,7 +305,7 @@ msg)} asynchron an alle verbundenen Clients gesendet.
 
 Die Entkoppelung zwischen \texttt{UARTService} und \texttt{uart\_handle()}
 mittels Buffer wird nötig, um das System möglichst modular zu halten. So wäre es
-zum Beispiel eine Erweiterung um SPI-Funktionalität denkbar. Hierfür müsste
+zum Beispiel eine Erweiterung um \gls{spi}-Funktionalität denkbar. Hierfür müsste
 lediglich der gleiche Buffer an einen zu erstellenden \texttt{SPIService}
 übergeben werden.
 
@@ -340,7 +340,7 @@ Ereignis ausgelöst.}
 \subsubsection*{Beenden des Servers}
 Zum Beenden der Serveranwendung wird eine \texttt{EXIT}-Nachricht an den Server
 geschickt.
-\begin{minipage}[c]{\textwidth}
+%%\begin{minipage}[c]{\textwidth}
 Dieser führt anschließend folgende Schritte aus:
 \begin{itemize}
   \item Ausgeführt duch Thread \texttt{network\_dispatcher\_}
@@ -364,7 +364,7 @@ Dieser führt anschließend folgende Schritte aus:
     \texttt{uart\_dispatcher\_} unterbrechen
   \end{itemize}
 \end{itemize}
-\end{minipage}
+%%\end{minipage}
 \section{Client - The Kraken}
 \begin{figure}[!ht]
 \centering
@@ -378,7 +378,6 @@ Zielsystemen gleichzeitig ausgelöster Interrupt ist erkennbar.}
 Die Clientsoftware dient dem Erfassen und Anzeigen der von der Serversoftware
 gesammelten Daten. \autoref{fig:client} stellt die Oberfläche der Software dar.
 
-\begin{minipage}[l]{\textwidth}
 Die Software erfüllt folgende Funktionen:
 \begin{itemize}
   \item Verbindungsaufbau zu einer beliebigen Anzahl Server
@@ -389,7 +388,6 @@ Die Software erfüllt folgende Funktionen:
   \item Synchronisieren der Zeiten aller Serveranwendungen mit dem Client
   \item <weitere Funktionen> 
 \end{itemize}
-\end{minipage}
 \subsection{Aufbau der Anwendung}
 Die Strukturierung der Clientanwendung folgt lose dem \gls{mvp}-Modell nach
 Martin Fowler<cite!>.

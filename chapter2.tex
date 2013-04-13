@@ -24,8 +24,9 @@ einzelnen Elemente, auch kategorieübergreifend, miteinander interagieren.
 Zu jedem Entwicklungsprozesses gehört auch immer die Entscheidung über eine
 Vorgehensweise. Viele Vorgehensweisen basieren dabei auf Vorgehensmodellen,
 die in Industrie und Wirtschaft weit verbreitet sind. Als Beispiele lassen sich
-hier das \emph{Wasserfallmodell}, das \emph{V-Modell}, \emph{Scrum} oder auch
-\emph{Extreme Programming} nennen.
+hier das \emph{Wasserfallmodell}, das \emph{V-Modell},
+\emph{Testgetriebene Entwicklung}, \emph{Scrum} oder auch \emph{Extreme
+Programming} nennen.
 
 All diesen Modellen ist gemein, dass einige ihrer Schritte
 unbedingt Unterstützung durch Soft- und Hardware bedürfen oder
@@ -35,9 +36,13 @@ Da es eine klare Strukturierung zeigt, soll hier exemplarisch für alle
 Vorgehensmodelle das \textbf{Wasserfallmodell} aufgeführt werden.
 
 Andere Vorgehensmodelle strukturieren ihren Ablauf unterschiedlich, jedoch sind
-diese Unterschiede für die Wahl der verwendeten Hard- und Software nur von
-untergeordneter Relevanz, da die zentralen Entwicklungsschritte
-identisch sind.
+die zentralen Entwicklungsschritte meist identisch.
+
+Durch die Wahl des Vorgehensmodells lässt sich allerdings festlegen, welche
+Priorität die einzelnen Bestandteile des Entwicklungssystems einnehmen. So legt
+zum Beispiel eine testgetrieben Entwicklung ihren Schwerpunkt auf die
+Möglichkeiten zum Testen der Soft- und Hardware, während das Wasserfallmodell
+relativ ausgewogene Anforderung an alle Bestandteile hat.
 
 \subsubsection*{Wasserfallmodell}
 Das \emph{Wasserfallmodell} ist ein klassisches, nicht-iteratives
@@ -80,7 +85,9 @@ benötigt. Dies erfordert oft ein Zusammenspiel aus Hardware-
 und Softwarekomponenten. \emph{(Installer, Softwarepakete, Flasher)}
 
 Oft durchläuft ein System in seiner Nutzungsphase auch \textbf{Wartungszyklen}.
-Diese Zyklen setzen eine möglichst einfache Wartbarkeit des Systems voraus.
+Diese Zyklen umfassen oft das Aufspielen neuer Softwareversionen auf das
+Zielsystem und setzen eine möglichst einfache Wartbarkeit des Systems
+voraus.
 
 \subsection{Software}\label{sub:software}
 Software unterstützt Softwareprojekte in allen Phasen der Durchführung.
@@ -156,7 +163,7 @@ eingebetteter Systeme verwendet werden.
   Alle diese Testarten setzen jedoch eine grundlegende Testbarkeit des Systems
   voraus.
   
-  \textbf{Beispiele:} Unittests, <\ldots>  
+  \textbf{Beispiele:} CUnit, hitex Tessy, Boost Test Library  
   \item \subsubsection*{Deploymenttools}\label{subs:deployment} Um ein System
   ausliefern zu können, muss es für den Endanwender vorbereitet werden.
   
@@ -205,7 +212,7 @@ zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
   kann so auf Unterbrechungen oder Überbrückungen geprüft werden.
   
   Einen darauf aufbauenden Funktionsumfang bietet das, vorwiegend in ARM
-  Prozessoren zum Einsatz kommende, \gls{swd} an.
+  Prozessoren zum Einsatz kommende, \gls{swd}\cite{SWD} an.
   
   Um (auch analoge) Bauteile und Platinen in größerem Umfang zu testen, dient
   der \emph{in-circuit Test}. Hierbei wird ein speziell angefertigtes
@@ -220,8 +227,8 @@ zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
   Mikroprozessors zu erleichtern beziehungsweise überhaupt zu ermöglichen,
   besitzen diese oft verschiedene Eigenschaften.
   Um eine Software Schritt-für-Schritt auszuführen, wird eine Unterstützung von
-  der CPU vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich zum
-  Beispiel mittels des \gls{dap}/\gls{tap} in einen \emph{Debug-Modus}
+  der \gls{cpu} vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich
+  zum Beispiel mittels des \gls{dap}/\gls{tap} in einen \emph{Debug-Modus}
   bringen. Dieser \emph{Debug-Modus} ist Voraussetzung dafür,
   Single-Step-Debugging duchführen oder Breakpoints setzen zu können.
   
@@ -382,14 +389,12 @@ Funktion auch für mehrere Systeme simultan durchführbar sein. So kann man das
 gesamte Netzwerk aus Zielsystemen jederzeit in einen wohldefinierten
 Ausgangszustand bringen.
 
-\begin{minipage}[c]{\textwidth}
 Gefordert wird:
 \begin{itemize}
   \item Die Möglichkeit, ein Zielsystem \textbf{schrittweise zu Debuggen}
   \item Eine \textbf{Integration} in eine \gls{ide}
   \item \textbf{Gleichzeitiger Start/Reset} mehrerer Zielsysteme
 \end{itemize}
-\end{minipage}
 
 \subsection{Deployment} Für das \emph{Deployment} des Zielystems ist es
 erforderlich, die einzelnen Knoten des Zielsystems mit einer \textbf{neuen Firmware
@@ -428,7 +433,7 @@ zu können.
 Als Schnittmenge kristallisieren sich dabei folgende Aspekte heraus:
 \begin{itemize}
   \item \subsection*{Programmieren} Eine Softwareunterstützung erfolgt in diesem
-  Schritt meist durch eine IDE und/oder einen Compiler.
+  Schritt meist durch eine \gls{ide} und/oder einen Compiler.
   \item \subsection*{Testen} Je nach Art der Tests wird auch in diesem Schritt
   Softwareunterstützung benötigt. 
   \item \subsection*{Verteilen} Soll eine Software auf mehrere

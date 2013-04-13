@@ -51,11 +51,12 @@ Beide Lösungen sind jedoch auch geschlossene Systeme. Wollte man also, wie
 vorgesehen, zusätzliche Daten sammeln, müsste man ein weiteres Gerät (mit
 eigenem Anschluss an das Netzwerk) verwenden.
 
-Der Ansatz, das Funknetzwerk der Zielsysteme selbst für das Deployment von
-Firmware oder das Analysieren von internen Vorgängen zu nutzen, hat den
-Nachteil, dass dafür ein solches Netzwerk bereits bestehen muss.
-Dies kann jedoch nicht immer garantiert werden. Insbesondere nicht dann, wenn
-erwähntes Funknetzwerk erst noch entwickelt werden muss.
+Der Ansatz vom in \autoref{sec:exist} erwähnten \emph{TinyOS}, das Funknetzwerk
+der Zielsysteme selbst für das Deployment von Firmware oder das Analysieren von
+internen Vorgängen zu nutzen, hat den Nachteil, dass dafür ein solches Netzwerk
+bereits bestehen muss. Dies kann jedoch nicht immer garantiert werden.
+Insbesondere nicht dann, wenn erwähntes Funknetzwerk erst noch entwickelt werden
+muss.
 
 Wünschenswert wäre es also, ein von dem Zielsystem und dessen Hardware völlig
 unabhängiges System zu entwickeln. Dies hat gleichzeitig den Vorteil, dass es
@@ -84,21 +85,58 @@ In diesem Abschnitt sollen die Vorgaben für das Entwicklungssystem und ein
 beispielhaftes Zielsystem getroffen und erläutert werden.
 \subsection{Entwicklungssystem}
 Für das \emph{Entwicklungssystem} selbst muss eine Entscheidung über das
-verwendete Modul getroffen werden, dass als "`Brücke"' zwischen Entwicklersystem
+verwendete Modul getroffen werden, das als "`Brücke"' zwischen Entwicklersystem
 und Zielsystem funktioniert.
 
-<Warum wir das Carambola wählten>
+Unter den eingebetteten Betriebssystemen hat unter anderem \textbf{Linux} eine
+hohe Verbreitung. Es existieren verschiedene Distributionen, die speziell für
+diese Einsatzzwecke ausgelegt sind und auch in den Bereich der Mobiltelefone
+hält Linux Einzug(Android).
 
-<Was das Carambola ist>
+Zusätzlich bietet Linux eine hohe Konfigurierbarkeit und Abstraktion von der
+zugrunde liegenden Hardware. So kann eine für Linux entwickelte Software meist
+mit relativ geringem Aufwand auf unterschiedlichste Plattformen portiert werden.
+Im Idealfall leistet die verwendete Linux Distribution hierbei Hilfe.
+
+Grundsätzliche Anforderung an die zu verwendende Plattform ist, dass sie
+mindestens eine Ethernet- und im Idealfall auch eine WLAN-Schnittstelle bietet.
+Außerdem sollten möglichst viele Möglichkeiten zur Kommunikation mit dem
+Zielsystem gegeben sein. Dazu zählen zum Beispiel Schnittstellen wie USB,
+\gls{uart}, I$^2$C oder \gls{spi}.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=7cm]{carambola.png}\\
+\caption{Fotografie des Carambolas}{}
+\end{figure}
+
+Das Entwicklungsboard \textbf{Carambola}\cite{CARAM1} wird von der der Firma UAB
+"`8devices"' hergestellt und besteht aus einer kleinen Platine mit einem Ralink
+RT3050\cite{RA01} Mikrocontroller(MIPS-Architektur).
+
+Der Mikrocontroller besitzt folgende Funktionen: 
+\begin{itemize}
+  \item Ralink RT3050 \SI{320}{\mega\hertz} MIPS SoC
+  \item 5-Port Ethernetswitch
+  \item 802.11n \SI{2,4}{\giga\hertz} WLAN
+  \item I$^2$C, \gls{spi}, \gls{uart}
+\end{itemize}
+4 LEDs, eine WLAN-Antenne und ein \SI{32}{\mega\byte} Flash-Baustein sind dabei
+bereits auf das Board integriert, die restlichen Anschlüsse sind über eine
+Steckerleiste verfügbar.
+
+Zusätzlich bietet "`8devices"' ein Entwicklungsboard an, auf das sich das
+Carambola direkt aufstecken lässt. So können viele der vom Mikrocontroler
+gebotenen Anschlüsse direkt verwendet werden. Das Entwicklungsboard besitzt
+unter anderem zwei Ethernet-Anschlüsse, einen RS232-Anschluss, einen
+USB-Anschluss und einen kleinen Bereich für eigene Elektronik\-aufbauten.
 
 Das Carambola wird mit \textbf{OpenWRT}, einem linuxbasierten
-Betriebssystem für eingebettete Geräte, betrieben. OpenWRT verfügt über eine
-große Anzahl portierter Softwarepakete, unterstützt viele Architekturen (unter
-anderem ARM, MIPS, PowerPC, x86) und gewährleistet durch simple
-Konfigurationsdateien einen hohen Grad an Konfigurierbarkeit.
+Betriebssystem für eingebettete Geräte, betrieben. Dieses wird in
+\autoref{subs:owrt} näher beschrieben.
 
-Um Software für das Carambola zu erstellen muss ein Cross-Compiler eingesetzt
-werden.
+Da das Carambola eine MIPS-Architektur besitzt, muss ein Cross-Compiler
+eingesetzt werden, um Software für das Carambola erstellen zu können.
 \begin{definition}[Cross-Compiler]
 Ein Cross-Compiler ist ein spezieller Compiler, der den Quellcode einer
 Software für eine andere als die ausführende Architektur kompilieren kann. Er
@@ -107,6 +145,7 @@ die Anwendung auf dem Zielsystem zu kompilieren. Dies kann zum Beispiel dann der
 Fall sein, wenn ein eingebettetes System über nicht ausreichend Ressourcen
 (Speicherplatz) verfügt, um den Kompilationsvorgang durchzuführen.
 \end{definition}
+
 \subsection{Zielsystem}
 Das zu entwerfende Entwicklungssystem sollte ein möglichst
 großes Spektrum potentieller Architekturen und Funksysteme abdecken können, so
@@ -132,10 +171,31 @@ in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diese
 Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau
 dafür.
 
- <Warum der ARM von Olimex gut ist>
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=7cm]{stm32.png}\\
+\caption{Fotografie des STM32-H152}{}
+\end{figure}
 
-\subsection{Funkmodul} Die verfügbaren Funkmodule lassen sich grundsätzlich in
-zwei Kategorien einteilen.
+Das Entwicklungsboard "`STM32-H152"'\cite{OLI2} des Herstellers
+\emph{Olimex Ltd.} besitzt mit dem \\STM32L152VBT6 der Firma
+\emph{STMicroelectronics} genau einen solchen
+energieeffizienten ARM-Mikrocontroller.
+
+Auch das Board ist speziell auf den Batteriebetrieb ausgelegt und besitzt neben
+einem USB-Anschluss für Stromversorgung und Datenübertragung eine 20-polige Buchse zum
+Anschluss eines \gls{jtag}-Debuggers und einen Schaltkreis zum Laden von
+Lithium-Ionen/Lithium-Polymer Batterien.
+
+Außerdem befindet sich auf dem Board ein, bei \emph{Olimex}-Produkten häufig
+eingesetzter, 10-poliger Anschluss. Für diesen "`UEXT"' getauften Anschluss
+bietet \emph{Olimex} eine Reihe von Erweiterungsboards an, die sich so einfach
+verbinden lassen. Dabei spezifiziert Olimex lediglich die Zuordnung
+verschiedener Pins zu Funktionen, die auf den meisten Mikrocontroller
+vorhanden sind(\gls{spi},I$^2$ und \gls{uart}).
+
+\subsection{Funkmodul} Die verfügbaren Funkmodule lassen
+sich grundsätzlich in zwei Kategorien einteilen.
 
 Jedes Funkmodul besteht mindestens aus einem \textbf{Transceiver}. Dieser
 Transceiver umfasst zumindest die analogen Komponenten der physikalischen
@@ -148,8 +208,8 @@ einen Transceiver integriert.
 Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
 zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
 neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
-Aufgaben höherer Schichten und wird dafür oft über einfache Protokolle wie UART
-oder SPI angesprochen.
+Aufgaben höherer Schichten und wird dafür oft über einfache Protokolle wie
+\gls{uart} oder \gls{spi} angesprochen.
 
 Dies bedeutet jedoch gleichzeitig mehr Hardware, da ein integrierter
 Mikroprozessor betrieben werden muss und somit Strom benötigt.
@@ -158,9 +218,25 @@ deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll die
 Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
 Abstraktion hinderlich sein.
 
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=4cm]{mrf24.png}\\
+\caption{Fotografie des MRF24J40}{}
+\end{figure}
 
- <Warum genau dieses Modul die einfachste Wahl ist>
+Da es möglich sein soll, die Abläufe des Funkprotokolls zu erfassen, sollte der
+Chip nicht zu abstrahiert funktionieren. Die Wahl mus also zwangsläufig auf
+einen \textbf{Transceiver} fallen.
 
+Da, wie zuvor erwähnt, eine Vielzahl verschiedenster Module für den "`UEXT"'
+Anschluss existieren, gibt hierfür auch ein Modul mit einem Transceiver.
+
+Das Modul "`MOD-MRF24J40"' verwendet den Chip MRF24J40 der Firma Microchip
+Technology Inc. Der Chip ist eine IEEE 802.15.4\cite{IEEE01} kompatible
+Realisierung eines Funktransceivers und implementiert die im Standard
+spezifizierten PHY- und \gls{mac}-Layer.
+
+<noch etwas mehr>
 \section{Debugging}
 \subsection{Schnittstellen}
 Das Debugging eines eingebetteten Systems erfordert meist eine kombinierte Hard-
@@ -211,7 +287,7 @@ Telnet-Protokoll oder mittels eines \gls{gdb}-Clients bedienen.
 Der \gls{gdb} ist der Standard-Debugger unter
 Unix-Betriebssystemen. Er bietet unter Anderem die Möglichkeit, ein Programm im
 laufenden Betrieb anzuhalten, Breakpoints zu setzen oder Single-Stepping
-durchzuführen. Der GDB besitzt keine grafische Oberfläche, sondern
+durchzuführen. Der \gls{gdb} besitzt keine grafische Oberfläche, sondern
 lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
 einem Client über TCP/IP ferngesteuert zu werden. 
 \end{definition}
@@ -229,7 +305,7 @@ beliebigen TCP-Port und damit auch über das Netzwerk erfolgen.
 Setzt man OpenOCD nun also auf dem Carambola ein, lässt sich diese Trennung
 ausnutzen, um ein Debugging über eine beliebige Netzwerkverbindung zu
 realisieren.
-\subsection{OpenWRT}
+\subsection{OpenWRT}\label{subs:owrt}
 OpenWRT ist ein ursprünglich aus dem von Linksys zur Verfügung
 gestellten Quellcode des Routers "`WRT54G"' \cite{OWRT} hervorgegangenes
 Opensource Projekt.
@@ -238,11 +314,14 @@ Ziel dieses Projektes ist die Entwicklung eines Betriebsystems, das sich
 über ein Paketverwaltungssystem beliebig anpassen und dessen Dateisystem sich
 beliebig beschreiben lässt. Dies soll es dem Nutzer ermöglichen, das System von
 nicht benötigten Funktionen zu befreien, beziehungsweise auf seine Bedürfnisse
-zuzuschneiden.
+zuzuschneiden. Aus diesem Grund verfügt \emph{OpenWRT} über eine große Anzahl
+für dieses System bereits portierter Bibliotheken und Anwendungen.
 
 OpenWRT wird hauptsächlich als Firmware auf Routern verschiedenster Hersteller
 angeboten. Es zeichnet sich durch eine hohe Konfigurierbarkeit bei
-gleichzeitiger Unterstützung verschiedenster Plattformen aus.
+gleichzeitiger Unterstützung verschiedenster Plattformen aus. So werden neben
+MIPS zum Beispiel noch ARM, PowerPC und x86 unterstützt. 
+
  \subsubsection*{Paketverwaltung
 und Kompiliervorgang} \emph{OpenWRT} besitzt mit \textbf{opkg} ein Tool zur Paketverwaltung von
 Anwendungen.
@@ -266,7 +345,7 @@ Grad an Abstraktion können \emph{Makefiles} jedoch auch für andere Aufgaben
 "`zweckentfremdet"' werden.
 \end{definition}
 
-\begin{minipage}[c]{\textwidth}
+%%\begin{minipage}[c]{\textwidth}
 \emph{OpenWRT} liefert alle nötigen Bestandteile mit, um ein vollständiges Image
 für das eingebettete System zu erstellen.
 Der Ablauf ist dabei wie folgt:
@@ -287,7 +366,7 @@ Der Ablauf ist dabei wie folgt:
     \item Erstellen der *.ipk-Datei
   \end{itemize}
 \end{itemize}
-\end{minipage}
+%%\end{minipage}
 
 Soll OpenOCD nun auf diese Plattform portiert werden, ist es wünschenswert,
 das Programm direkt in diesen Prozess des Paketverwaltungssystems einzubinden.
@@ -334,7 +413,7 @@ Adaptives Clocking und unterstützt einen Spannungsbereich von $\SI{2.0}{\volt}$
 bis $\SI{5.0}{\volt}$.
 
 \subsection{Zielsetzung}
-\begin{minipage}[c]{\textwidth}
+%%\begin{minipage}[c]{\textwidth}
 Folgende Punkte sollen im Rahmen dieser Arbeit für ein funktionierendes
 Debugsystem umgesetzt werden:
 \begin{itemize}
@@ -344,10 +423,10 @@ Debugsystem umgesetzt werden:
   OpenWRT erstellt wird.
   \item OpenOCD muss so \textbf{(vor-)konfiguriert} werden, dass sich das
   Zielsystem damit debuggen lässt.
-  \item Eine \textbf{IDE} muss so eingerichtet werden, dass sie OpenOCD über
-  \gls{gdb} als entfernete Debugging-Schnittstelle verwendet.
+  \item Eine \textbf{\gls{ide}} muss so eingerichtet werden, dass sie OpenOCD
+  über \gls{gdb} als entfernete Debugging-Schnittstelle verwendet.
 \end{itemize}
-\end{minipage}
+%%\end{minipage}
 \section{Datenanalyse}\label{sec:datenan}
 Ein weiterer wichtiger Bestandteil dieses Entwicklungssystems ist die
 \emph{Analyse} von Daten, die das Zielsystem erzeugt. Da das Zielsystem über
@@ -355,7 +434,7 @@ eine Funkschnittstelle verfügt, muss die für das Zielsystem zu entwickelnde
 Software diese Schnittstelle sicher auch in Betrieb nehmen können.
 \subsection{Anforderungen}
 Aufgabe dieses Teils des Entwicklungssystems wird es sein, die Erfassung der in
-\autoref{sec:szenarien} erwähnten Szenarien zu erleichtern.
+\autoref{sect:szenarien} erwähnten Szenarien zu erleichtern.
 
 Bedingung für die Erfassung von Daten seitens des Entwicklungssystems ist, dass
 das Zielsystem diese Daten überhaupt in einer erfassbaren Form zur Verfügung
@@ -367,22 +446,20 @@ des \textbf{\gls{uart}} an. Hierfür muss jedoch die Software des Zielsystems so
 angepasst werden, dass es die zu sammelnden Daten über \gls{uart} ausgibt.
 
 \begin{definition}[UART]
-Der \gls{uart} ist eine, in Mikrocontrollern sehr weit verbreitete,
-elektronische Schaltung zur seriellen Übertragung von Daten. In
+\glsreset{uart}Der \gls{uart} ist eine, in Mikrocontrollern sehr weit
+verbreitete, elektronische Schaltung zur seriellen Übertragung von Daten. In
 seiner Minimalkonfiguration benötigt der \gls{uart} nur zwei Pins (RX ---
 Receive, TX --- Transmit), da, durch Festlegung auf einen gemeinsamen Takt, auf
 ein Taktsignal verzichtet werden kann. Dies ermöglicht eine Nutzung von
 \gls{uart} auch in einem stark integriertem Zielsystem.
 \end{definition}
 
-\begin{minipage}[c]{\textwidth}
 Um die Daten später sortieren und analysieren zu können, müssen vom
 Entwicklungssystem mindestens folgende Daten erfasst werden.
 \begin{itemize}
   \item Vom Zielsystem \textbf{ausgegebene Daten}
   \item \textbf{Zeitpunkt} der Erfassung der Daten
 \end{itemize}
-\end{minipage}
 
 Besonderes Augenmerk muss hierbei auf die Synchronizität der einzelnen Module
 des Entwicklungssystems gelegt werden. Auf diesen Umstand wird in
@@ -522,7 +599,7 @@ Bei einer maximal spezifizierten Größe des Payloads eines
 zur Übertragung benötigt. Dies zeigt \autoref{calc:data}. Hierbei sind der
 \emph{overhead}-Anteil \SI{31}{\byte} bestehend unter anderem aus
 Sequenznummer, Adressfeldern und Längenangabe aus PHY- und
-MAC-Layer.
+\gls{mac}-Layer.
 \begin{align}\label{calc:data}
 \frac{(\SI{114}{\byte}+\mathit{overhead)*8}}{\SI{250}{\kilo\bit\per\second}}=\SI{4.256}{\milli\second}
 \end{align}
@@ -532,7 +609,6 @@ Timer also bei \textbf{mindestens \SI{1}{\milli\second}} liegen. Erst diese
 Genauigkeit würde ein sinnvolles Sortieren und Zuordnen der Abläufe ermöglichen.
 
 \subsection{Bestandteile}\label{subs:best}
-\begin{minipage}[c]{\textwidth}
 Der Teil des Entwicklungssystems, der für die Analyse der gesammelten Daten
 zuständig ist, muss im Kern aus drei Teilen bestehen.
 \begin{itemize}
@@ -543,7 +619,6 @@ zuständig ist, muss im Kern aus drei Teilen bestehen.
   \item \textbf{Protokoll} --- Definiert die Kommunikation zwischen Server und
   Client.
 \end{itemize}
-\end{minipage}\par
 Für die \emph{Clientanwendung} ist es von großer Bedeutung, dass sie sich zu
 mehreren Serverinstanzen verbinden kann. Nur hierdurch wird es möglich, die
 Daten von mehreren Zielsystemen erfassen und auswerten zu können.
@@ -574,10 +649,10 @@ ausreichend viel Platz ($2^{64}\si{\micro\second}\approx 584942~years$), um auch
 Ein erster Ansatz für den Synchronisationsvorgang wäre, bereits bestehende
 Synchronisationstechniken wie \gls{ntp} zu verwenden. Diese haben jedoch den
 Nachteil, dass sie für die Synchronisation immer eine aktive Verbindung zum
-Internet oder einen lokalen NTP-Server  benötigen. Außerdem sind, da die
-Carambola-Systeme keine Echtzeituhren besitzen, Datum und Uhrzeit nach einem
-Start des Systems auf die Unix Epoche gesetzt. Da NTP direkt die Systemzeit
-beeinflusst, würde dies unter Umständen Auswirkungen auf andere Prozesse
+Internet oder einen lokalen \gls{ntp}-Server  benötigen. Außerdem sind, da
+die Carambola-Systeme keine Echtzeituhren besitzen, Datum und Uhrzeit nach einem
+Start des Systems auf die Unix Epoche gesetzt. Da \gls{ntp} direkt die
+Systemzeit beeinflusst, würde dies unter Umständen Auswirkungen auf andere Prozesse
 bedeuten.
 
 Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von
@@ -679,17 +754,15 @@ Algorithmus\cite{RFC896} deaktiviert werden muss, da die Daten ansonsten unter
 Umständen zu stark verzögert werden.
 
 Um das Protokoll erweiterbar zu halten, sollte es eine Möglichkeit geben, das
-System später um andere Nutzdatentypen wie zum Beispiel Ausgaben einer SPI oder
+System später um andere Nutzdatentypen wie zum Beispiel Ausgaben einer \gls{spi} oder
 I$^2$C-Schnittstelle erweitern zu können.
 
-\begin{minipage}[c]{\textwidth}
 Das Protokoll soll folgende Funktionen erlauben:
 \begin{itemize}
   \item \textbf{Zeitsynchronisation} wie in \autoref{subs:time} aufgeführt
-  \item Übertragung von \textbf{UART-Daten}
+  \item Übertragung von \textbf{\gls{uart}-Daten}
   \item \textbf{Erweiterungsmöglichkeit} für andere Datentypen
 \end{itemize}
-\end{minipage}
 
 Jedes Datenpaket besteht dafür aus einem \textbf{Pakettyp}, der \textbf{Länge}
 (Anzahl Byte) der Nutzdaten, einem \textbf{Zeitstempel} und optional den
