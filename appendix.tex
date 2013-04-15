@@ -1,0 +1,39 @@
+\chapter{Installationshinweise}
+Die beigelegte CD enthält den Quellcode der im Rahmen dieser Bachelorarbeit
+entwickelten Software.
+
+Da die Serversoftware stark in das Build-System von OpenWRT integriert
+ist, folgt eine Auflistung der selbstentwickelten oder modifizierten Dateien.
+\vspace{4pt}
+\dirtree{%
+.1 Hauptordner.
+.2 Thesis.pdf.
+.2 Installation.
+.2 binary.
+.3 TheKraken.exe.
+.3 chibios.elf.
+.3 openwrt-ramips-rt305x-carambola-squashfs-sysupgrade.bin.
+.2 thekraken.
+.3 src.
+.4 \ldots.
+.3 pom.xml.
+.2 chibios.
+.3 \ldots.
+.2 carambola.
+.3 package.
+.4 freejtag.
+.5 files.
+.6 freejtag.uci-defaults openocd.cfg openocd.init. 
+.5 src.
+.6 \ldots.
+.5 Makefile.
+.4 openocd.
+.5 Makefile.
+.3 feeds/packages/libs/libftdi.
+.4 Makefile.
+}
+\vspace{4pt}
+Alle weiteren Dateien sind ausdrücklich nicht Bestandteil dieser Arbeit,
+allerdings für die Verwendung der Software notwendig.
+In der Datei \texttt{Installation} befinden sich Hinweise zur Konfiguration des
+Entwicklersystems und zum Kompilieren eines OpenWRT Images.

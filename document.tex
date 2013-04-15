@@ -26,6 +26,7 @@
 \usepackage{lipsum} %% for sample text
 \usepackage{etoolbox}
 %% All my packages
+\usepackage{dirtree}
 \definecolor{grey}{HTML}{E6E6E6}
 \usepackage{realboxes}
 \usepackage{amsmath}
@@ -134,13 +135,12 @@
                     ,Title={Design und Implementierung eines verteilten
                     linuxbasierten Entwicklungssystems für
                     Nahbereichsfunkanwendungen mit ARM-Architektur }
-                    ,EnglishTitle={Developing software in Germany}
-                    ,ThesisType={Bachelorarbeit}
-                    ,ExaminationType={Bachelorprüfung}
-                    ,DegreeProgramme={Bachelor of Science Technische Informatik}
-                    ,ThesisExperts={Prof. Dr. rer. nat. Hans Heinrich Heitmann
-                    \and Prof. Dr.-Ing. Franz Korf} ,ReleaseDate={18. April 2013}
-                  }
+                    ,EnglishTitle={Design and implementation of a 
+                    distributed Linux-based development platform for near-field
+                    radio systems using the ARM architecture}
+                    ,ThesisType={Bachelorarbeit} ,ExaminationType={Bachelorprüfung} ,DegreeProgramme={Bachelor of Science Technische Informatik} ,ThesisExperts={Prof. Dr. rer. nat. Hans Heinrich Heitmann
+                    \and Prof. Dr.-Ing. Franz Korf} ,ReleaseDate={17. April
+                    2013} }
 
 %% title
 \frontmatter
@@ -154,17 +154,20 @@
 %% note: this is one command on multiple lines
 \HAWAbstractPage
 %% German abstract
-{Schlüsselwort 1, Schlüsselwort 2}%
-{Dieses Dokument \ldots}
+{Entwicklungssystem, 802.15.4, ZigBee, }%
+{Dieses Dokument beschreibt die Entwicklung einer verteilten
+Entwicklungsplattform.}
 %% English abstract
-{keyword 1, keyword 2}%
-{This document \ldots}
-
-\newpage
-\singlespacing
+{development platform, 802.15.4}%
+{This document needs an abstract\ldots}
 \mtcselectlanguage{german}
 \dominitoc
+\newpage
+
+\begin{spacing}{0.97}
 \tableofcontents
+\end{spacing}
+\singlespacing
 
 \newpage
 %% enable if these lists should be shown on their own page
@@ -196,9 +199,9 @@
 %%%%
 
 %% appendix if used
-%%\appendix
+\appendix
 %%\typeout{===== File: appendix}
-%%\include{appendix}
+\include{appendix}
 
 % bibliography and other stuff
 %\backmatter

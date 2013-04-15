@@ -1,2 +1,102 @@
-\chapter{Ausblick}\label{chap:ausblick}
-<\ldots>
+\chapter{Ausblick und Fazit}\label{chap:ausblick}
+Dieses Kapitel soll ein Fazit zu dem entwickelten System ziehen und mögliche
+Erweiterungen des Systems aufzeigen.
+\section{Verbesserungen des entwickelten Systems}
+Einige Komponenten des entwickelten Systems erfüllen zwar die gestellten
+Anforderungen, könnten in ihrer Funktionsweise jedoch noch verbessert werden.
+Diese Verbesserungen betreffen zum Beispiel die Genauigkeit der Zeitstempel oder
+den Ressourcenverbrauch der Software.
+
+Einige denkbare Verbesserungen sollen hier angeführt werden.
+\subsection{Kompensation des Clock-Drifts}
+Die Analyse aus \autoref{sect:analyse} zeigt, dass die Herstellungstoleranzen
+der Schwingquarze einen starken Drift verursachen und so die Zeitmessung massiv
+beeinflussen.
+
+Die erwähnten Funktionen von \texttt{adjtimex} könnte man in der Serversoftware
+in Zusammenspiel mit dem Client verwenden, um eine "`gemeinsame Taktrate"' zu
+errechnen. 
+
+Dadurch wäre es unter Umständen möglich, Betrachtungen von Zeitabläufen auch
+über einen längeren Zeitraum durchführen zu können, ohne regelmäßig eine
+Zeitsynchronistion durchführen zu müssen.
+\subsection{Parallelisierung}
+Da die in \autoref{sect:deployment} vorgestellten Skripte die Programmierung der
+einzelnen Zielsysteme seriell ausführen, wird für eine zunehmende Anzahl an
+Zielsystemen auch zunehmend mehr Zeit zum Flashen nötig.
+
+Außerdem ist ein durch solch ein Skript verursachter "`gemeinsamer Neustart"'
+immer signifikant zeitversetzt.
+
+Eine denkbare Lösung hierfür wäre es, das Flashen und Neustarten
+unterschiedlicher Zielsysteme von mehreren Threads gleichzeitig ausführen zu
+lassen.
+\subsection{Speicherverbrauch des Servers}
+Im Betrieb von \emph{FreeJTAG} stellte sich heraus, dass das Programm einen
+relativ hohen Speicherverbrauch hat($\approx \SI{9400}{\kilo\byte}$). 
+
+Dies ist für eine derartige Anwendung auf einem eingebetteten System ein
+ziemlich hoher Wert. So benötigt zum Beispiel das relativ komplexe
+\emph{OpenOCD} ungefähr \SI{2600}{\kilo\byte}.
+
+Dieser Speicherverbrauch ist für das Carambola mit seinen \SI{32}{\mega\byte}
+Arbeitsspeicher zwar noch keine Schwierigkeit, schränkt jedoch die Verwendung
+weiterer Software ein und verhindert unter Umständen die Portierung auf
+leistungsschwächere Hardware.
+\section{Mögliche Erweiterungen}
+Da das gesamte Entwicklungssystem in Hinblick auf größtmögliche Flexibilität und
+Modularisierung entwickelt wurde, sind eine Vielzahl möglicher Erweiterungen
+denkbar. Einige dieser Möglichkeiten sollen hier aufgeführt werden.
+\subsection{Zusätzliche Anschlussmöglichkeiten}
+Während für die Kommunikation zwischen Carambola und Zielsystem zur Zeit
+\gls{uart} eingesetzt wird, ist auch eine Erweiterung auf die
+\gls{spi}-Schnittstelle denkbar.
+
+Hierfür müsste in die Serversoftware ein \texttt{SPIService} integriert werden.
+Durch die Entkoppelung zwischen \texttt{NetworkService} und
+\texttt{UARTService} wäre es zum Beispiel möglich, den bereits vom
+\texttt{UARTService} benutzten Buffer zu verwenden, um die erhaltenen
+SPI-Nachrichten an den Rest des Systems weiterzuleiten.
+
+Diese Vorgehensweise hätte den Vorteil, dass dadurch keine weiteren
+Änderungen am Rest des Systems nötig wären.
+
+Ein anderer Ansatz wäre, eine der ungenutzten IDs des Netzwerkprotokolls zu
+verwenden, um \gls{spi}-Daten als separate Werte im Client erfassen zu
+können. Dies erfordert jedoch etwas umfangreichere Änderungen am Server, da ein
+weiterer Thread und ein weiterer Buffer angelegt werden müssten. Außerdem müsste
+die Clientsoftware um das Empfangen von \gls{spi}-Datenpaketen erweitert werden.
+
+Eine ähnliche Erweiterung wäre auch für die Weiterleitung von I$^2$C-Daten
+denkbar.
+\subsection{Analyse via Wireshark}
+Das das Entwicklungssystem hauptsächlich auf die Analyse von Funknetzwerken
+zugeschnitten ist, wäre auch diesbezüglich eine Erweiterung denkbar.
+
+So könnte man den Client zum Beispiel die gesammelten Netzwerkdaten in eine
+Datei schreiben lassen.
+
+Da der Netzwerkanalyzer "`Wireshark"'\cite{WIRESH} umfangreiche Möglichkeiten
+bietet, neue Protokolle hinzuzufügen, könnte man ihn unter Umständen auch dazu
+verwenden, diese Datei einzulesen.
+
+Würde man diesen Gedanken noch weiter tragen, wäre es wünschenswert, mit
+Wireshark eine direkte Verbindung zu den einzelnen Carambolas aufzubauen. So
+ließe sich hierüber ein verteilter Netzwerksniffer realisieren.
+\section{Fazit}
+Es konnte erfolgreich ein System entwickelt werden, mit dessen Hilfe die
+Entwicklung eines eingebetteten Systems wesentlich erleicht wird.
+
+Wird eine Software für dieses System entwickelt, so ist es nun möglich, fast
+alle Entwicklungsphasen netzwerkgestützt durchzuführen.
+
+\begin{itemize}
+  \item Leider konnte im Zeitumfang kein Funksystem entworfen werden
+\end{itemize}
+
+
+So ist es nun möglich, während der Entwicklung einer Software für dieses System 
+
+Auch ist es wesentlich 
+, Soll ein eingebettetes Funksystem nun entwickelt werden, ist, abgesehen von dem
+Zielsystem, ausschlie?lich ein \emph{Caram}

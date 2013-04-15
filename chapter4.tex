@@ -90,6 +90,14 @@ Für \emph{OpenOCD} existiert keine Portierung in die Paketverwaltung von OpenWR
 muss also ein Makefile erstellt werden, das die Einbindung ermöglicht. Der
 grundlegende Aufbau solcher Makefiles ist im Wiki von OpenWRT
 festgelegt\cite{OWRT}.
+
+Hierbei folgt der Ablauf, der durch ein solches Makefile ausgeführt wird,
+grob den Abläufen die nötig sind, um ein mit den GNU Build System entworfenes
+Programm zu kompilieren und installieren.
+
+Hierfür werden von dem Makefile nacheinander die Befehle \listinlsh{./configure}
+und \listinlsh{make} ausgeführt. Über das Makefile kann angegeben werden, welche
+Parameter an diese Befehle übergeben werden.
 \subsection{Portierung auf OpenWRT}
 Um \emph{OpenOCD} kompilieren zu können, müssen zuerst die Voraussetzungen festgestellt
 werden. Da ein auf dem FT2232-Chip basierender \gls{jtag}-Adapter mit
@@ -99,12 +107,13 @@ bereits zur Verfügung und müssen im Makefile als Abhängigkeiten definiert
 werden. Dies geschieht mit dem Befehl \listinlsh{DEPENDS:=+libftdi +libusb}.
 
 Der Quellcode von \emph{OpenOCD} in der Version 0.6.1 wird durch das Makefile von
-Sourceforge selbstständig heruntergeladen, über MD5 verifiziert und entpackt.
+Sourceforge selbstständig heruntergeladen, über eine MD5 Hashfunktion auf
+Konsistenz überprüft und entpackt.
 
 Um eine hohe Kompatibilität gegenüber allen möglichen Zielsystemen zu
 gewährleisten, musste das \texttt{Makefile} der \texttt{libftdi} angepasst werden, da die in den
-Repositories vorhandene Version 0.19  keine Kommunikation mit Adaptern
-gewährleistet, die einen FT232H-Chip besitzen. Diese Funktion gewährleistet erst
+Repositories \nopagebreak vorhandene Version 0.19  keine Kommunikation mit
+Adaptern gewährleistet, die einen FT232H-Chip besitzen. Diese Funktion gewährleistet erst
 Version 0.20.
 
 Vor dem Kompilierungsvorgang müssen noch die an \listinlsh{./configure}
@@ -137,8 +146,8 @@ auf 4444 fest.
 
 Zusätzlich muss sichergestellt werden, dass \emph{OpenOCD} mit jedem Systemstart
 ausgeführt wird. Dazu wurde die Datei \listinlsh{openocd.init} erstellt, die
-bei installation in den Ordner \listinlsh{/etc/init.d/} kopiert werden muss. In
-diesem Ordner befinden sich unter Linux traditionell alle Skripte, die bei
+bei der Installation in den Ordner \listinlsh{/etc/init.d/} kopiert wird.
+In diesem Ordner befinden sich unter Linux traditionell alle Skripte, die bei
 Systemstart ausgeführt werden sollen. Dies ermöglicht es,
 Daemons\footnote{Anwendungen, die als Hintergrundprozesse laufen und meist auf
 spezielle Ereignisse wie Netzwerkverkehr reagieren} zu starten.
@@ -187,6 +196,12 @@ ASIO}), dem hierfür nötigen Einsatz von Threads (\emph{Boost Thread}), der
 Verwaltung der Zeitstempel (\emph{Boost Chrono}) und dem Speichern und
 Einlesen von Programmeinstellungen (\emph{Boost Program\_Options}).
 
+Um eine leichte Einbindung in das System der Makefiles von OpenWRT zu erreichen,
+wird für \emph{FreeJTAG} das GNU Build System(Autotools) eingesetzt. Hierbei
+kommt zusätzlich die Datei \texttt{boost.m4} von Benoit Sigoure\cite{GITH01} zum
+Einsatz, um das System auf Existenz der benötigten Bibliotheken überprüfen zu
+können.
+
 Außerdem hängt \emph{FreeJTAG} von dem Paket "`io"' ab, da dieses für die Aktivierung
 des \gls{uart}, wie in \autoref{subs:aktuart} beschrieben, zuständig ist und
 installiert werden muss. Die in \autoref{sec:conf} beschriebene Skriptdatei,
@@ -219,9 +234,9 @@ die Kommunikation mit verschiedensten Zielsystemen.
 Verbindung zum Server herstellen kann.
 
 Außerdem besitzt das System mit der Option "`ping"' eine Möglichkeit, zu
-Testzwecken alle X\us eine \texttt{MESS}-Nachricht mit dem Payload "`PING!"' an
-alle verbundenen Clients zu senden. Diese Funktion ist für den regulären Betrieb
-nicht nötig und kann wahlweise abgeschaltet werden.
+Testzwecken alle paar \si{\us} eine \texttt{MESS}-Nachricht mit dem Payload
+"`PING!"' an alle verbundenen Clients zu senden. Diese Funktion ist für den
+regulären Betrieb nicht nötig und kann wahlweise abgeschaltet werden.
 
 Alle diese Einstellungen lassen sich bei einem Start des Programmes
 \texttt{freejtag} von einer Linux-Konsole aus auch als Parameter
@@ -279,6 +294,7 @@ synchronisiert werden muss.
 In diesem Abschnitt sollen die wichtigsten Abläufe in der Serveranwendung
 erläutert werden. Der Schwerpunkt liegt hierbei hauptsächlich auf der
 Synchronisierung der Zeit und dem Weiterleiten der gesammelten Daten.
+\clearpage
 \subsubsection*{Programmstart}\label{subs:start}
 Die Anwendung wird zuerst initialisiert und anschließend ausgeführt. Dies
 erfolgt durch folgenden Ablauf.
@@ -347,7 +363,7 @@ asynchronen Netzwerkvorgänge.
 
 Damit ist der Programmstart abgeschlossen und die Serveranwendung kann nun
 verwendet werden.
-\subsubsection*{Zeitsynchronisation}
+\subsubsection*{Zeitsynchronisation}\label{subs:servertime}
 Der aktuell gültige Zeitstempel wird bei Aufruf von
 \listinlcpp{Timekeeper::time()} durch eine simple Subtraktion errechnet.
 \begin{lstlisting}[language=C++]
@@ -386,24 +402,23 @@ gesetzt.
 Die Hauptfunktion des Servers liegt im Weiterleiten von über den
 \gls{uart}-Anschluss erhaltenen Daten.
 
-Ein beispielhafter Ablauf ist in \autoref{fig:serveruart} abgebildet.
+Zu diesem Zweck wird bei Systemstart durch den \texttt{UARTService} die
+asynchrone Funktion \listinlcpp{boost::asio::async_read_until()} ausgeführt.
+Dieses speichert alle über \gls{uart} eintreffenden Zeichen in einen internen
+Buffer, wertet sie aus und ruft bei Eintreffen des Newline-Zeichens
+'\textbackslash n' die Funktion \listinlcpp{Freejtag::handle_read} auf.
 
-Sobald die asynchrone Empfangsroutine des \texttt{UARTService} aufgerufen wird,
-fragt diese den aktuellen Zeitstempel über den \texttt{TimeKeeper} ab. Zu
-diesem Zweck besitzt dieser die statische Funktion \listinlcpp{time()}, die den
-aktuellen Zeitpunkt in Mikrosekunden wie in \autoref{subs:servertime}
-erläutert zurückgibt.
+Sobald diese "`Handler-Routine"' aufgerufen wird, fragt sie den aktuellen
+Zeitstempel über den \texttt{TimeKeeper} ab. Zu diesem Zweck besitzt dieser die
+statische Funktion \listinlcpp{time()}, die den aktuellen Zeitpunkt in
+Mikrosekunden wie in \autoref{subs:servertime} erläutert zurückgibt.
 
 Anschließend wird der Zeitstempel zusammen mit der erhaltenen Textzeile in die
-Buffer-Queue gegeben. Aus dieser Queue wird dieses Zeitstempel-Nachrichten-Paar
+Buffer-Queue gegeben. Aus dieser Queue wird das Zeitstempel-Nachrichten-Paar
 abgeholt und mittels \listinlcpp{NetworkService::sendBroadcast(Message::pointer
 msg)} asynchron an alle verbundenen Clients gesendet.
 
-Die Entkoppelung zwischen \texttt{UARTService} und \texttt{uart\_handle()}
-mittels Buffer wird nötig, um das System möglichst modular zu halten. So wäre es
-zum Beispiel eine Erweiterung um \gls{spi}-Funktionalität denkbar. Hierfür müsste
-lediglich der gleiche Buffer an einen zu erstellenden \texttt{SPIService}
-übergeben werden.
+Ein beispielhafter Ablauf ist in \autoref{fig:serveruart} abgebildet.\clearpage
 
 \begin{figure}
 \centering
@@ -434,24 +449,24 @@ Ereignis ausgelöst.}
 \label{fig:serveruart}
 \end{figure}
 \subsubsection*{Beenden des Servers}
-Zum Beenden der Serveranwendung wird eine \texttt{EXIT}-Nachricht an den Server
-geschickt.
-%%\begin{minipage}[c]{\textwidth}
-Dieser führt anschließend folgende Schritte aus:
+Zum Beenden der Serveranwendung wird durch einen der verbundenen Clients eine
+\texttt{EXIT}-Nachricht an den Server geschickt. Dieser führt anschließend
+folgende Schritte aus:
 \begin{itemize}
   \item Ausgeführt duch Thread \texttt{network\_dispatcher\_}
   \begin{itemize}
   \item Variable \texttt{\_running} auf \listinlcpp{false} setzen
   \item Acceptor für neu ankommende Verbindungen schließen
   \item Auf dem Socket der TCP-Verbindung ein \listinlcpp{socket\_.shutdown()}
-  und \listinlcpp{socket\_.close()} ausführen, um die Verbindungen zu schließen
+  und \\\listinlcpp{socket\_.close()} ausführen, um die Verbindungen zu
+  schließen
   \item Den Seriellen Port des \texttt{UARTService} mittels
   \listinlcpp{port\_.close()} schließen
   \item Den Socket des UDP-Servers mittels \listinlcpp{socket\_.close()}
   schließen
   \item Da keine Netzwerkoperationen anstehen, ist der Hauptthread nun nicht
   mehr auf  \listinlcpp{io\_service\_.run()} blockiert
-  \end{itemize}
+  \end{itemize}\clearpage
   \item Ausgeführt durch Hauptthread
   \begin{itemize}
     \item Den auf \listinlcpp{input\_network\_.pop();} blockierenden
@@ -460,7 +475,9 @@ Dieser führt anschließend folgende Schritte aus:
     \texttt{uart\_dispatcher\_} unterbrechen
   \end{itemize}
 \end{itemize}
-%%\end{minipage}
+Abschließend laufen alle Threads wieder zusammen und die Serveranwendung ist
+beendet.
+
 \section{Client - The Kraken}
 \begin{figure}[!ht]
 \centering
@@ -470,37 +487,41 @@ Dieser führt anschließend folgende Schritte aus:
 Zielsystemen gleichzeitig ausgelöster Interrupt ist erkennbar.}
 \label{fig:client}
 \end{figure}
+Die Clientsoftware \emph{The Kraken} dient zur Anzeige der über \emph{FreeJTAG}
+gesammelten Daten. Hierzu kann eine beliebige Anzahl Verbindungen zu
+\emph{FreeJTAG}-Servern hergestellt werden. Da während der Übertragung der
+Nachrichten Verzögerungen auftreten können, muss eine Sortierung der Nachrichten
+nach ihren Zeitstempeln gewährleistet werden.
 \subsection{Funktionalität}
-Die Clientsoftware dient dem Erfassen und Anzeigen der von der Serversoftware
-gesammelten Daten. \autoref{fig:client} stellt die Oberfläche der Software dar.
+Die Clientsoftware dient hauptsächlich dem Erfassen und Anzeigen der von der
+Serversoftware gesammelten Daten. \autoref{fig:client} stellt die Oberfläche der
+Software dar.
 
 Die Software erfüllt folgende Funktionen:
 \begin{itemize}
   \item Verbindungsaufbau zu einer beliebigen Anzahl Server
   \item Sortierung der Daten. (Siehe \autoref{subs:sort})
   \item Beenden einer Serveranwendung
-  \item Senden von \texttt{MESS}-Nachrichten an einen Server (Broadcast)
+  \item Senden von \texttt{MESS}-Nachrichten an einen oder alle
+  verbundenen Server (Broadcast)
+  \item Senden von TCP-\texttt{PING}-Nachrichten um vom Server ein
+  TCP\texttt{PONG} zu erhalten.
   \item Unterbrechen der Datenaufnahme
   \item Synchronisieren der Zeiten aller Serveranwendungen mit dem Client
-  \item <weitere Funktionen> 
+  \item Anzeige der realen Differenz zwischen einzelnen Empfangsvorgängen
 \end{itemize}
-\subsection{Aufbau der Anwendung}
-Die Strukturierung der Clientanwendung folgt lose dem \gls{mvp}-Modell.
-
-<!!!AUSFÜHRLICHER!!!>
-
-Der EventBus der \emph{Google Guava}-Bibliothek wird verwendet, um die
-Ereignisse der Softwareelemente miteinander zu verknüpfen.
-
-Die Anwendung wurde mithilfe des Build-Management-Tools "`Maven"'
-entwickelt.
 \subsection{Sortierung der Daten}\label{subs:sort}
+Verzögerungen von Nachrichten sind in einem IP-Netzwerk nichts ungewöhnliches.
+Da für dieses Entwicklungssystem die Genauigkeit jedoch höchste Priorität hat,
+ist es wichtig, dass die Nachrichten ihren Zeitstempeln entsprechend geordnet
+werden.
+
 Da die Daten im Betrieb fortlaufend eintreffen, wird eine entsprechende Methode
 benötigt, die Daten zu sortieren.
 
 Ein Sortieralgorithmus wie zum Beispiel "`Quicksort"' funktioniert nur so lange,
-wie die Daten konsistent bleiben. Da sie das in diesem Fall jedoch nicht sind,
-ist nach einer alternativen Lösung zu suchen.
+wie ein gleichbleibender Datensatz existiert. Da das in diesem Fall jedoch
+nicht so ist, ist nach einer alternativen Lösung zu suchen.
 
 Ein \textbf{TreeSet} sorgt dafür, dass die Daten direkt beim Eintreffen nach
 ihren Zeitstempeln in den Baum einsortiert werden. Dies erlaubt es relativ
@@ -508,10 +529,45 @@ einfach, das jeweils kleinste Element (das Element mit dem niedrigsten
 Zeitstempel) auszugeben. 
 
 Hierbei muss jedoch sichergestellt werden, dass immer eine Anzahl an Nachrichten
-in diesem Buffer verbleibt. Die Größe des Buffers beträgt aus diesem Grund
-$\mathit{AnzahlVerbindungen}*3$.
+in diesem Buffer verbleibt, da ansonsten keine Sortierung erfolgen kann. Die
+Größe des Buffers beträgt aus diesem Grund $\mathit{AnzahlVerbindungen}*3$.
 
-\section{Deployment}
+\subsection{Aufbau der Anwendung}
+Die Strukturierung der Clientanwendung folgt lose dem \gls{mvp}-Modell.
+
+Der EventBus der \emph{Google Guava}-Bibliothek\cite{GOOG} wird verwendet, um
+die Ereignisse der Softwareelemente miteinander zu verknüpfen. 
+
+Um die Funktionsweise der Clientsoftware zu erläutern soll hier exemplarisch der
+Empfangsvorgang eine Nachricht dargestellt werden.
+
+Für jeden verbundenen Client wird ein \texttt{TCPConnection}-Objekt angelegt.
+Jedes dieser Objekte wartet über einen \texttt{DataInputStream} auf ankommende
+Daten. Werden nun Daten empfangen, dekodiert die Funktion
+\listinljava{KrakenMessage.read()} die Bestandteile des Datenpaketes.
+Anschließend fügt die \texttt{TCPConnection} die
+empfangene \texttt{KrakenMessage} dem in \autoref{subs:sort} erwähnten
+\texttt{TreeSet} hinzu.
+
+Dieses \texttt{TreeSet} wird von dem \texttt{MessageDispatcher} verwaltet. Er
+sorgt dafür, dass immer eine gewisse Mindestanzahl an
+\texttt{KrakenMessage}-Objekten im \texttt{TreeSet} verbleibt und
+leitet die Nachricht mit dem derzeit kleinsten Zeitstempel an den
+\texttt{EventBus} über die Funktion \listinljava{EventBus.post()} weiter.
+
+Dieses Event wird von der Funktion \listinljava{Presenter.handleNewMessage()}
+aufgefangen. Dieser untersucht die Nachricht auf ihren
+Typ(\texttt{UART}, \texttt{MESS} oder \texttt{PONG}) und führt die
+dieser Nachricht entsprechenden Funktionen der GUI aus.
+
+Wird durch Benutzerinteraktion ein Ereignis in der GUI ausgelöst, wird der
+\texttt{EventBus} in "`umgekehrter Reihenfolge"' verwendet. 
+
+Die Anwendung wurde mithilfe des Build-Management-Tools "`Maven"'\cite{MVN}
+entwickelt und verwendet zusätzlich Proguard\cite{PROG} zum Minimieren der
+ausführbaren Datei und launch4j\cite{L4J} zur Erstellung der *.exe-Dateien.
+
+\section{Deployment}\label{sect:deployment}
 Mittels einer Linux-Scriptdatei lässt sich der \gls{gdb} im Batch-Modus steuern.
 Zum Einsatz kommt hier ein Here-document, dass die in \autoref{subs:eclipse}
 erwähnten Initialisierungsbefehle ausführt, um anschließend die Firmware durch
@@ -561,7 +617,7 @@ der WLAN-Antenne gelötet. Anschließend lies sich der \gls{jtag}-Adapter
 problemlos betreiben. Alternativ hätte auch die Möglichkeit bestanden, die
 Sendeleistung des WLAN-Moduls über die Einstellung \listinlsh{option txpower 10}
 in der Datei \listinlsh{/etc/config/wireless} zu reduzieren.
-\section{Analyse des Systems}
+\section{Analyse des Systems}\label{sect:analyse}
 Da die Präzision der Zeitstempel von zentraler Bedeutung für die
 Aussagekraft der gesammelten Daten ist, muss festgestellt werden, wie exakt zum Beispiel die
 Zeitsynchronisation funktioniert.
@@ -652,4 +708,16 @@ Diese Abweichung ist für einen Schwingquarz noch innerhalb der üblichen
 Frequenztoleranz.
 
 Die Genauigkeit der Zeitsynchronisation selbst jedoch liegt in der in
-\autoref{subs:time} geforderten Genauigkeit von ungefähr \SI{1}{\ms}.
+\autoref{subs:time} geforderten Genauigkeit von \textbf{unter \SI{1}{\ms}}. So
+wäre eine exakte Erfassung der Testdaten zumindest anfänglich noch möglich.
+
+Wollte man diesen Drift nun ausgleichen, könnte man dafür die in
+\autoref{fig:testtab} aufgeführten Drifts der Clocks als Grundlage nehmen.
+
+Der Linux-Kernel verwendet den Algorithmus nach \gls{ntp}\cite{RFC1305} zur
+Justierung der internen Clock. Hierfür lassen sich verschiedene Kernelparameter
+konfigurieren, die diesen Algorithmus beeinflussen. Zum Setzen dieser Parameter
+wird das Tool \texttt{adjtimex} verwendet.
+
+Würde man nun diese Funktionalität des Kernels verwenden, ließe sich der
+aufgetretene Drift der Uhr ausgleichen.

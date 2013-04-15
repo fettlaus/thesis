@@ -420,7 +420,7 @@ Debugsystem umgesetzt werden:
 \begin{itemize}
   \item OpenWRT muss \textbf{kompiliert} und konfiguriert werden werden.
   \item Für \emph{OpenOCD} muss ein \textbf{Makefile} erstellt werden, mithilfe
-  dessen über den \linebreak(Cross-)Kompiliervorgang eine Paketdatei für
+  dessen über den \\(Cross-)Kompiliervorgang eine Paketdatei für
   OpenWRT erstellt wird.
   \item \emph{OpenOCD} muss so \textbf{(vor-)konfiguriert} werden, dass sich das
   Zielsystem damit debuggen lässt.
@@ -822,6 +822,7 @@ Broadcast verursacht durch MESS von einem Client. \\
 empfangenen Daten sind als Payload angehängt. \\
 & SPID & \texttt{0x03} & Der Server hat eine SPI-Zeile empfangen. Die
 empfangenen Daten sind als Payload angehängt. \\
+& PONG & \texttt{0x06} & Antwort des Servers auf TCP-PING vom Client. \\
 UDP & PONG & \texttt{0x06} & Antwort des Servers auf PING vom Client.
 Zeitstempel identisch mit PING.\\
 \hline \\
@@ -830,10 +831,12 @@ Protokoll & Abkürzung & Wert & Beschreibung \\
 \hline
 TCP & MESS & \texttt{0x01} & Payload an alle verbundenen Clients senden.
 (Broadcastfunktion)\\
+& PING & \texttt{0x05} & Eine TCP-PONG-Antwort vom Server anfordern. Unabhängig
+von der Zeitsynchronisation!\\
 & EXIT & \texttt{0x10} & Den Server zum Schließen aller Verbindungen und Beenden
 der Serveranwendung veranlassen. \\
-UDP & PING & \texttt{0x05} & Einen Ping
-mit aktuellem Zeitstempel des Clients senden. \\
+UDP & PING & \texttt{0x05} &  Einen PING mit aktuellem Zeitstempel des Clients
+senden.\\
 & STIM & \texttt{0x04} & Letzter Schritt der Zeitsynchronisation. Den Zeitpunkt
 des zuletzt erhaltenen \emph{PONG} als Payload anhängen. Zeitstempel identisch
 mit PONG.\\
