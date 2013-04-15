@@ -1,7 +1,10 @@
-\chapter{Realisierung}
+\chapter{Realisierung und Analyse}\label{chap:realisierung}
 \minitoc
 In diesem Kapitel wird die Realisierung des Entwicklungssystems
-beschrieben. <\ldots>
+beschrieben. Es werden die Funktionen der einzelnen Komponenten und deren
+Umsetzung erläutert.
+
+Abschließend soll die Genauigkeit des Systems untersucht werden. 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth]{aufbau.png}
@@ -62,7 +65,8 @@ Der Mikrochip\cite{RA01} des Carambolas besitzt zwei \glspl{uart}. Einer dieser
 Carambolas verwendet. Somit kann der zweite Anschluss für die
 Datenschnittstelle des Entwicklungssystems verwendet werden.
 Da die Pins des Carambolas für den zweiten \gls{uart} standardmäßig auf
-\gls{gpio}-Betrieb eingestellt sind, müssen diese erst umgestellt werden.
+\gls{gpio}-Betrieb eingestellt sind, müssen sie vor der Verwendung entsprechend
+konfiguriert werden.
 
 Hierzu muss das Tool \texttt{io} installiert und mittels 
 \listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies weist den
@@ -71,10 +75,10 @@ Systemstart erfolgen und kann durch die, bei jedem Systemstart aufgerufene,
 Datei \listinlsh{/etc/rc.local} erfolgen.
 
 Zusätzlich muss verhindert werden, dass auf diesem \gls{uart} eine Linuxterminal
-betrieben wird. Hierzu muss die Datei \listinlsh{/etc/inittab} modifiziert
-werden.
+betrieben wird. Diese Änderung wird in der Datei \listinlsh{/etc/inittab}
+durchgeführt.
 
-Diese beiden Änderungen werden wie folgt ebenso mittels des Skripts in
+Die Änderungen werden wie folgt ebenso mittels des Skripts in
 \listinlsh{/etc/uci-defaults/} nach \autoref{sec:conf} durchgeführt.
 \begin{lstlisting}[language=sh]
 sed -i '/exit 0/ i\io 0x10000060 0x01' /etc/rc.local
@@ -82,19 +86,19 @@ sed -i '/ttyS0/ s/^/# /' /etc/inittab
 \end{lstlisting}
 
 \section{OpenOCD}
-Für OpenOCD existiert keine Portierung in die Paketverwaltung von OpenWRT. Es
+Für \emph{OpenOCD} existiert keine Portierung in die Paketverwaltung von OpenWRT. Es
 muss also ein Makefile erstellt werden, das die Einbindung ermöglicht. Der
 grundlegende Aufbau solcher Makefiles ist im Wiki von OpenWRT
 festgelegt\cite{OWRT}.
 \subsection{Portierung auf OpenWRT}
-Um OpenOCD kompilieren zu können, müssen zuerst die Voraussetzungen festgestellt
+Um \emph{OpenOCD} kompilieren zu können, müssen zuerst die Voraussetzungen festgestellt
 werden. Da ein auf dem FT2232-Chip basierender \gls{jtag}-Adapter mit
-USB-Anschluss eingesetzt werden soll, müssen laut \texttt{README} von OpenOCD
+USB-Anschluss eingesetzt werden soll, müssen laut \texttt{README} von \emph{OpenOCD}
 sowohl libftdi als auch libusb installiert sein. Diese Pakete stehen für OpenWRT
 bereits zur Verfügung und müssen im Makefile als Abhängigkeiten definiert
 werden. Dies geschieht mit dem Befehl \listinlsh{DEPENDS:=+libftdi +libusb}.
 
-Der Quellcode von OpenOCD in der Version 0.6.1 wird durch das Makefile von
+Der Quellcode von \emph{OpenOCD} in der Version 0.6.1 wird durch das Makefile von
 Sourceforge selbstständig heruntergeladen, über MD5 verifiziert und entpackt.
 
 Um eine hohe Kompatibilität gegenüber allen möglichen Zielsystemen zu
@@ -107,7 +111,7 @@ Vor dem Kompilierungsvorgang müssen noch die an \listinlsh{./configure}
 zu übergebenden Argumente festgelegt werden. Der verwendete Adapter
 verwendet einen FT2232H-Chip und erfordert daher die Option
 \listinlsh{--enable-ft2232_libftdi}.
-Die Option \listinlsh{--enable-parport} wird in der \texttt{README} von OpenOCD als
+Die Option \listinlsh{--enable-parport} wird in der \texttt{README} von \emph{OpenOCD} als
 empfohlen angegeben und aktiviert die Unterstützung für \gls{jtag}-Adapter, die
 den Parallelport verwenden.
 
@@ -123,38 +127,113 @@ Zu den Kompilerargumenten muss die Option
 \listinlsh{-Wno-error=maybe-uninitialized} hinzugefügt werden, da anderenfalls
 eine den Kompiliervorgang abbrechende Warnung beim Kompilieren der Datei
 \listinlsh{src/target/dsp5680xx.c} auftritt.
-\subsection{Integration in Eclipse}
-Da OpenOCD neben einer Telnet-Konsole auch die Möglichkeit bietet, über einen
-\gls{gdb}-Client darauf zuzugreifen, ist die Einbindung in verschiedenste
+\subsection{Konfiguration}
+Die Konfiguration von \emph{OpenOCD} erfolgt durch die Datei \listinlsh{openocd.cfg}.
+Diese Datei wird während der Installation in den Ordner
+\listinlsh{/etc/} kopiert. Sie beinhaltet alle Einstellungen, um \emph{OpenOCD}
+mit dem \emph{ARM-USB-TINY-H} und dem \emph{STM32L} zu verwenden. Außerdem legt die
+Konfigurationsdatei den \gls{gdb}-Port auf 3333 und den Telnet-Port von \emph{OpenOCD}
+auf 4444 fest.
+
+Zusätzlich muss sichergestellt werden, dass \emph{OpenOCD} mit jedem Systemstart
+ausgeführt wird. Dazu wurde die Datei \listinlsh{openocd.init} erstellt, die
+bei installation in den Ordner \listinlsh{/etc/init.d/} kopiert werden muss. In
+diesem Ordner befinden sich unter Linux traditionell alle Skripte, die bei
+Systemstart ausgeführt werden sollen. Dies ermöglicht es,
+Daemons\footnote{Anwendungen, die als Hintergrundprozesse laufen und meist auf
+spezielle Ereignisse wie Netzwerkverkehr reagieren} zu starten.
+\subsection{Integration in Eclipse}\label{subs:eclipse}
+Da \emph{OpenOCD} neben einer Telnet-Konsole auch die Möglichkeit bietet, sich über
+einen \gls{gdb}-Client steuern zu lassen, ist die Einbindung in verschiedenste
 Entwicklungsumgebungen oft denkbar einfach.
 
 So bieten zum Beispiel "`Qt Creator"', "`Netbeans"' oder auch "`Eclipse"' eine
-Unterstützung für \gls{gdb}. <cite>
+Unterstützung für \gls{gdb} an. Für diese Arbeit soll exemplarisch eine
+Verbindung zum Entwicklungssystem mittels Eclipse hergestellt werden.
 
-Für diese Arbeit soll exemplarisch eine Verbindung zum Entwicklungssystem
-mittels Eclipse hergestellt werden.
+Um das System Flashen beziehungsweise Debuggen zu können, muss eine neue "`Debug
+Konfiguration"' erstellt werden.
 
-Hierfür
+Als \gls{gdb}-Debugger muss für ARM-Mikrocontroller dabei
+\texttt{arm-none-eabi-gdb} verwendet werden. Dieser Client ist in den meisten
+ARM-Toolchains bereits vorhanden. Außerdem muss als Zielsystem noch die IP des
+Carambolas und der konfigurierte Port angegeben werden.
 
-<\ldots>
+Zusätzlich lässt sich eine Initialisierungssequenz festlegen, die vor dem
+Flashen ausgeführt wird. Basierend auf den Angaben des "`OpenOCD User's
+Guide"'\cite{OOCD} und der Webseite des \gls{rtos} "`ChibiOS/RT"'\cite{CHIB}
+erwies sich dabei folgende Initialisierungssequenz als vernünftig.
+\begin{lstlisting}
+monitor soft_reset_halt
+monitor soft_reset_halt
+monitor wait_halt
+monitor poll
+monitor flash probe 0
+monitor soft_reset_halt
+\end{lstlisting}
+Für das eigentliche Flashen des Bausteins muss lediglich die Projektdatei,
+üblicherweise eine \listinlsh{*.elf}-Datei, ausgewählt werden. Soll ein
+Debugging erfolgen, muss zusätzlich noch ein Laden der Symbolinformationen aus
+der selben Datei erfolgen.
 \section{Server - FreeJTAG}
-Der "`FreeJTAG"' genannte Server des Entwicklungssystems wird auf dem Carambola
-installiert, als Serveranwendung bei jedem Systemstart gestartet und leitet die
+Der \emph{FreeJTAG} genannte Server des Entwicklungssystems wird auf dem
+Carambola installiert, als Serveranwendung bei jedem Systemstart gestartet und leitet die
 gesammelten Daten an jeden verbundenen Client weiter.
 
-
-\subsection{Bibliotheken und Abhängigkeiten}
-Als Bibliotheken kommen bei FreeJTAG vor allem Teile der \emph{Boost Bibliothek}
+\subsection{Bibliotheken, Abhängigkeiten und Installation}
+Als Bibliotheken kommen bei \emph{FreeJTAG} vor allem Teile der \emph{Boost Bibliothek}
 zum Einsatz. Diese dienen der asynchronen Netzwerkkommunikation (\emph{Boost
 ASIO}), dem hierfür nötigen Einsatz von Threads (\emph{Boost Thread}), der
 Verwaltung der Zeitstempel (\emph{Boost Chrono}) und dem Speichern und
 Einlesen von Programmeinstellungen (\emph{Boost Program\_Options}).
 
-Außerdem hängt FreeJTAG von dem Paket "`io"' ab, da dieses für die Aktivierung
+Außerdem hängt \emph{FreeJTAG} von dem Paket "`io"' ab, da dieses für die Aktivierung
 des \gls{uart}, wie in \autoref{subs:aktuart} beschrieben, zuständig ist und
 installiert werden muss. Die in \autoref{sec:conf} beschriebene Skriptdatei,
 die mittels \listinlsh{/etc/uci-defaults/} eine Vorkonfiguration durchführt, ist
 ebenso in diesem Paket enthalten.
+
+Die Konfiguration der Serveranwendung erfolgt über die Datei
+\listinlsh{/etc/freejtag.cfg}. Diese Datei wird standardmäßig mit folgenden
+Einstellungen installiert.
+\begin{lstlisting}
+[common]
+ping=10000000
+
+[uart]
+device=/dev/ttyS0
+baud=115200
+data=8
+parity=none
+stop_bits=one
+flow_control=none
+
+[network]
+port=12323
+\end{lstlisting}
+
+Die Konfiguration des \gls{uart} ist umfangreich möglich. Dies erleichtert
+die Kommunikation mit verschiedensten Zielsystemen.
+
+"`port"' bezeichnet den TCP-Port, über den die Clientsoftware eine
+Verbindung zum Server herstellen kann.
+
+Außerdem besitzt das System mit der Option "`ping"' eine Möglichkeit, zu
+Testzwecken alle X\us eine \texttt{MESS}-Nachricht mit dem Payload "`PING!"' an
+alle verbundenen Clients zu senden. Diese Funktion ist für den regulären Betrieb
+nicht nötig und kann wahlweise abgeschaltet werden.
+
+Alle diese Einstellungen lassen sich bei einem Start des Programmes
+\texttt{freejtag} von einer Linux-Konsole aus auch als Parameter
+übergeben. Alle verfügbaren Parameter lassen sich durch das Ausführen von
+\listinlsh{freejtag --help} anzeigen.
+
+Da die Konfiguration von \emph{OpenOCD} und dessen Betrieb direkt nach
+Systemstart spezifisch für dieses Projekt ist, werden bei der Installation von
+\emph{FreeJTAG} auch die beiden Dateien \listinlsh{/etc/openocd.cfg} und
+\listinlsh{/etc/init.d/openocd} installiert. Dadurch besteht das Paket
+\emph{OpenOCD} nur aus einem Makefile und kann so auch unabhängig von diesem
+Entwicklungssystem eingesetzt werden.
 
 Durch die Installation dieser Anwendung wird das Carambola also komplett für den
 Einsatz als Entwicklungssystem konfiguriert.
@@ -164,7 +243,7 @@ Einsatz als Entwicklungssystem konfiguriert.
 \centering
 \includegraphics[width=\textwidth]{server.eps}
 \caption{Grober Aufbau der Serveranwendung}{Diese Abbildung verdeutlicht den
-Aufbau der Serveranwendung (FreeJTAG). Hierbei wurden Details zu Gunsten der
+Aufbau der Serveranwendung (\emph{FreeJTAG}). Hierbei wurden Details zu Gunsten der
 Übersichtlichkeit ausgelassen.}
 \label{fig:server}
 \end{figure}
@@ -265,18 +344,12 @@ und mit den eingestellten Parametern konfiguriert.
 Schließlich ruft der startende Thread die blockierende Methode
 \listinlcpp{io_service_.run();} auf und dient nun zur Abarbeitung der
 asynchronen Netzwerkvorgänge.
+
+Damit ist der Programmstart abgeschlossen und die Serveranwendung kann nun
+verwendet werden.
 \subsubsection*{Zeitsynchronisation}
-Der Ablauf erfolgt wie in \autoref{subs:time} beschrieben.
-
-<näher erläutern>
-
-Da nun die Abweichung zur Clientsoftware ermittelt wurde, kann die Funktion
-\newline\listinlcpp{TimeKeeper::set(microseconds difference)} verwendet werden,
-um diesen Wert zu speichern. Durch diese Justierung wird der \texttt{TimeKeeper}
-in diesem Augenblick effektiv auf \SI{0}{\micro\second} gesetzt.
-
-Der aktuelle Zeitstempel wird bei Abfrage durch eine simple Subtraktion
-errechnet.
+Der aktuell gültige Zeitstempel wird bei Aufruf von
+\listinlcpp{Timekeeper::time()} durch eine simple Subtraktion errechnet.
 \begin{lstlisting}[language=C++]
 static high_resolution_clock::time_point epoch;
 microseconds TimeKeeper::time(){
@@ -285,6 +358,29 @@ microseconds TimeKeeper::time(){
     return duration_cast<microseconds>(now);
 }
 \end{lstlisting}
+Um diese Berechnung durchführen zu können, muss jedoch zuerst eine
+Synchronisation des Systems zum Client erfolgen. Der Ablauf dieser
+Synchronistion erfolgt wie in \autoref{subs:time} beschrieben.
+
+Der Einfachheit halber ist der Server nicht in der Lage, mehrere
+Synchronisierungsvorgänge gleichzeitig durchzuführen. Diese müssen also
+nacheinander ausgeführt werden.
+
+Um die Abweichung zuverlässig ermitteln zu können, erfolgt nach 20
+erfolgreichen Synchronisierungsvorgängen eine Bildung des arithmetischen Mittels
+aller bis zu diesem Zeitpunkt gewonnenen Daten. 
+
+Eine Ausnahme bilden hierbei Ergebnisse, die einen Differenz zum Client von mehr
+als \SI{90}{\ms} aufzeigen. Tritt eine solch "`hohe"' Differenz auf, wird die
+Abweichung unverzüglich und auf Basis dieses einen Ergebnis justiert. Hierdurch
+soll einer Verfälschung der Mittelwertbildung durch anfänglich stark
+abweichende Uhren vorgebeugt werden.
+
+Da nun die gemittelte Abweichung zur Clientsoftware ermittelt wurde, kann die
+Funktion \newline\listinlcpp{TimeKeeper::set(microseconds difference)} verwendet
+werden, um die aktuell gültige \listinlcpp{epoch} anzupassen. Durch diese
+Justierung wird der \texttt{TimeKeeper} effektiv auf \SI{0}{\micro\second}
+gesetzt.
 
 \subsubsection*{Empfang und Weiterleitung von UART-Daten}
 Die Hauptfunktion des Servers liegt im Weiterleiten von über den
@@ -389,10 +485,9 @@ Die Software erfüllt folgende Funktionen:
   \item <weitere Funktionen> 
 \end{itemize}
 \subsection{Aufbau der Anwendung}
-Die Strukturierung der Clientanwendung folgt lose dem \gls{mvp}-Modell nach
-Martin Fowler<cite!>.
+Die Strukturierung der Clientanwendung folgt lose dem \gls{mvp}-Modell.
 
-<ausführlicher>
+<!!!AUSFÜHRLICHER!!!>
 
 Der EventBus der \emph{Google Guava}-Bibliothek wird verwendet, um die
 Ereignisse der Softwareelemente miteinander zu verknüpfen.
@@ -417,22 +512,49 @@ in diesem Buffer verbleibt. Die Größe des Buffers beträgt aus diesem Grund
 $\mathit{AnzahlVerbindungen}*3$.
 
 \section{Deployment}
-\begin{itemize}
-  \item Scripting von OpenOCD
-  \item Einbindung in Eclipse
-\end{itemize}
-<\ldots>
+Mittels einer Linux-Scriptdatei lässt sich der \gls{gdb} im Batch-Modus steuern.
+Zum Einsatz kommt hier ein Here-document, dass die in \autoref{subs:eclipse}
+erwähnten Initialisierungsbefehle ausführt, um anschließend die Firmware durch
+Ausführen von \listinlsh{load} zu flashen.
+\begin{lstlisting}[language=sh]
+#!/bin/bash
+echo "Flashing $1"
+for target in "${@:2}"
+do
+ echo "Flash $target"
+ arm-none-eabi-gdb $1 <<EOF
+ target remote $target:3333
+ monitor reset halt
+ monitor soft_reset_halt
+ monitor wait_halt
+ monitor poll
+ monitor flash probe 0
+ monitor soft_reset_halt
+ tbreak main
+ load
+EOF
+done
+\end{lstlisting}
+Dieses Script erfordert als erstes Argument die zu flashende Datei und
+anschließend eine beliebige Anzahl von Zielsystemen.
+
+Das Zurücksetzen der Zielsysteme erfolgt analog hierzu. Dabei entfallen jedoch
+die Initialisierungsbefehle und das Flashen. Lediglich der Befehl
+\listinlsh{monitor reset run} muss von gdb ausgeführt werden.
+
+Die Einbindung in Eclipse ist durch die Verwendung der Scripte als "`Externe
+Tools"' einfach möglich.
 \section{Aufgetretene Probleme}
-Während der Inbetriebnahme von OpenOCD traten häufig Probleme mit der
+Während der Inbetriebnahme von \emph{OpenOCD} traten häufig Probleme mit der
 Verbindung zum \gls{jtag}-Adapter auf. Dies äußerte sich darin, dass das
 Linux-System regelmäßig die Verbindung zu dem Adapter verlor. Dies
-erschwerte den Betrieb von OpenOCD erheblich.
+erschwerte den Betrieb von \emph{OpenOCD} erheblich.
 
-Jedoch ist dies offensichtlich ein bekanntes Konstruktionsproblem der
-"`Carambolas"' hervorgerufen durch eine unzulängliche Schirmung des
-USB-Anschlusses gegenüber Elektromagnetischen Wellen.\cite{CARAM2} Dies bewirkt,
-dass die integrierte WLAN-Antenne den Betrieb von USB-Geräten unter Umständen
-stark beeinflusst.
+Jedoch ist dies, laut dem Benutzerforum des Herstellers, ein bekanntes
+Konstruktionsproblem der "`Carambolas"' hervorgerufen durch eine unzulängliche
+Schirmung des USB-Anschlusses gegenüber Elektromagnetischen Wellen.
+Dies bewirkt, dass die integrierte WLAN-Antenne den Betrieb von USB-Geräten
+unter Umständen stark beeinflusst.
 
 Um dieses Problem zu beheben wurde ein \SI{32}{\mm} langer Draht an die Masse
 der WLAN-Antenne gelötet. Anschließend lies sich der \gls{jtag}-Adapter
@@ -452,10 +574,10 @@ Hierfür wurde exemplarisch das \gls{rtos} ChibiOS/RT\cite{CHIB} auf den
 Zielsystemen installiert. Es wurde so konfiguriert, dass ein Interrupt ausgelöst
 wird, sobald ein bestimmter Pin als "`Auslöser"' auf Masse gezogen wird.
 
-Da die "`Carambolas"' alle verschiedene Massepotentiale haben, müssen diese
-zuerst miteinander verbunden werden. Anschließend kann man alle
-"`Auslöser"'-Pins miteinander verbinden. Dies erlaubt es einem, mittels eines
-Knopfes oder eines Überbrückungskabels, die so verbundenen Pins zeitgleich
+Da die "`Carambolas"' durch separate Netzteile alle verschiedene Massepotentiale
+haben, müssen diese zuerst miteinander verbunden werden. Anschließend kann man
+alle "`Auslöser"'-Pins miteinander verbinden. Dies erlaubt es einem, mittels
+eines Knopfes oder eines Überbrückungskabels, die so verbundenen Pins zeitgleich
 auszulösen.
 
 Hat man vorher einen Synchronisierungsvorgang durch den Client durchgeführt,
@@ -476,25 +598,27 @@ Abläufen keine Rolle spielt.
 1}} & \textbf{Knoten 2}\\ \cline{2-6}
 Minute & Zeitstempel & Diff zu Knoten 1& Zeitstempel &
 Diff zu Knoten 2& Zeitstempel \\ \hline
-0  & 10613705   & -21\us   & 10613684   & 175\us   & 10613859   \\
-15 & 950992475  & 6423\us  & 950998898  & 12465\us & 951011363  \\
-30 & 1854818581 & 12581\us & 1854831162 & 24298\us & 1854855460 \\
-45 & 2754582459 & 18743\us & 2754601202 & 36158\us & 2754637360 \\
-60 & 3655782708 & 24897\us & 3655807605 & 47868\us & 3655855473 \\
-75 & 4554104959 & 30989\us & 4554135948 & 59647\us & 4554195595 \\
-90 & 5453785960 & 37080\us & 5453823040 & 71543\us & 5453894583 \\ \hline
+0  & 10613705   &-0.02\ms & 10613684   &  0.2\ms & 10613859   \\
+15 & 950992475  &  6.4\ms & 950998898  & 12.5\ms & 951011363  \\
+30 & 1854818581 & 12.6\ms & 1854831162 & 24.3\ms & 1854855460 \\
+45 & 2754582459 & 18.7\ms & 2754601202 & 36.2\ms & 2754637360 \\
+60 & 3655782708 & 24.9\ms & 3655807605 & 47.9\ms & 3655855473 \\
+75 & 4554104959 & 31.0\ms & 4554135948 & 59.6\ms & 4554195595 \\
+90 & 5453785960 & 37.0\ms & 5453823040 & 71.5\ms & 5453894583 \\ \hline
 & \multicolumn{2}{p{4,7cm}}{\textbf{Drift pro \SI{15}{\minute}
-gegenüber Knoten 1}} & \multicolumn{2}{|p{4,7cm}|}{\textbf{Drift pro \SI{15}{\minute}
-gegenüber Knoten 2}} &
+gegenüber Knoten 1}} & \multicolumn{2}{|p{4,7cm}|}{\textbf{Drift pro
+\SI{15}{\minute} gegenüber Knoten 2}} &
 \\
-& \multicolumn{2}{c}{\textbf{\SI{6,180}{\ms}}} &
-\multicolumn{2}{|c|}{\textbf{\SI{11,924}{\ms}}}&
+& \multicolumn{2}{c}{\textbf{\SI{6,2}{\ms}}} &
+\multicolumn{2}{|c|}{\textbf{\SI{11,9}{\ms}}}&
 \\
 \end{tabu}\\
 \caption{Testdaten einer Testreihe zur Prüfung der Genauigkeit der
 "`Carambolas"'}{Die Zeitstempel sind die von der Clientsoftware
-ausgegebenen Werte. Der durchschnittliche Drift über \SI{15}{\minute} errechnet
-sich über die Differenz zwischen den einzelnen Knoten nach einer Testzeit von
+ausgegebenen Werte. Die Differenzen zwischen den Knoten sind gerundete Angaben,
+da eine Genauigkeit der Zeitstempel von \SI{1}{\micro\second} nicht zu
+erwarten ist. Der durchschnittliche Drift über \SI{15}{\minute} errechnet sich
+über die Differenz zwischen den einzelnen Knoten nach einer Testzeit von
 \SI{90}{\minute}.}
 \label{fig:testtab}
 \end{figure}

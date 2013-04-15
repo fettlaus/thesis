@@ -1,4 +1,4 @@
-\chapter{Konzeption}\label{chap:konzeption}
+\chapter{Konzeption des verteilten Entwicklungssystems}\label{chap:konzeption}
 \minitoc
 In diesem Kapitel soll das Entwicklungssystem konzipiert werden.
 
@@ -155,15 +155,16 @@ ein anderes zu ersetzen. Dies sollte sich in einer möglichst
 widerspiegeln.
 
 Da Mikroprozessoren mit \textbf{ARM-Architektur} einen Anteil von rund
-71\%\cite{IDC01} an allen verkauften \glspl{cpu} haben, scheint es beinahe
-selbstverständlich, sich für eine solche \gls{cpu} zu entscheiden.
+71\%\cite{IDC01} an allen verkauften CPUs haben, scheint es beinahe
+selbstverständlich, sich für eine solche CPU zu entscheiden.
 
-Bedingt durch die hohe Verbreitung von ARM \glspl{cpu} existiert allerdings
+Bedingt durch die hohe Verbreitung von ARM Rechenkernen existiert allerdings
 auch eine große Anzahl an Entwicklungsboards, die in Frage kommen.
 
 Dabei ist es wichtig, eine Entscheidung eher nach Kriterien der Energieeffizienz
 als der Rechenleistung zu treffen, da das Zielsystem später stark integriert
-arbeiten können soll.
+und unter Umständen auch unabhängig von einer Stromversorgung arbeiten können
+soll.
 
 Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
 Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
@@ -192,9 +193,9 @@ eingesetzter, 10-poliger Anschluss. Für diesen "`UEXT"' getauften Anschluss
 bietet \emph{Olimex} eine Reihe von Erweiterungsboards an, die sich so einfach
 verbinden lassen. Dabei spezifiziert Olimex lediglich die Zuordnung
 verschiedener Pins zu Funktionen, die auf den meisten Mikrocontroller
-vorhanden sind(\gls{spi},I$^2$ und \gls{uart}).
+vorhanden sind(\gls{spi}, I$^2$C und \gls{uart}).
 
-\subsection{Funkmodul} Die verfügbaren Funkmodule lassen
+\subsection{Funkmodul} Die auf dem Markt verfügbaren Funkmodule lassen
 sich grundsätzlich in zwei Kategorien einteilen.
 
 Jedes Funkmodul besteht mindestens aus einem \textbf{Transceiver}. Dieser
@@ -208,15 +209,13 @@ einen Transceiver integriert.
 Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
 zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
 neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
-Aufgaben höherer Schichten und wird dafür oft über einfache Protokolle wie
-\gls{uart} oder \gls{spi} angesprochen.
+Aufgaben höherer Netzwerkschichten und wird dafür oft über einfache Protokolle
+wie \gls{uart} oder \gls{spi} angesprochen.
 
 Dies bedeutet jedoch gleichzeitig mehr Hardware, da ein integrierter
 Mikroprozessor betrieben werden muss und somit Strom benötigt.
 Außerdem verhindert die hohe Abstraktion der Kommunikation genauere Einblicke in
-deren Abläufe. Da das Ziel dieser Arbeit jedoch auch sein soll die
-Visualisierung von Kommunikationsabläufen zu ermöglichen, kann eine zu starke
-Abstraktion hinderlich sein.
+deren Abläufe.
 
 \begin{figure}[!ht]
 \centering
@@ -224,19 +223,21 @@ Abstraktion hinderlich sein.
 \caption{Fotografie des MRF24J40}{}
 \end{figure}
 
-Da es möglich sein soll, die Abläufe des Funkprotokolls zu erfassen, sollte der
-Chip nicht zu abstrahiert funktionieren. Die Wahl mus also zwangsläufig auf
-einen \textbf{Transceiver} fallen.
+Da es jedoch auch möglich sein soll, die Abläufe des Funkprotokolls erfassen ud
+visualisieren zu können, sollte der Chip nicht zu abstrahiert funktionieren. Die
+Wahl muss also zwangsläufig auf einen \textbf{Transceiver} fallen.
 
 Da, wie zuvor erwähnt, eine Vielzahl verschiedenster Module für den "`UEXT"'
-Anschluss existieren, gibt hierfür auch ein Modul mit einem Transceiver.
+Anschluss existieren, gibt es hierfür auch ein Modul mit einem Transceiver.
 
-Das Modul "`MOD-MRF24J40"' verwendet den Chip MRF24J40 der Firma Microchip
-Technology Inc. Der Chip ist eine IEEE 802.15.4\cite{IEEE01} kompatible
-Realisierung eines Funktransceivers und implementiert die im Standard
+Das Modul "`MOD-MRF24J40"' verwendet den Chip MRF24J40\cite{MRF} der Firma
+Microchip Technology Inc. Der Chip ist eine IEEE 802.15.4\cite{IEEE01}
+kompatible Realisierung eines Funktransceivers und implementiert die im Standard
 spezifizierten PHY- und \gls{mac}-Layer.
 
-<noch etwas mehr>
+Das Modul enthält eine integrierte Antenne und stellt die vom Chip zur
+Datenkommunikation genutzte \gls{spi}-Schnittstelle über den "`UEXT"'-Stecker
+zur Verfügung.
 \section{Debugging}
 \subsection{Schnittstellen}
 Das Debugging eines eingebetteten Systems erfordert meist eine kombinierte Hard-
@@ -265,22 +266,22 @@ Betrachtet man die Möglichkeiten zum Debuggen von ARM-Mikrocontrollern via
 Source Projekt \textbf{OpenOCD}. Dieses Projekt ist im Rahmen einer
 Diplomarbeit\cite{OOCD2} an der \emph{FH Augsburg} entstanden und hatte die
 Entwicklung einer quelloffenen Software zum Debuggen von ARM-Mikrocontrollern zum Ziel.
-OpenOCD fungiert dabei als Schnittstelle zwischen einem \gls{jtag}-Debugger und
+\emph{OpenOCD} fungiert dabei als Schnittstelle zwischen einem \gls{jtag}-Debugger und
 einer Benutzeroberfläche.
 
-OpenOCD ist hochgradig modular gehalten und unterstützt daher eine große
+\emph{OpenOCD} ist hochgradig modular gehalten und unterstützt daher eine große
 Bandbreite von \gls{jtag}-Adaptern, verschiedenste Mikrocontroller und
 Architekturen (unter anderem \emph{ARMv7}, \emph{ARMv4}, \emph{AVR32},
 \emph{MIPS}), einige Echtzeitbetriebssysteme(\emph{FreeRTOS}, \emph{ChibiOS},
 \emph{ThreadX}) und diverse Flash-Speicher.
 
-Die Konfiguration von OpenOCD erfolgt dabei über simple Skripte, die vom
+Die Konfiguration von \emph{OpenOCD} erfolgt dabei über simple Skripte, die vom
 Hauptprogramm beim Start eingelesen werden.
 
 Auch der auf dem Olimex-Board verwendete Mikrocontroller "`STM32L152VB"' wird
-von OpenOCD als "`STM32L"' unterstützt.
+von \emph{OpenOCD} als "`STM32L"' unterstützt.
 
-OpenOCD lässt sich dabei entweder über eine eigene Benutzeroberfläche via
+\emph{OpenOCD} lässt sich dabei entweder über eine eigene Benutzeroberfläche via
 Telnet-Protokoll oder mittels eines \gls{gdb}-Clients bedienen.
 
 \begin{definition}[GDB]
@@ -292,7 +293,7 @@ lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
 einem Client über TCP/IP ferngesteuert zu werden. 
 \end{definition}
 
-Der entscheidende Punkt hierbei ist, dass \gls{gdb}(und auch OpenOCD)
+Der entscheidende Punkt hierbei ist, dass \gls{gdb}(und auch \emph{OpenOCD})
 grundsätzlich einen "`Remote"'-Modus anbietet. Dies wird dadurch möglich, dass
 \gls{gdb} in einen "`Server"' und einen "`Client"' unterteilt ist. Dabei
 übernimmt der "`Server"' die Kontrolle des Zielsystems oder der Zielsoftware,
@@ -302,7 +303,7 @@ bedient dann den Client und damit nur indirekt den Debugger selbst.
 Verwendet man \gls{gdb} im "`Remote"'-Modus, kann diese Steuerung über einen
 beliebigen TCP-Port und damit auch über das Netzwerk erfolgen.
 
-Setzt man OpenOCD nun also auf dem Carambola ein, lässt sich diese Trennung
+Setzt man \emph{OpenOCD} nun also auf dem Carambola ein, lässt sich diese Trennung
 ausnutzen, um ein Debugging über eine beliebige Netzwerkverbindung zu
 realisieren.
 \subsection{OpenWRT}\label{subs:owrt}
@@ -368,7 +369,7 @@ Der Ablauf ist dabei wie folgt:
 \end{itemize}
 %%\end{minipage}
 
-Soll OpenOCD nun auf diese Plattform portiert werden, ist es wünschenswert,
+Soll \emph{OpenOCD} nun auf diese Plattform portiert werden, ist es wünschenswert,
 das Programm direkt in diesen Prozess des Paketverwaltungssystems einzubinden.
 Hierfür muss ein geeignetes \emph{Makefile} erstellt werden.
 
@@ -377,7 +378,7 @@ jede beliebige Plattform verwendet werden kann, die von OpenWRT unterstützt
 wird.
 
 \subsection{Wahl eines JTAG-Adapters}
-OpenOCD unterstützt eine große Anzahl verschiedener \emph{\gls{jtag}-Adapter}.
+\emph{OpenOCD} unterstützt eine große Anzahl verschiedener \emph{\gls{jtag}-Adapter}.
 Viele dieser Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
 
 Neben den industriellen Lösungen mit speziell entwickelten Bauteilen(Segger
@@ -388,7 +389,7 @@ seriellen bzw. parallelen Ausgang spezialisiert ist. Neben kommerziellen
 Adaptern (Amontec JTAGkey2\cite{AMO}, Olimex ARM-USB-TINY-H\cite{OLI})
 existieren auch einige Open Source Lösungen, in denen der \emph{FT2232} zum
 Einsatz kommt (OOCDLink\cite{OCDL}, Turtelizer 2\cite{TURT}). Eine Auflistung
-aller mit OpenOCD kompatiblen Adapter findet sich in dessen "`User Guide"'\cite{OOCD}.
+aller mit \emph{OpenOCD} kompatiblen Adapter findet sich in dessen "`User Guide"'\cite{OOCD}.
 
 Entscheidend für die Wahl eines Adapters sollte zum einen die Anzahl der
 unterstützten Zielsysteme sein. Diese definiert sich hauptsächlich über die
@@ -418,12 +419,12 @@ Folgende Punkte sollen im Rahmen dieser Arbeit für ein funktionierendes
 Debugsystem umgesetzt werden:
 \begin{itemize}
   \item OpenWRT muss \textbf{kompiliert} und konfiguriert werden werden.
-  \item Für OpenOCD muss ein \textbf{Makefile} erstellt werden, mithilfe
+  \item Für \emph{OpenOCD} muss ein \textbf{Makefile} erstellt werden, mithilfe
   dessen über den \linebreak(Cross-)Kompiliervorgang eine Paketdatei für
   OpenWRT erstellt wird.
-  \item OpenOCD muss so \textbf{(vor-)konfiguriert} werden, dass sich das
+  \item \emph{OpenOCD} muss so \textbf{(vor-)konfiguriert} werden, dass sich das
   Zielsystem damit debuggen lässt.
-  \item Eine \textbf{\gls{ide}} muss so eingerichtet werden, dass sie OpenOCD
+  \item Eine \textbf{\gls{ide}} muss so eingerichtet werden, dass sie \emph{OpenOCD}
   über \gls{gdb} als entfernete Debugging-Schnittstelle verwendet.
 \end{itemize}
 %%\end{minipage}
@@ -594,18 +595,18 @@ Nachrichten erzeugen.}
 \label{fig:kolmsg}
 \end{figure}
 
-Bei einer maximal spezifizierten Größe des Payloads eines
-802.15.4-Paketes von \SI{114}{\byte} werden \SI{4.256}{\milli\second}
-zur Übertragung benötigt. Dies zeigt \autoref{calc:data}. Hierbei sind der
-\emph{overhead}-Anteil \SI{31}{\byte} bestehend unter anderem aus
-Sequenznummer, Adressfeldern und Längenangabe aus PHY- und
-\gls{mac}-Layer.
+Bei einer minimal spezifizierten Größe des Payloads eines
+IEEE 802.15.4-Paketes von \SI{2}{\byte}\cite{IEEE01} werden
+\SI{672}{\micro\second} zur Übertragung benötigt. Dies zeigt
+\autoref{calc:data}. Hierbei sind der \emph{overhead}-Anteil \SI{19}{\byte}
+bestehend unter anderem aus Sequenznummer, Adressfeldern und Längenangabe aus
+PHY- und \gls{mac}-Layer.
 \begin{align}\label{calc:data}
-\frac{(\SI{114}{\byte}+\mathit{overhead)*8}}{\SI{250}{\kilo\bit\per\second}}=\SI{4.256}{\milli\second}
+\frac{(\SI{2}{\byte}+\mathit{overhead)*8}}{\SI{250}{\kilo\bit\per\second}}=\SI{672}{\micro\second}
 \end{align}
 
 Will man nun die erwähnten Abläufe sinnvoll erfassen, muss die Präzision der
-Timer also bei \textbf{mindestens \SI{1}{\milli\second}} liegen. Erst diese
+Timer also bei \textbf{unter \SI{1}{\milli\second}} liegen. Erst diese
 Genauigkeit würde ein sinnvolles Sortieren und Zuordnen der Abläufe ermöglichen.
 
 \subsection{Bestandteile}\label{subs:best}
@@ -722,7 +723,7 @@ Für die Kommunikation zwischen dem Zielsystem und dem Carambola und damit der
 Serveranwendung wird \gls{uart} als Schnittstelle eingesetzt.
 
 \gls{uart} ist relativ flexibel in seiner Umsetzung. So lassen sich
-diverse Paramter verändern (Baudrate, Stopbits, Paritätsbits). <cite> Dies
+diverse Paramter verändern (Baudrate, Stopbits, Paritätsbits). Dies
 bedeutet jedoch auch gleichzeitig, dass es keine einheitliche Lösung geben kann.
 Aus diesem Grund muss es möglich sein, diese Parameter unter Umständen an die
 Bedürfnisse des Zielsystems anpassen zu können.
@@ -770,18 +771,9 @@ Jedes Datenpaket besteht dafür aus einem \textbf{Pakettyp}, der \textbf{Länge}
 Netzwerkprotokolle üblich, in Big-Endian. Der Aufbau eines Datenpaketes ist in
 \autoref{fig:bytefield} visualisiert.
 
-Die Größe des Headers beträgt 11 Byte und setzt sich wie folgt zusammen:\\
-Für die Bestimmung des \textbf{Typs} eines Datenpaketes reichen 8 Bit. Dies
-ermöglicht 256 verschiedene Pakettypen und somit ausreichend Spielraum für
-potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} von 64 Bit ist in
-\autoref{subs:time} erläutert worden. Die maximale Größe der an ein
-Datenpaket anhängbaren Nutzdaten ist auf 512 Byte beschränkt. Dies erscheint
-ausreichend groß für "`kurze"' Statusnachrichten. Hieraus ergibt sich, dass für
-die Angabe der \textbf{Länge} 16 Bit benötigt werden.
-
 \begin{figure}[h!]
 \centering
-\begin{bytefield}[bitheight=3.3ex,bitwidth=3em,endianness=big]{8}
+\begin{bytefield}[bitheight=3.1ex,bitwidth=3em,endianness=big]{8}
 \bitheader{0-7} \\
 \begin{rightwordgroup}{Header}
 \wordbox{1}{Type (1 Byte)} \\
@@ -797,17 +789,29 @@ ist mit dem eines UDP-Paketes identisch. Die Menge \emph{n} der Daten ist
 auf 512 Byte beschränkt.}
 \label{fig:bytefield}
 \end{figure}
-Aus dem Ablauf in \autoref{subs:time} ist ersichtlich, dass einzig für die
-\texttt{PING}-Nachricht und unter Umständen auch für die \texttt{STIM}-Nachricht
-eine Verwendung des Zeitstempels wichtig ist. Verlagert man den Zeitstempel der
-\texttt{STIM}-Nachricht innerhalb des Datenpaketes in den Bereich der
-\emph{Nutzdaten}, lässt sich das \emph{Zeitstempel}-Feld im UDP-Ablauf als
-Sequenznummer verwenden. Die erste \texttt{PING}-Nachricht übermittelt somit
-indirekt auch die für den Synchronisierungsablauf notwendige Sequenznummer in
-Form ihres eigenen Zeitstempels.
 
-In \autoref{fig:prot} sind die verschiedenen Pakettypen aufgeführt. 
-\begin{figure}[h!]
+Die Größe des Headers beträgt 11 Byte und setzt sich wie folgt zusammen:\\
+Für die Bestimmung des \textbf{Typs} eines Datenpaketes reichen 8 Bit. Dies
+ermöglicht 256 verschiedene Pakettypen und somit ausreichend Spielraum für
+potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} von 64 Bit ist in
+\autoref{subs:time} erläutert worden. Die maximale Größe der an ein
+Datenpaket anhängbaren Nutzdaten ist auf 512 Byte beschränkt. Dies erscheint
+ausreichend groß für "`kurze"' Statusnachrichten. Hieraus ergibt sich, dass für
+die Angabe der \textbf{Länge} 16 Bit benötigt werden.
+
+
+Aus dem Ablauf in \autoref{subs:time} ist ersichtlich, dass bei den
+UDP-Nachrichten einzig für \texttt{PING} und für \texttt{STIM} eine
+Übermittlung des Zeitstempels wichtig ist, gleichzeitig allerdings auch eine
+Sequenznummer benötigt wird. Verlagert man den zu übertragenden Zeitstempel der
+\texttt{STIM}-Nachricht in den Bereich der \emph{Nutzdaten}, lässt sich das
+\emph{Zeitstempel}-Feld im UDP-Ablauf durchgehend als Sequenznummer verwenden.
+Die erste \texttt{PING}-Nachricht übermittelt somit indirekt auch die für den
+weiteren Synchronisierungsablauf notwendige Sequenznummer in Form ihres eigenen
+Zeitstempels.
+
+In \autoref{fig:prot} sind die verschiedenen TCP- und UDP-Pakettypen aufgeführt. 
+\begin{figure}[ht]
 \centering
 \begin{tabu}{l l l p{7cm}}
 \multicolumn{3}{c}{\textbf{Server zu Client}}\\ \cline{1-3}
@@ -849,6 +853,10 @@ Grundvoraussetzung ist hierfür jedoch, dass sich das \gls{rom} des Zielsystems
 über den \gls{tap} erreichen lässt. Dies ist bei dem verwendeten ST Cortex M3
 (und vielen anderen Mikrocontrollern) der Fall.
 \subsection{Zielsetzung}
-Es muss ein Skript für einen \gls{gdb}-Client erstellt werden, das es erlaubt,
-eine beliebige Anzahl Zielsysteme mit einer neuen Firmware zu versorgen.
-<\ldots>
+Es muss eine Möglichkeit gefunden werden, die Verwendung eines \gls{gdb}-Clients
+zu automatisieren. Dadurch könnte man ein und dieselbe Firmware auf eine
+beliebige Anzahl Zielsysteme verteilen.
+
+Existiert diese Möglichkeit, kann der gleiche Weg genommen werden, um diese
+Zielsysteme gesammelt resetten und somit in einen definierten Augangszustand
+bringen zu können.

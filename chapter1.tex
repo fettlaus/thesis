@@ -41,7 +41,7 @@ Beispiele wären Contiki\cite{CONT} oder FreeRTOS\cite{FREE}.
 
 Die meisten dieser Betriebssysteme benötigen zum Ändern oder
 Aktualisieren der Firmware eine direkte Verbindung zu dem Rechner des
-Entwicklers. Dies kann, insbesondere mit einer Hohen Anzahl Sensorknoten,
+Entwicklers. Dies kann, insbesondere mit einer hohen Anzahl Sensorknoten,
 durchaus zu einer logistischen Herausforderung werden.
 
 \begin{definition}[Zielsystem]
@@ -63,7 +63,7 @@ muss. So wird dieses Verfahren unmöglich, sobald ein komplett neues
 Funkprotokoll entwickelt werden soll.
 
 Wünschenswert wäre es also, die Verteilung neuer Softwareversionen möglichst
-kabellos und gkeichzeitig ohne starke Abhängigkeit vom Zielsystem oder dem
+kabellos und gleichzeitig ohne starke Abhängigkeit vom Zielsystem oder dem
 verwendeten Funksystem durchführen zu können.
 
 Während der Entwicklung eines solchen Funksystems spielen auch andere
@@ -79,4 +79,23 @@ Zielsysteme entwickeln und in ihrem Betrieb untersuchen lassen.
 Hierzu werden verschiedene Hilfsmittel benötigt, deren einzelne Bestandteile
 herausgearbeitet, entworfen und implementiert werden sollen.
 \section{Gliederung}
-Im ersten Teil werden bestehende Systeme analysiert, um <\ldots>
+In \autoref{chap:analyse} "`\nameref{chap:analyse}"' werden die Elemente eines
+allgemeinen Entwicklungssystems analysiert. Anschließend sollen Szenarien
+vorgestellt werden, die bei der Entwicklung eines verteilten,
+eingebetteten Systems auftreten können. Daraus erwachsend sollen
+dann die zu erfüllenden Anforderungen an das zu entwerfende
+Entwicklungssystem gestellt werden.
+
+In \autoref{chap:konzeption} "`\nameref{chap:konzeption}"' wird zuerst die
+grundlegende Idee eines verteilten Entwicklungssystems erläutert, bevor
+anschließend Vorentscheidungen über die zu verwendende Hardware getroffen
+werden. Hierbei müssen auch die für die Realisierung wichtigen Randbedingungen
+ermittelt werden.
+
+\autoref{chap:realisierung} "`\nameref{chap:realisierung}"' beschreibt dann die
+Umsetzung des konzipierten Systems, erläutert die Funktionen der einzelnen
+Bestandteile und analysiert abschließend das System hinsichtlich der Umsetzung
+der Vorgaben.
+
+\autoref{chap:ausblick} "`\nameref{chap:ausblick}"' bietet zum Schluss einen
+Ausblick auf mögliche Verbesserungen und Fortentwicklungen des Systems.

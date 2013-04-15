@@ -181,7 +181,7 @@ muss, ergibt sich oft aus den Projektvorgaben. Im Speziellen ist hierbei von
 Bedeutung, welche Hardware als Zielsystem zum Einsatz kommt.
 
 Insbesondere im Bereich der eingebetteten Systeme ist die Hardware eines
-Entwicklungssystems von hohere Bedeutung, das sie oftmals eine Art Schnittstelle
+Entwicklungssystems von hohere Bedeutung, da sie oftmals eine Art Schnittstelle
 zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
 \begin{itemize}
   \item \subsubsection*{Testtools} Um Tests durchführen zu können, wird
@@ -207,9 +207,11 @@ zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
   
   Die \glspl{tap}/\glspl{dap} werden zu einer sogenannten
   \gls{jtag}-Chain verkettet und ermöglichen es, die Ein- und Ausgänge der
-  einzelnen Bauteile mit Prüfdaten zu betreiben, Bauteile komplett zu überbrücken oder auch sie in ihrem Betrieb anzuhalten.
-  Die in \autoref{fig:ALT01} als "`Zu testende Verbindung"' markierte Leitung
-  kann so auf Unterbrechungen oder Überbrückungen geprüft werden.
+  einzelnen Bauteile über die zugehörigen "`Boundary-Scan-Zellen"' mit Prüfdaten
+  zu betreiben, Bauteile komplett zu überbrücken oder auch sie in ihrem Betrieb
+  anzuhalten. Die in \autoref{fig:ALT01} als "`Zu testende Verbindung"'
+  markierte Leitung kann so auf Unterbrechungen oder Überbrückungen geprüft
+  werden.
   
   Einen darauf aufbauenden Funktionsumfang bietet das, vorwiegend in ARM
   Prozessoren zum Einsatz kommende, \gls{swd}\cite{SWD} an.
@@ -227,7 +229,7 @@ zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
   Mikroprozessors zu erleichtern beziehungsweise überhaupt zu ermöglichen,
   besitzen diese oft verschiedene Eigenschaften.
   Um eine Software Schritt-für-Schritt auszuführen, wird eine Unterstützung von
-  der \gls{cpu} vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich
+  der CPU vorausgesetzt. Prozessorkerne der ARM-Architektur lassen sich
   zum Beispiel mittels des \gls{dap}/\gls{tap} in einen \emph{Debug-Modus}
   bringen. Dieser \emph{Debug-Modus} ist Voraussetzung dafür,
   Single-Step-Debugging duchführen oder Breakpoints setzen zu können.
@@ -256,7 +258,7 @@ zwischen dem Entwicklersystem und dem Zielsystem darstellen muss.
   \textbf{Beispiele:} AVRISP mkII, Waveshare LPC ISP(mini), \gls{jtag}-Debugger
 \end{itemize}
 %%=====================================================================
-\section{Szenarien}\label{sect:szenarien}
+\section{Szenarien eines Funksystems}\label{sect:szenarien}
 Für das Design eines Entwicklungssystems ist außerdem entscheidend, dass die
 Zielsysteme über eine Funkschnittstelle verfügen.
 
