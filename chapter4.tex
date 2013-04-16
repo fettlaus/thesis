@@ -27,18 +27,20 @@ Nach Systemstart werden außerdem alle Dateien im Ordner
 \listinlsh{/etc/uci-defaults/} eingelesen, ausgeführt und anschließend gelöscht.
 Dies erlaubt es Softwarepaketen, Einstellungen am System vorzunehmen. Werden
 diese Softwarepakete bereits in die Firmware integriert, entspricht dies einer
-Art \textbf{Vorkonfiguration} des gesamten Systems.
+Art \textbf{Vorkonfiguration} des gesamten Systems. 
 
-Da alle diese Einstellungen für das zu entwerfende Entwicklungssystem spezifisch
-sind, wird diese Datei zusammen mit der kompilierten Serveranwendung installiert
-und nach einem Neustart beziehungsweise einem ersten Systemstart ausgeführt.
+Darum wurde die Datei \listinlsh{freejtag.uci-defaults} erstellt, um eine
+entsprechende Einrichtung vornehmen zu können. Da alle diese Einstellungen für
+das zu entwerfende Entwicklungssystem spezifisch sind, wird diese Datei zusammen
+mit der kompilierten Serveranwendung installiert und nach einem Neustart
+beziehungsweise einem ersten Systemstart ausgeführt.
 \subsection{WLAN und Netzwerkkonfiguration}
 Da die Netzwerkkonfiguration von OpenWRT vollständig durch die
 \gls{uci}-Konfigurationsdateien abgewickelt wird, muss auch \gls{uci} genutzt
 werden, wenn das Netzwerk vorkonfiguriert werden soll.
 
 \gls{uci} bietet mit \listinlsh{uci batch} explizit einen Befehl an, um
-umfangreiche Einstellungsändeurngen vorzunehmen. Hierfür werden die einzelnen
+umfangreiche Einstellungsänderungen vorzunehmen. Hierfür werden die einzelnen
 Befehle mittels \emph{Here document} übergeben.
 
 \begin{definition}[Here document]
@@ -68,11 +70,11 @@ Da die Pins des Carambolas für den zweiten \gls{uart} standardmäßig auf
 \gls{gpio}-Betrieb eingestellt sind, müssen sie vor der Verwendung entsprechend
 konfiguriert werden.
 
-Hierzu muss das Tool \texttt{io} installiert und mittels 
-\listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies weist den
-Mikrocontroller an, den \gls{uart} zu aktivieren. Dieser Vorgang muss nach jedem
-Systemstart erfolgen und kann durch die, bei jedem Systemstart aufgerufene,
-Datei \listinlsh{/etc/rc.local} erfolgen.
+Hierzu muss, laut Wiki des Herstellers "`8devices"'\cite{CARAM1}, das Tool
+\texttt{io} installiert und mittels \listinlsh{io 0x10000060 0x01} ausgeführt werden. Dies
+weist den Mikrocontroller an, den \gls{uart} zu aktivieren. Dieser Vorgang muss
+nach jedem Systemstart erfolgen und kann durch die, bei jedem Systemstart
+aufgerufene, Datei \listinlsh{/etc/rc.local} erfolgen.
 
 Zusätzlich muss verhindert werden, dass auf diesem \gls{uart} eine Linuxterminal
 betrieben wird. Diese Änderung wird in der Datei \listinlsh{/etc/inittab}
@@ -95,9 +97,9 @@ Hierbei folgt der Ablauf, der durch ein solches Makefile ausgeführt wird,
 grob den Abläufen die nötig sind, um ein mit den GNU Build System entworfenes
 Programm zu kompilieren und installieren.
 
-Hierfür werden von dem Makefile nacheinander die Befehle \listinlsh{./configure}
-und \listinlsh{make} ausgeführt. Über das Makefile kann angegeben werden, welche
-Parameter an diese Befehle übergeben werden.
+Es werden von dem Makefile nacheinander die Befehle \listinlsh{./configure}
+und \listinlsh{make} ausgeführt. Über das Makefile kann dabei angegeben werden,
+welche Parameter an diese Befehle übergeben werden.
 \subsection{Portierung auf OpenWRT}
 Um \emph{OpenOCD} kompilieren zu können, müssen zuerst die Voraussetzungen festgestellt
 werden. Da ein auf dem FT2232-Chip basierender \gls{jtag}-Adapter mit
@@ -150,7 +152,7 @@ bei der Installation in den Ordner \listinlsh{/etc/init.d/} kopiert wird.
 In diesem Ordner befinden sich unter Linux traditionell alle Skripte, die bei
 Systemstart ausgeführt werden sollen. Dies ermöglicht es,
 Daemons\footnote{Anwendungen, die als Hintergrundprozesse laufen und meist auf
-spezielle Ereignisse wie Netzwerkverkehr reagieren} zu starten.
+spezielle Ereignisse wie Netzwerkverkehr reagieren.} zu starten.
 \subsection{Integration in Eclipse}\label{subs:eclipse}
 Da \emph{OpenOCD} neben einer Telnet-Konsole auch die Möglichkeit bietet, sich über
 einen \gls{gdb}-Client steuern zu lassen, ist die Einbindung in verschiedenste
@@ -185,9 +187,10 @@ Für das eigentliche Flashen des Bausteins muss lediglich die Projektdatei,
 Debugging erfolgen, muss zusätzlich noch ein Laden der Symbolinformationen aus
 der selben Datei erfolgen.
 \section{Server - FreeJTAG}
-Der \emph{FreeJTAG} genannte Server des Entwicklungssystems wird auf dem
-Carambola installiert, als Serveranwendung bei jedem Systemstart gestartet und leitet die
-gesammelten Daten an jeden verbundenen Client weiter.
+Der im Rahmen dieser Arbeit entwickelte Server für das Entwicklungssytem wurde
+in der Programmiersprache C++ geschrieben und wird im Weiteren \emph{FreeJTAG}
+genannt. Er wird auf dem Carambola installiert, als Serveranwendung bei jedem
+Systemstart gestartet und leitet die gesammelten Daten an jeden verbundenen Client weiter.
 
 \subsection{Bibliotheken, Abhängigkeiten und Installation}
 Als Bibliotheken kommen bei \emph{FreeJTAG} vor allem Teile der \emph{Boost Bibliothek}
@@ -197,7 +200,7 @@ Verwaltung der Zeitstempel (\emph{Boost Chrono}) und dem Speichern und
 Einlesen von Programmeinstellungen (\emph{Boost Program\_Options}).
 
 Um eine leichte Einbindung in das System der Makefiles von OpenWRT zu erreichen,
-wird für \emph{FreeJTAG} das GNU Build System(Autotools) eingesetzt. Hierbei
+wird für \emph{FreeJTAG} das GNU Build System (Autotools) eingesetzt. Hierbei
 kommt zusätzlich die Datei \texttt{boost.m4} von Benoit Sigoure\cite{GITH01} zum
 Einsatz, um das System auf Existenz der benötigten Bibliotheken überprüfen zu
 können.
@@ -209,13 +212,13 @@ die mittels \listinlsh{/etc/uci-defaults/} eine Vorkonfiguration durchführt, is
 ebenso in diesem Paket enthalten.
 
 Die Konfiguration der Serveranwendung erfolgt über die Datei
-\listinlsh{/etc/freejtag.cfg}. Diese Datei wird standardmäßig mit folgenden
-Einstellungen installiert.
+\listinlsh{/etc/freejtag.cfg}. Diese Datei enthält standardmäßig folgende
+Einstellungen und wird zusammen mit \emph{FreeJTAG} installiert.
 \begin{lstlisting}
-[common]
+# Common
 ping=10000000
 
-[uart]
+# UART
 device=/dev/ttyS0
 baud=115200
 data=8
@@ -223,7 +226,7 @@ parity=none
 stop_bits=one
 flow_control=none
 
-[network]
+# Network
 port=12323
 \end{lstlisting}
 
@@ -327,7 +330,7 @@ verwaltet. Da asynchrone TCP-Sendevorgängen mittels der
 \listinlcpp{boost::asio}-Bibliothek erfolgen, ist eine weitere
 \texttt{BlockingQueue} zur Synchronisierung hierfür nicht notwendig.
 
-Da es möglich sein soll mehrere Verbindungen (Siehe auch \autoref{subs:best}) zu
+Da es möglich sein soll mehrere Verbindungen (siehe auch \autoref{subs:best}) zu
 verwalten, muss in der \texttt{BlockingQueue} zusammen mit der \texttt{Message}
 auch immer die Verbindung von der sie erhalten wurde gespeichert werden.
 
@@ -338,7 +341,7 @@ Nun werden sowohl \texttt{NetworkService} als auch \texttt{DatagramService}
 initialisiert.
 
 Der \texttt{NetworkService} erhält hierfür die vorher erstellte
-\texttt{BlockingQueue}(den Buffer), legt das Protokoll auf TCP fest und
+\texttt{BlockingQueue} (den Buffer), legt das Protokoll auf TCP fest und
 öffnet den in den Einstellungen spezifizierten Port. Der Ablauf des
 \texttt{DatagramService} verläuft analog mit dem Unterschied, dass für die über
 diesen Dienst erfolgende Zeitsynchronisation kein Zugriff auf den
@@ -351,7 +354,7 @@ input_uart_.pop();} beziehungsweise \newline\listinlcpp{MessageDatagram msgd =
 input_network_.pop();} auf die Ankunft neuer Daten in ihrere zugehörigen
 \texttt{BlockingQueue}. Dies schließt die Initialisierung ab.
 
-Nun muss nun \listinlcpp{Freejtag::run();} aufgerufen werden, um den Start der
+Nun muss \listinlcpp{Freejtag::run();} aufgerufen werden, um den Start der
 Anwendung zu vollziehen. Dies startet ein asynchrones Accept auf dem Socket des
 Netzwerkmoduls, so dass es nun möglich ist, eine Verbindung zum Server
 herzustellen. Der \gls{uart}-Anschluss wird auf dem angegebenen Gerät geöffnet
@@ -361,8 +364,8 @@ Schließlich ruft der startende Thread die blockierende Methode
 \listinlcpp{io_service_.run();} auf und dient nun zur Abarbeitung der
 asynchronen Netzwerkvorgänge.
 
-Damit ist der Programmstart abgeschlossen und die Serveranwendung kann nun
-verwendet werden.
+Damit ist der Programmstart abgeschlossen und die Serveranwendung kann verwendet
+werden.
 \subsubsection*{Zeitsynchronisation}\label{subs:servertime}
 Der aktuell gültige Zeitstempel wird bei Aufruf von
 \listinlcpp{Timekeeper::time()} durch eine simple Subtraktion errechnet.
@@ -392,7 +395,7 @@ Abweichung unverzüglich und auf Basis dieses einen Ergebnis justiert. Hierdurch
 soll einer Verfälschung der Mittelwertbildung durch anfänglich stark
 abweichende Uhren vorgebeugt werden.
 
-Da nun die gemittelte Abweichung zur Clientsoftware ermittelt wurde, kann die
+Da nun die gemittelte Abweichung zur Clientsoftware berechnet wurde, kann die
 Funktion \newline\listinlcpp{TimeKeeper::set(microseconds difference)} verwendet
 werden, um die aktuell gültige \listinlcpp{epoch} anzupassen. Durch diese
 Justierung wird der \texttt{TimeKeeper} effektiv auf \SI{0}{\micro\second}
@@ -455,24 +458,24 @@ folgende Schritte aus:
 \begin{itemize}
   \item Ausgeführt duch Thread \texttt{network\_dispatcher\_}
   \begin{itemize}
-  \item Variable \texttt{\_running} auf \listinlcpp{false} setzen
-  \item Acceptor für neu ankommende Verbindungen schließen
+  \item Variable \texttt{\_running} auf \listinlcpp{false} setzen.
+  \item Acceptor für neu ankommende Verbindungen schließen.
   \item Auf dem Socket der TCP-Verbindung ein \listinlcpp{socket\_.shutdown()}
   und \\\listinlcpp{socket\_.close()} ausführen, um die Verbindungen zu
-  schließen
+  schließen.
   \item Den Seriellen Port des \texttt{UARTService} mittels
-  \listinlcpp{port\_.close()} schließen
+  \listinlcpp{port\_.close()} schließen.
   \item Den Socket des UDP-Servers mittels \listinlcpp{socket\_.close()}
-  schließen
+  schließen.
   \item Da keine Netzwerkoperationen anstehen, ist der Hauptthread nun nicht
-  mehr auf  \listinlcpp{io\_service\_.run()} blockiert
+  mehr auf  \listinlcpp{io\_service\_.run()} blockiert.
   \end{itemize}\clearpage
   \item Ausgeführt durch Hauptthread
   \begin{itemize}
     \item Den auf \listinlcpp{input\_network\_.pop();} blockierenden
-    \texttt{network\_dispatcher\_} unterbrechen
+    \texttt{network\_dispatcher\_} unterbrechen.
     \item Den auf \listinlcpp{input\_uart\_.pop();} blockierenden
-    \texttt{uart\_dispatcher\_} unterbrechen
+    \texttt{uart\_dispatcher\_} unterbrechen.
   \end{itemize}
 \end{itemize}
 Abschließend laufen alle Threads wieder zusammen und die Serveranwendung ist
@@ -487,11 +490,12 @@ beendet.
 Zielsystemen gleichzeitig ausgelöster Interrupt ist erkennbar.}
 \label{fig:client}
 \end{figure}
-Die Clientsoftware \emph{The Kraken} dient zur Anzeige der über \emph{FreeJTAG}
-gesammelten Daten. Hierzu kann eine beliebige Anzahl Verbindungen zu
-\emph{FreeJTAG}-Servern hergestellt werden. Da während der Übertragung der
-Nachrichten Verzögerungen auftreten können, muss eine Sortierung der Nachrichten
-nach ihren Zeitstempeln gewährleistet werden.
+Die im Rahmen dieser Arbeit entwickelte Clientsoftware \emph{The Kraken} dient
+zur Anzeige der über \emph{FreeJTAG} gesammelten Daten.
+Sie wurde in der Programmiersprache Java geschrieben und kann eine beliebige
+Anzahl Verbindungen zu \emph{FreeJTAG}-Servern hergestellen. Da während der
+Übertragung der Nachrichten Verzögerungen auftreten können, muss eine Sortierung
+der Nachrichten nach ihren Zeitstempeln gewährleistet werden.
 \subsection{Funktionalität}
 Die Clientsoftware dient hauptsächlich dem Erfassen und Anzeigen der von der
 Serversoftware gesammelten Daten. \autoref{fig:client} stellt die Oberfläche der
@@ -500,12 +504,12 @@ Software dar.
 Die Software erfüllt folgende Funktionen:
 \begin{itemize}
   \item Verbindungsaufbau zu einer beliebigen Anzahl Server
-  \item Sortierung der Daten. (Siehe \autoref{subs:sort})
+  \item Sortierung der Daten (siehe \autoref{subs:sort})
   \item Beenden einer Serveranwendung
   \item Senden von \texttt{MESS}-Nachrichten an einen oder alle
   verbundenen Server (Broadcast)
   \item Senden von TCP-\texttt{PING}-Nachrichten um vom Server ein
-  TCP\texttt{PONG} zu erhalten.
+  TCP-\texttt{PONG} zu erhalten.
   \item Unterbrechen der Datenaufnahme
   \item Synchronisieren der Zeiten aller Serveranwendungen mit dem Client
   \item Anzeige der realen Differenz zwischen einzelnen Empfangsvorgängen
@@ -519,8 +523,8 @@ werden.
 Da die Daten im Betrieb fortlaufend eintreffen, wird eine entsprechende Methode
 benötigt, die Daten zu sortieren.
 
-Ein Sortieralgorithmus wie zum Beispiel "`Quicksort"' funktioniert nur so lange,
-wie ein gleichbleibender Datensatz existiert. Da das in diesem Fall jedoch
+Ein Sortieralgorithmus, wie zum Beispiel "`Quicksort"', funktioniert nur so
+lange, wie ein gleichbleibender Datensatz existiert. Da das in diesem Fall jedoch
 nicht so ist, ist nach einer alternativen Lösung zu suchen.
 
 Ein \textbf{TreeSet} sorgt dafür, dass die Daten direkt beim Eintreffen nach
@@ -538,8 +542,8 @@ Die Strukturierung der Clientanwendung folgt lose dem \gls{mvp}-Modell.
 Der EventBus der \emph{Google Guava}-Bibliothek\cite{GOOG} wird verwendet, um
 die Ereignisse der Softwareelemente miteinander zu verknüpfen. 
 
-Um die Funktionsweise der Clientsoftware zu erläutern soll hier exemplarisch der
-Empfangsvorgang eine Nachricht dargestellt werden.
+Um die Funktionsweise der Clientsoftware zu erläutern, soll hier exemplarisch
+der Empfangsvorgang einer Nachricht dargestellt werden.
 
 Für jeden verbundenen Client wird ein \texttt{TCPConnection}-Objekt angelegt.
 Jedes dieser Objekte wartet über einen \texttt{DataInputStream} auf ankommende
@@ -555,10 +559,10 @@ sorgt dafür, dass immer eine gewisse Mindestanzahl an
 leitet die Nachricht mit dem derzeit kleinsten Zeitstempel an den
 \texttt{EventBus} über die Funktion \listinljava{EventBus.post()} weiter.
 
-Dieses Event wird von der Funktion \listinljava{Presenter.handleNewMessage()}
+Das Event wird von der Funktion \listinljava{Presenter.handleNewMessage()}
 aufgefangen. Dieser untersucht die Nachricht auf ihren
-Typ(\texttt{UART}, \texttt{MESS} oder \texttt{PONG}) und führt die
-dieser Nachricht entsprechenden Funktionen der GUI aus.
+Typ (\texttt{UART}, \texttt{MESS} oder \texttt{PONG}) und führt die, dieser
+Nachricht entsprechenden, Funktionen der GUI aus.
 
 Wird durch Benutzerinteraktion ein Ereignis in der GUI ausgelöst, wird der
 \texttt{EventBus} in "`umgekehrter Reihenfolge"' verwendet. 
@@ -592,7 +596,7 @@ EOF
 done
 \end{lstlisting}
 Dieses Script erfordert als erstes Argument die zu flashende Datei und
-anschließend eine beliebige Anzahl von Zielsystemen.
+anschließend die IPs einer beliebigen Anzahl von Zielsystemen.
 
 Das Zurücksetzen der Zielsysteme erfolgt analog hierzu. Dabei entfallen jedoch
 die Initialisierungsbefehle und das Flashen. Lediglich der Befehl
@@ -603,24 +607,30 @@ Tools"' einfach möglich.
 \section{Aufgetretene Probleme}
 Während der Inbetriebnahme von \emph{OpenOCD} traten häufig Probleme mit der
 Verbindung zum \gls{jtag}-Adapter auf. Dies äußerte sich darin, dass das
-Linux-System regelmäßig die Verbindung zu dem Adapter verlor. Dies
-erschwerte den Betrieb von \emph{OpenOCD} erheblich.
+Linux-System regelmäßig die Verbindung zu dem Adapter verlor. Der Betrieb von
+\emph{OpenOCD} wurde dadurch erheblich erschwert.
 
 Jedoch ist dies, laut dem Benutzerforum des Herstellers, ein bekanntes
 Konstruktionsproblem der "`Carambolas"' hervorgerufen durch eine unzulängliche
-Schirmung des USB-Anschlusses gegenüber Elektromagnetischen Wellen.
-Dies bewirkt, dass die integrierte WLAN-Antenne den Betrieb von USB-Geräten
-unter Umständen stark beeinflusst.
+Schirmung des USB-Anschlusses gegenüber elektromagnetischen Wellen.
+Die integrierte WLAN-Antenne beeinflusst deshalb den Betrieb von USB-Geräten
+unter Umständen stark.
 
 Um dieses Problem zu beheben wurde ein \SI{32}{\mm} langer Draht an die Masse
 der WLAN-Antenne gelötet. Anschließend lies sich der \gls{jtag}-Adapter
 problemlos betreiben. Alternativ hätte auch die Möglichkeit bestanden, die
 Sendeleistung des WLAN-Moduls über die Einstellung \listinlsh{option txpower 10}
 in der Datei \listinlsh{/etc/config/wireless} zu reduzieren.
+
+Bei der Übertragung von Testdaten über das System zeigte sich, dass der
+Nagle-Algorithmus\cite{RFC896} auch den TCP-Datenverkehr stark beeinflusst.
+So musste für eine funktionierende Sortierung der Daten ein sehr hoher
+Buffer-Wert eingestellt werden, wodurch die Anzeige stark verzögert wurde. Um
+dies zu verhindern, wurde auch für TCP der Nagle-Algorithmus deaktiviert.
 \section{Analyse des Systems}\label{sect:analyse}
 Da die Präzision der Zeitstempel von zentraler Bedeutung für die
-Aussagekraft der gesammelten Daten ist, muss festgestellt werden, wie exakt zum Beispiel die
-Zeitsynchronisation funktioniert.
+Aussagekraft der gesammelten Daten ist, muss festgestellt werden, wie exakt zum
+Beispiel die Zeitsynchronisation funktioniert.
 
 Um die Genauigkeit messen zu können, müssen alle Zielsysteme möglichst
 zeitgleich ein Signal erhalten, um dann unverzüglich über \gls{uart} eine
@@ -639,7 +649,7 @@ auszulösen.
 Hat man vorher einen Synchronisierungsvorgang durch den Client durchgeführt,
 lässt sich durch die Differenz der Zeitstempel nun die tatsächliche Abweichung
 voneinander messen. Im Idealfall ist die Differenz hierbei möglichst gering
-(Nach \autoref{subs:time} weniger als \SI{1}{\milli\second}). Das Eintreffen
+(nach \autoref{subs:time} weniger als \SI{1}{\milli\second}). Das Eintreffen
 dieser erwähnten Interrupts ist auch auf \autoref{fig:client} zu erkennen.
 
 Allerdings kann dies natürlich nur die Differenzen der Zielysteme untereinander
@@ -691,19 +701,19 @@ gezeigt werden sollten.
 
 Wie aus \autoref{fig:testtab} ersichtlich, ist direkt nach der Synchronisation
 die absolute Differenz zwischen "`Knoten 0"' und "`Knoten 1"' bei nur
-\SI{21}{\us} und zwischen "`Knoten 1"' und "`Knoten 2"' bei \SI{175}{\us}. Dies
-zeigt, dass die Zeitsynchronisation eine ziemlich hohe Genauigkeit erreicht.
+\SI{0.02}{\ms} und zwischen "`Knoten 1"' und "`Knoten 2"' bei \SI{0.2}{\ms}.
+Dies zeigt, dass die Zeitsynchronisation eine ziemlich hohe Genauigkeit erreicht.
 
 Aus dem Verlauf der Testreihe ist jedoch auch ersichtlich, dass die Differenz
-zwischen den Systemen nicht gleichbleibend ist. So steigt über einen Zeitraum
-von \SI{15}{\minute} die Differenz zwischen "`Knoten 0"' und "`Knoten 1"' um
-ungefähr \SI{6,180}{\ms} und zwischen "`Knoten 1"' und "`Knoten 2"' um
-\SI{11,924}{\ms}.
+zwischen den Systemen nicht gleichbleibend ist. So steigt jeweils über einen
+Zeitraum von \SI{15}{\minute} die Differenz zwischen "`Knoten 0"' und "`Knoten
+1"' um ungefähr \SI{6,2}{\ms} und zwischen "`Knoten 1"' und "`Knoten 2"' um
+\SI{11,9}{\ms}.
 
 Dies erklärt sich aus den Fertigungstoleranzen der Schwingquarze. Die Abweichung
-zwischen "`Knoten 0"' und "`Knoten"' vergrößert sich alle \SI{15}{\minute} um
-ungefähr \SI{18}{\us} was einer Abweichung von 20 ppm entspricht
-($\frac{\SI{18}{\us}}{\SI{15}{\minute}}*1000000=20\mathit{ppm}$).
+zwischen "`Knoten 0"' und "`Knoten 2"' vergrößert sich alle \SI{15}{\minute} um
+ungefähr \SI{18}{\ms} was einer Abweichung von 20 ppm entspricht
+($\frac{\SI{18}{\ms}}{\SI{15}{\minute}}*1000000=20 \text{ppm}$).
 Diese Abweichung ist für einen Schwingquarz noch innerhalb der üblichen
 Frequenztoleranz.
 
@@ -716,8 +726,9 @@ Wollte man diesen Drift nun ausgleichen, könnte man dafür die in
 
 Der Linux-Kernel verwendet den Algorithmus nach \gls{ntp}\cite{RFC1305} zur
 Justierung der internen Clock. Hierfür lassen sich verschiedene Kernelparameter
-konfigurieren, die diesen Algorithmus beeinflussen. Zum Setzen dieser Parameter
-wird das Tool \texttt{adjtimex} verwendet.
+konfigurieren, die diesen Algorithmus beeinflussen. Einer dieser Parameter
+spezifiziert auch die tatsächliche Abweichung von der erwarteten Taktrate. Zum
+Setzen dieser Parameter wird das Tool \texttt{adjtimex} verwendet.
 
 Würde man nun diese Funktionalität des Kernels verwenden, ließe sich der
 aufgetretene Drift der Uhr ausgleichen.

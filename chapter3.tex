@@ -3,7 +3,7 @@
 In diesem Kapitel soll das Entwicklungssystem konzipiert werden.
 
 Hierfür muss anfänglich ein grundsätzliches Entwicklungskonzept festgelegt
-werden. Aus diesem Konzept ergeben sich dann die Voraussetzungen, die die zu
+werden. Aus diesem Konzept ergeben sich dann die Voraussetzungen, welche die zu
 wählende Hardware erfüllen muss.
 
 Das Entwicklungssystem soll außerdem dazu verwendet werden, ein
@@ -29,7 +29,7 @@ Entwicklersystem getrennt sind, erfordert gewisse Änderungen an den
 Entwicklungsabläufen.
 
 Ein direkter Zugriff auf die einzelnen Zielsysteme ist nicht ohne Weiteres
-möglich beziehungsweise vergleichsweise umständlich. Würde man die in
+möglich, beziehungsweise vergleichsweise umständlich. Würde man die in
 \autoref{chap:analyse} aufgezählten Abläufe für ein verteiltes System umsetzen
 wollen, müsste man die Zielsysteme zum Beispiel neben das Entwicklersystem
 legen, da für viele Vorgänge eine \textbf{physische Verbindung} bestehen muss.
@@ -43,9 +43,9 @@ Verkabelung benötigt.
 Die Auswahl existierender Netzwerk-Debugging-Lösungen ist geradezu
 minimal. Als eigenständige Lösung findet sich hier zum Beispiel \emph{ZY1000
 (Ultimate Solutions Inc.)}\cite{ULT} oder \emph{WiFiDemon (Macraigor
-Systems)}\cite{MAC}. Beide Systeme stellen eine Schnittstelle zwischen Ethernet
-oder WLAN dar und sind somit bereits existierende Teilumsetzungen des geplanten
-\emph{Entwicklungssystems}.
+Systems)}\cite{MAC}. Beide Systeme stellen eine Schnittstelle zwischen
+\gls{jtag} und Ethernet oder WLAN dar und sind somit bereits existierende
+Teilumsetzungen des geplanten \emph{Entwicklungssystems}.
 
 Beide Lösungen sind jedoch auch geschlossene Systeme. Wollte man also, wie
 vorgesehen, zusätzliche Daten sammeln, müsste man ein weiteres Gerät (mit
@@ -90,8 +90,7 @@ und Zielsystem funktioniert.
 
 Unter den eingebetteten Betriebssystemen hat unter anderem \textbf{Linux} eine
 hohe Verbreitung. Es existieren verschiedene Distributionen, die speziell für
-diese Einsatzzwecke ausgelegt sind und auch in den Bereich der Mobiltelefone
-hält Linux Einzug(Android).
+diese Einsatzzwecke ausgelegt sind.
 
 Zusätzlich bietet Linux eine hohe Konfigurierbarkeit und Abstraktion von der
 zugrunde liegenden Hardware. So kann eine für Linux entwickelte Software meist
@@ -102,17 +101,17 @@ Grundsätzliche Anforderung an die zu verwendende Plattform ist, dass sie
 mindestens eine Ethernet- und im Idealfall auch eine WLAN-Schnittstelle bietet.
 Außerdem sollten möglichst viele Möglichkeiten zur Kommunikation mit dem
 Zielsystem gegeben sein. Dazu zählen zum Beispiel Schnittstellen wie USB,
-\gls{uart}, I$^2$C oder \gls{spi}.
+\gls{uart}, I$^2$C oder \gls{spi}.\clearpage
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=7cm]{carambola.png}\\
-\caption{Fotografie des Carambolas}{}
+\caption{Fotografie des Entwicklungsboards mit aufgestecktem Carambola}{}
 \end{figure}
 
-Das Entwicklungsboard \textbf{Carambola}\cite{CARAM1} wird von der der Firma UAB
+Das Entwicklungsmodul \textbf{Carambola}\cite{CARAM1} wird von der der Firma UAB
 "`8devices"' hergestellt und besteht aus einer kleinen Platine mit einem Ralink
-RT3050\cite{RA01} Mikrocontroller(MIPS-Architektur).
+RT3050\cite{RA01} Mikrocontroller (MIPS-Architektur).
 
 Der Mikrocontroller besitzt folgende Funktionen: 
 \begin{itemize}
@@ -163,12 +162,11 @@ auch eine große Anzahl an Entwicklungsboards, die in Frage kommen.
 
 Dabei ist es wichtig, eine Entscheidung eher nach Kriterien der Energieeffizienz
 als der Rechenleistung zu treffen, da das Zielsystem später stark integriert
-und unter Umständen auch unabhängig von einer Stromversorgung arbeiten können
-soll.
+und unter Umständen auch batteriebetrieben arbeiten können soll.
 
 Wählt man einen ARM-Kern nach der Energieeffizienz aus, fällt einem hierbei die
 Reihe der Cortex-M Prozessoren auf. Sie liegen mit ihrem geringen Energiebedarf
-in einem Bereich, der z.B. für Batteriebetrieb sehr gut geeignet ist. Aus diesem
+in einem Bereich, der für Batteriebetrieb sehr gut geeignet ist. Aus diesem
 Grund optimieren viele Chiphersteller, die Cortex-M Kerne verbauen, diese genau
 dafür.
 
@@ -193,7 +191,7 @@ eingesetzter, 10-poliger Anschluss. Für diesen "`UEXT"' getauften Anschluss
 bietet \emph{Olimex} eine Reihe von Erweiterungsboards an, die sich so einfach
 verbinden lassen. Dabei spezifiziert Olimex lediglich die Zuordnung
 verschiedener Pins zu Funktionen, die auf den meisten Mikrocontroller
-vorhanden sind(\gls{spi}, I$^2$C und \gls{uart}).
+vorhanden sind (\gls{spi}, I$^2$C und \gls{uart}).
 
 \subsection{Funkmodul} Die auf dem Markt verfügbaren Funkmodule lassen
 sich grundsätzlich in zwei Kategorien einteilen.
@@ -203,11 +201,11 @@ Transceiver umfasst zumindest die analogen Komponenten der physikalischen
 Schicht wie Analog-Digital-Wandler, Digital-Analog-Wandler, Filter, Verstärker,
 Frequenzerzeuger. Je nach Ausführung werden, ahängig davon ob der Transceiver
 für ein spezifisches Protokoll eingesetzt werden soll, auch die Bauteile des
-Medium-Access-Layers (Checksummenprüfung, Buffer, Kollisionsvermeidung) in
+\gls{mac}-Layers (Checksummenprüfung, Buffer, Kollisionsvermeidung) in
 einen Transceiver integriert.
 
 Für viele Funkprotokolle stehen jedoch auch \textbf{Single-Chip Solutions}
-zur Verfügung. Diese Bauteile bestehen sowohl aus einem Transceiver als auch,
+zur Verfügung. Diese Module bestehen sowohl aus einem Transceiver als auch,
 neben anderen Bauteilen, aus einem eigenen Mikrocontroller. Dieser übernimmt die
 Aufgaben höherer Netzwerkschichten und wird dafür oft über einfache Protokolle
 wie \gls{uart} oder \gls{spi} angesprochen.
@@ -223,7 +221,7 @@ deren Abläufe.
 \caption{Fotografie des MRF24J40}{}
 \end{figure}
 
-Da es jedoch auch möglich sein soll, die Abläufe des Funkprotokolls erfassen ud
+Da es jedoch auch möglich sein soll, die Abläufe des Funkprotokolls erfassen und
 visualisieren zu können, sollte der Chip nicht zu abstrahiert funktionieren. Die
 Wahl muss also zwangsläufig auf einen \textbf{Transceiver} fallen.
 
@@ -272,7 +270,7 @@ einer Benutzeroberfläche.
 \emph{OpenOCD} ist hochgradig modular gehalten und unterstützt daher eine große
 Bandbreite von \gls{jtag}-Adaptern, verschiedenste Mikrocontroller und
 Architekturen (unter anderem \emph{ARMv7}, \emph{ARMv4}, \emph{AVR32},
-\emph{MIPS}), einige Echtzeitbetriebssysteme(\emph{FreeRTOS}, \emph{ChibiOS},
+\emph{MIPS}), einige Echtzeitbetriebssysteme (\emph{FreeRTOS}, \emph{ChibiOS},
 \emph{ThreadX}) und diverse Flash-Speicher.
 
 Die Konfiguration von \emph{OpenOCD} erfolgt dabei über simple Skripte, die vom
@@ -289,11 +287,10 @@ Der \gls{gdb} ist der Standard-Debugger unter
 Unix-Betriebssystemen. Er bietet unter Anderem die Möglichkeit, ein Programm im
 laufenden Betrieb anzuhalten, Breakpoints zu setzen oder Single-Stepping
 durchzuführen. Der \gls{gdb} besitzt keine grafische Oberfläche, sondern
-lässt sich über eine Kommandozeile bedienen. Er bietet die Möglichkeit, von
-einem Client über TCP/IP ferngesteuert zu werden. 
+lässt sich über eine Kommandozeile bedienen.
 \end{definition}
 
-Der entscheidende Punkt hierbei ist, dass \gls{gdb}(und auch \emph{OpenOCD})
+Der entscheidende Punkt hierbei ist, dass \gls{gdb} (und auch \emph{OpenOCD})
 grundsätzlich einen "`Remote"'-Modus anbietet. Dies wird dadurch möglich, dass
 \gls{gdb} in einen "`Server"' und einen "`Client"' unterteilt ist. Dabei
 übernimmt der "`Server"' die Kontrolle des Zielsystems oder der Zielsoftware,
@@ -318,7 +315,7 @@ nicht benötigten Funktionen zu befreien, beziehungsweise auf seine Bedürfnisse
 zuzuschneiden. Aus diesem Grund verfügt \emph{OpenWRT} über eine große Anzahl
 für dieses System bereits portierter Bibliotheken und Anwendungen.
 
-OpenWRT wird hauptsächlich als Firmware auf Routern verschiedenster Hersteller
+OpenWRT wird hauptsächlich als Firmware auf Routern diverser Hersteller
 angeboten. Es zeichnet sich durch eine hohe Konfigurierbarkeit bei
 gleichzeitiger Unterstützung verschiedenster Plattformen aus. So werden neben
 MIPS zum Beispiel noch ARM, PowerPC und x86 unterstützt. 
@@ -340,8 +337,8 @@ Die Erstellung neuer Pakete für OpenWRT wird durch stark modifizierte Makefiles
 wesentlich vereinfacht.
  \begin{definition}[Makefile]
 Ein \emph{Makefile} ist eine Datei, die Steuerbefehle für das Tool
-\texttt{make} enthält. \texttt{make} wird überwiegend eingesetzt, um Quellcode
-in ausführbare Programme und Bibliotheken zu übersetzen. Durch seinen hohen
+\emph{\texttt{make}} enthält. \emph{\texttt{make}} wird überwiegend eingesetzt,
+um Quellcode in ausführbare Programme und Bibliotheken zu übersetzen. Durch seinen hohen
 Grad an Abstraktion können \emph{Makefiles} jedoch auch für andere Aufgaben
 "`zweckentfremdet"' werden.
 \end{definition}
@@ -356,9 +353,9 @@ Der Ablauf ist dabei wie folgt:
   erstellenden Anwendungen, Konfigurationsparameter des Kernels und
   Voreinstellungen der Anwendungen.
   \item Durch das Eingeben von \listinlsh{make} wird der Kompiliervorgang
-  gestartet
-  \item Der Quellcode der Toolchain wird heruntergeladen und kompiliert
-  \item Der Quellcode des Basissystems wird heruntergeladen und kompiliert
+  gestartet.
+  \item Der Quellcode der Toolchain wird heruntergeladen und kompiliert.
+  \item Der Quellcode des Basissystems wird heruntergeladen und kompiliert.
   \item Die einzelnen Pakete werden erstellt:
   \begin{itemize}
     \item Herunterladen des Quellcodes
@@ -381,15 +378,15 @@ wird.
 \emph{OpenOCD} unterstützt eine große Anzahl verschiedener \emph{\gls{jtag}-Adapter}.
 Viele dieser Adapter haben dabei jedoch im Grunde ähnliche Komponenten verbaut.
 
-Neben den industriellen Lösungen mit speziell entwickelten Bauteilen(Segger
+Neben den industriellen Lösungen mit speziell entwickelten Bauteilen (Segger
 J-Link\cite{SEG}, ST Micro ST-Link\cite{STM01}), existieren auch viele
 Alternativen, die bereits existierende Bauteile verwenden. So kommt zum Beispiel oft der
 \emph{FT2232}-Chip zum Einsatz, der auf die Umsetzung von USB-Daten zu einem
 seriellen bzw. parallelen Ausgang spezialisiert ist. Neben kommerziellen
 Adaptern (Amontec JTAGkey2\cite{AMO}, Olimex ARM-USB-TINY-H\cite{OLI})
 existieren auch einige Open Source Lösungen, in denen der \emph{FT2232} zum
-Einsatz kommt (OOCDLink\cite{OCDL}, Turtelizer 2\cite{TURT}). Eine Auflistung
-aller mit \emph{OpenOCD} kompatiblen Adapter findet sich in dessen "`User Guide"'\cite{OOCD}.
+Einsatz kommt (Turtelizer 2\cite{TURT}, OOCDLink\cite{OCDL}). Eine
+Auflistung aller mit \emph{OpenOCD} kompatiblen Adapter findet sich in dessen "`User Guide"'\cite{OOCD}.
 
 Entscheidend für die Wahl eines Adapters sollte zum einen die Anzahl der
 unterstützten Zielsysteme sein. Diese definiert sich hauptsächlich über die
@@ -425,7 +422,7 @@ Debugsystem umgesetzt werden:
   \item \emph{OpenOCD} muss so \textbf{(vor-)konfiguriert} werden, dass sich das
   Zielsystem damit debuggen lässt.
   \item Eine \textbf{\gls{ide}} muss so eingerichtet werden, dass sie \emph{OpenOCD}
-  über \gls{gdb} als entfernete Debugging-Schnittstelle verwendet.
+  über \gls{gdb} als entfernte Debugging-Schnittstelle verwendet.
 \end{itemize}
 %%\end{minipage}
 \section{Datenanalyse}\label{sec:datenan}
@@ -472,15 +469,15 @@ Diese drückt sich insbesondere in der Genauigkeit der vom Entwicklungssystem
 verwendeten Zeitstempel aus.
 
 Eine Möglichkeit die erforderliche Präzision analysieren zu können ist die
-Untersuchen des Kollisionsvermeidungs-Algorithmus'.
+Untersuchung des Kollisionsvermeidungs-Algorithmus.
 
-Hierfür setzt der, in unserem Funkmodul verwendete, 802.15.4 Standard in seinem
-\gls{mac}-Layer zum Beispiel CSMA/CA ein\cite{IEEE01}.
+Hierfür setzt der, in unserem Funkmodul verwendete, IEEE 802.15.4 Standard in
+seinem \gls{mac}-Layer zum Beispiel CSMA/CA ein\cite{IEEE01}.
 \begin{definition}[CSMA/CA]
 \emph{CSMA/CA} ist ein Algorithmus zur Kollisionsvermeidung innerhalb eines
 Netzwerks. Hierbei prüft der Sender vor dem eigentlichen Sendevorgang über
 einen definierten Zeitraum, ob das Übertragungsmedium (zum Beispiel Funk oder
-Kabel) "`frei"' ist. Wird das Medium bereits verwendet, wartet der der Sender
+Kabel) "`frei"' ist. Wird das Medium bereits verwendet, wartet der Sender
 eine zufällige Zeitperiode (Back-off Periode) und überprüft den Zustand erneut.
 Sobald der Sendekanal "`frei"' ist, beginnt der Sendevorgang. Der Empfang der Daten muss
 von der Gegenstation mittels \texttt{ACK} bestätigt werden.
@@ -624,7 +621,7 @@ Für die \emph{Clientanwendung} ist es von großer Bedeutung, dass sie sich zu
 mehreren Serverinstanzen verbinden kann. Nur hierdurch wird es möglich, die
 Daten von mehreren Zielsystemen erfassen und auswerten zu können.
 
-Für die \emph{Serveranwendung} ist es nicht unbedingt notwendig aber
+Für die \emph{Serveranwendung} ist es nicht unbedingt notwendig, aber
 wünschenswert, mehrere verbundene \emph{Clients} verwalten zu können.
 \subsection{Zeitsynchronisation}\label{subs:time}
 Ein wichtiger Punkt im Entwurf dieses Systems ist die \textbf{Synchronisation
@@ -637,8 +634,8 @@ Größen zählen hierbei zum Beispiel die für einen Kontextwechsel durch den
 Scheduler des Betriebssystems nötige Zeit oder die Genauigkeit des
 Systemquarzes.
 
-Da der zu übertragene Zeitstempel die seit eines durch den Entwickler-Rechner
-festgelegten Zeitpunktes vergangenen $\si{\micro\second}$ darstellt, muss diese
+Da der zu übertragene Zeitstempel die, seit eines durch den Entwickler-Rechner
+festgelegten Zeitpunktes, vergangenen $\si{\micro\second}$ darstellt, muss diese
 Zahl ausreichend groß dimensioniert sein. Eine 32-Bit Zahl reicht unter
 Umständen für die Betrachtung längerer Zeitabstände nicht mehr aus
 ($2^{32}\si{\micro\second}\approx \SI{71}{\minute}$).
@@ -647,8 +644,8 @@ Eine \textbf{64-Bit} Zahl bleibt somit als einzige Möglichkeit. Sie bietet
 ausreichend viel Platz ($2^{64}\si{\micro\second}\approx 584942~years$), um auch
 über sehr große Zeiträume Daten aufzuzeichnen.
 
-Ein erster Ansatz für den Synchronisationsvorgang wäre, bereits bestehende
-Synchronisationstechniken wie \gls{ntp} zu verwenden. Diese haben jedoch den
+Ein erster Ansatz für den Synchronisationsvorgang wäre, ein bereits bestehendes
+Synchronisationsprotokoll wie \gls{ntp} zu verwenden. Diese haben jedoch den
 Nachteil, dass sie für die Synchronisation immer eine aktive Verbindung zum
 Internet oder einen lokalen \gls{ntp}-Server  benötigen. Außerdem sind, da
 die Carambola-Systeme keine Echtzeituhren besitzen, Datum und Uhrzeit nach einem
@@ -656,8 +653,8 @@ Start des Systems auf die Unix Epoche gesetzt. Da \gls{ntp} direkt die
 Systemzeit beeinflusst, würde dies unter Umständen Auswirkungen auf andere Prozesse
 bedeuten.
 
-Für die Zeitsynchronisation soll eine Abwandlung des Algorithmus von
-Christian\cite{CHR} zum Einsatz kommen. Entscheidend ist hierbei, dass der
+Für die Zeitsynchronisation soll eine Abwandlung des "`Algorithmus von
+Christian"'\cite{CHR} zum Einsatz kommen. Entscheidend ist hierbei, dass der
 Synchronisationsvorgang vom Zeitgeber angestoßen wird. Dies erfordert eine
 zusätzliche abschließende Datenübertragung.
 
@@ -703,8 +700,8 @@ Dieser Vorgang ist in \autoref{fig:timeseq} visualisiert.
 \label{fig:timeseq}
 \end{figure}
 
-Nach Abschluss dieser Kommunikation lässt sich die Zeitdifferenz durch folgende
-Formel errechnen.
+Nach Abschluss dieser Kommunikation lässt sich die Zeitdifferenz vom Server
+durch folgende Formel errechnen.
 \begin{equation}
 \frac{t_1-t_0-t_3+t_2}{2}=\Delta t
 \end{equation}
@@ -736,7 +733,7 @@ gesendete Daten mit einem Zeilenumbruch enden müssen. Anschließend wird von de
 Serveranwendung ein Zeitstempel generiert und die Daten im System
 weitergereicht.
 
-Dies erlaubt es dem Zielsystem, neben Debugausgaben des Funkmoduls auch
+Dies erlaubt es dem Zielsystem, neben Debugausgaben des Funkmoduls, auch
 beliebige andere Nachrichten an das Entwicklersystem abzusetzen.
 
 \subsubsection*{Serveranwendung --- Entwicklersystem}
@@ -790,14 +787,15 @@ auf 512 Byte beschränkt.}
 \label{fig:bytefield}
 \end{figure}
 
-Die Größe des Headers beträgt 11 Byte und setzt sich wie folgt zusammen:\\
-Für die Bestimmung des \textbf{Typs} eines Datenpaketes reichen 8 Bit. Dies
-ermöglicht 256 verschiedene Pakettypen und somit ausreichend Spielraum für
-potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} von 64 Bit ist in
-\autoref{subs:time} erläutert worden. Die maximale Größe der an ein
-Datenpaket anhängbaren Nutzdaten ist auf 512 Byte beschränkt. Dies erscheint
-ausreichend groß für "`kurze"' Statusnachrichten. Hieraus ergibt sich, dass für
-die Angabe der \textbf{Länge} 16 Bit benötigt werden.
+Die Größe des Headers beträgt \SI{11}{\byte} und setzt sich wie folgt
+zusammen:\\
+Für die Bestimmung des \textbf{Typs} eines Datenpaketes reichen \SI{8}{\bit}.
+Dies ermöglicht 256 verschiedene Pakettypen und somit ausreichend Spielraum für
+potentielle Erweiterungen. Die Größe des \textbf{Zeitstempels} von \SI{64}{\bit}
+ist in \autoref{subs:time} erläutert worden. Die maximale Größe der an ein
+Datenpaket anhängbaren Nutzdaten ist auf \SI{512}{\byte} beschränkt. Dies
+erscheint ausreichend groß für "`kurze"' Statusnachrichten. Hieraus ergibt sich,
+dass für die Angabe der \textbf{Länge} \SI{16}{\bit} benötigt werden.
 
 
 Aus dem Ablauf in \autoref{subs:time} ist ersichtlich, dass bei den
@@ -853,7 +851,7 @@ Die zum \emph{Debuggen} bereits bestehende \gls{jtag}-Verbindung lässt sich
 ebenso verwenden, um Software auf das Zielsystem zu bringen.
 
 Grundvoraussetzung ist hierfür jedoch, dass sich das \gls{rom} des Zielsystems
-über den \gls{tap} erreichen lässt. Dies ist bei dem verwendeten ST Cortex M3
+über den \gls{tap} erreichen lässt. Dies ist bei dem verwendeten Cortex M3
 (und vielen anderen Mikrocontrollern) der Fall.
 \subsection{Zielsetzung}
 Es muss eine Möglichkeit gefunden werden, die Verwendung eines \gls{gdb}-Clients

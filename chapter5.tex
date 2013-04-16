@@ -1,6 +1,5 @@
 \chapter{Ausblick und Fazit}\label{chap:ausblick}
-Dieses Kapitel soll ein Fazit zu dem entwickelten System ziehen und mögliche
-Erweiterungen des Systems aufzeigen.
+\minitoc
 \section{Verbesserungen des entwickelten Systems}
 Einige Komponenten des entwickelten Systems erfüllen zwar die gestellten
 Anforderungen, könnten in ihrer Funktionsweise jedoch noch verbessert werden.
@@ -33,7 +32,7 @@ unterschiedlicher Zielsysteme von mehreren Threads gleichzeitig ausführen zu
 lassen.
 \subsection{Speicherverbrauch des Servers}
 Im Betrieb von \emph{FreeJTAG} stellte sich heraus, dass das Programm einen
-relativ hohen Speicherverbrauch hat($\approx \SI{9400}{\kilo\byte}$). 
+relativ hohen Speicherverbrauch hat ($\approx \SI{9400}{\kilo\byte}$). 
 
 Dies ist für eine derartige Anwendung auf einem eingebetteten System ein
 ziemlich hoher Wert. So benötigt zum Beispiel das relativ komplexe
@@ -43,6 +42,9 @@ Dieser Speicherverbrauch ist für das Carambola mit seinen \SI{32}{\mega\byte}
 Arbeitsspeicher zwar noch keine Schwierigkeit, schränkt jedoch die Verwendung
 weiterer Software ein und verhindert unter Umständen die Portierung auf
 leistungsschwächere Hardware.
+
+Eine Optimierung der Serversoftware ist also unter Umständen möglich und
+eröffnet weitere Optionen, mit dem Carambola zu arbeiten.
 \section{Mögliche Erweiterungen}
 Da das gesamte Entwicklungssystem in Hinblick auf größtmögliche Flexibilität und
 Modularisierung entwickelt wurde, sind eine Vielzahl möglicher Erweiterungen
@@ -77,26 +79,52 @@ So könnte man den Client zum Beispiel die gesammelten Netzwerkdaten in eine
 Datei schreiben lassen.
 
 Da der Netzwerkanalyzer "`Wireshark"'\cite{WIRESH} umfangreiche Möglichkeiten
-bietet, neue Protokolle hinzuzufügen, könnte man ihn unter Umständen auch dazu
-verwenden, diese Datei einzulesen.
+bietet, ihm neue Protokolle hinzuzufügen, könnte man ihn unter Umständen auch
+dazu verwenden, diese Datei einzulesen.
 
 Würde man diesen Gedanken noch weiter tragen, wäre es wünschenswert, mit
 Wireshark eine direkte Verbindung zu den einzelnen Carambolas aufzubauen. So
 ließe sich hierüber ein verteilter Netzwerksniffer realisieren.
 \section{Fazit}
 Es konnte erfolgreich ein System entwickelt werden, mit dessen Hilfe die
-Entwicklung eines eingebetteten Systems wesentlich erleicht wird.
+Entwicklung eines verteilten Funknetzwerks eingebetteter Systems wesentlich
+erleicht wird.
 
-Wird eine Software für dieses System entwickelt, so ist es nun möglich, fast
-alle Entwicklungsphasen netzwerkgestützt durchzuführen.
+Wird eine Software für ein solches eingebettetes System entwickelt, ist es
+nun möglich, fast alle Entwicklungsphasen netzwerkgestützt durchzuführen.
 
-\begin{itemize}
-  \item Leider konnte im Zeitumfang kein Funksystem entworfen werden
-\end{itemize}
+Dazu besteht das gesamte Entwicklungssystem aus einer Anzahl von
+OpenWRT-Plattformen, von denen jeweils eine einem Zielsystem
+zugeordnet ist. Diese Plattform ist durch eine direkte Verbindung in der
+Lage, physischen Zugriff auf die \gls{jtag}-Schnittstelle des Zielsystems zu
+nehmen. Durch den Einsatz von OpenOCD kann ein \gls{gdb}-Client verwendet
+werden, um das Zielsystem flashen und debuggen zu können.
 
+Zusätzlich ist es dem OpenWRT-Modul mit Hilfe der entworfenen Software
+"`FreeJTAG"' möglich, die von seinem Netzwerkknoten ausgegebenen
+\gls{uart}-Daten zu erfassen.
 
-So ist es nun möglich, während der Entwicklung einer Software für dieses System 
+Über ein WLAN oder Ethernet sind alle einzelnen OpenWRT-Module mit der
+Clientsoftware "`The Kraken"' verbunden, die die über \gls{uart} erfassten Daten
+sammelt und nach ihren, von "`FreeJTAG"' gesetzten, Zeitstempeln sortiert. Die
+Kommunikation zwischen "`FreeJTAG"' und "`The Kraken"' erfolgt dabei über ein
+selbstentwickeltes Protokoll.
 
-Auch ist es wesentlich 
-, Soll ein eingebettetes Funksystem nun entwickelt werden, ist, abgesehen von dem
-Zielsystem, ausschlie?lich ein \emph{Caram}
+Da für die Erfassung von Funkdaten üblicherweise eine hohe zeitliche Genauigkeit
+benötigt wird, wurde besonderes Augenmerk auf die Zeitsynchronisation zwischen
+den beiden Softwarebestandteilen gelegt. So wurde für das entworfene Protkoll
+ein Synchronisationsablauf entwickelt, der in Tests eine hohe Präzision zeigte.
+
+Allerdings war es im Zeitraum dieser Arbeit nicht möglich, ein beispielhaftes
+Funksystem zu implementieren, sondern nur eine Software zur Prüfung der
+Präzision des Entwicklungssystems. Dies war jedoch auch keine für die Arbeit
+essentielle Aufgabe, da nur die Voraussetzungen für die Entwicklung eines
+solchen Systems geschaffen werden sollten.
+
+Die Testergebnisse zeigen außerdem, dass sowohl Debugging als auch Deployment
+und Analyse funktionieren und sich somit ein solches Funksystem unter
+Nutzung dieses Entwicklungssystems entwickeln ließe.
+
+Ergänzt man die vorgeschlagenen Änderungen, könnte sich das Entwicklungssystem
+als flexible, robuste und günstige Lösung zur Vereinfachung der Entwicklung
+und Analyse eingebetteter Funknetzwerke erweisen.

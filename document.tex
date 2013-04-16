@@ -22,10 +22,12 @@
 %%\usepackage{natbib}
 \usepackage[ngerman,hidelinks]{hyperref}
 \usepackage{soul}
-\usepackage{hawstyle}
+\usepackage[printer]{hawstyle}
 \usepackage{lipsum} %% for sample text
 \usepackage{etoolbox}
 %% All my packages
+\usepackage{chngcntr}
+\counterwithout{footnote}{chapter}
 \usepackage{dirtree}
 \definecolor{grey}{HTML}{E6E6E6}
 \usepackage{realboxes}
@@ -148,18 +150,37 @@
 %% output title page
 \maketitle
 
-\onehalfspacing
-
+\begin{spacing}{1}
 %% add abstract pages
 %% note: this is one command on multiple lines
 \HAWAbstractPage
 %% German abstract
-{Entwicklungssystem, 802.15.4, ZigBee, }%
-{Dieses Dokument beschreibt die Entwicklung einer verteilten
-Entwicklungsplattform.}
+{Entwicklungssystem, IEEE 802.15.4, OpenWRT, OpenOCD, Carambola, JTAG, GDB,
+MIPS, ARM, UART}%
+{Dieses Arbeit beschreibt die Entwicklung eines verteilten Systems, mit
+dessen Hilfe eingebettete Funksysteme entworfen, implementiert und analysiert
+werden können. Das System soll es einem Entwickler dabei ermöglichen,
+viele dieser Entwicklungsschritte netzwerkgestützt durchzuführen. Da
+beispielsweise auch die Funkdaten analysiert werden sollen, ist eine hohe
+Genauigkeit der Datenerfassung notwendig. Realisiert wurde das
+Entwicklungssystem mithilfe mehrerer MIPS-Entwicklungsboards, die als
+"`Datenbrücken"' fungieren und JTAG-Steuerbefehle über GDB zur Verfügung
+stellen sowie über UART gesammelte Daten an eine Clientanwendung durchreichen.
+Diese Anwendung sortiert die eingehenden Daten nach ihrem Auftreten und zeigt
+sie dem Entwickler an.\vspace{30pt}}
 %% English abstract
-{development platform, 802.15.4}%
-{This document needs an abstract\ldots}
+{development platform, IEEE 802.15.4, OpenWRT, OpenOCD, Carambola, JTAG, GDB,
+MIPS, ARM, UART}%
+{This thesis describes the development of a distributed system to help
+design, implement and analyze embedded radio systems. The system
+allows a developer to perform many of these development steps with network
+support. Since for example, the radio data needs to be analyzed, a high
+accuracy while collecting data is necessary. The development system was
+implemented using multiple MIPS development boards, working as "data
+bridges" to provide JTAG-commands using GDB as well as provide data
+collected via UART to a client application. This application sorts the incoming
+data according to their occurrence and shows them to the developer.}
+\end{spacing}
 \mtcselectlanguage{german}
 \dominitoc
 \newpage
